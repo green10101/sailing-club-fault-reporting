@@ -1,7 +1,8 @@
 <?php
-require_once '../src/Controllers/PublicController.php';
+require_once '../vendor/autoload.php';
+require_once '../src/config/database.php';
 
-$controller = new PublicController();
+$controller = new \App\Controllers\PublicController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $boatName = $_POST['boat_name'] ?? '';

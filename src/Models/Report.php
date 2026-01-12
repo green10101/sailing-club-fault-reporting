@@ -9,9 +9,10 @@ class Report
     private $db;
     private $table = 'reports';
 
-    public function __construct($database)
+    public function __construct()
     {
-        $this->db = $database;
+        global $pdo;
+        $this->db = $pdo;
     }
 
     public function create($boatName, $faultDescription)

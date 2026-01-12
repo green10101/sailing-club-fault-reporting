@@ -1,9 +1,9 @@
 <?php
 session_start();
+require_once '../vendor/autoload.php';
 require_once '../src/config/database.php';
-require_once '../src/Controllers/AuthController.php';
 
-$authController = new AuthController();
+$authController = new \App\Controllers\AuthController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';

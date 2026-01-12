@@ -1,8 +1,8 @@
 <?php
+require_once '../vendor/autoload.php';
 require_once '../src/config/database.php';
-require_once '../src/Controllers/PublicController.php';
 
-$controller = new PublicController();
+$controller = new \App\Controllers\PublicController();
 
 $requestUri = $_SERVER['REQUEST_URI'];
 

@@ -27,8 +27,8 @@ class PublicController
             $boatName = $_POST['boat_name'] ?? '';
             $faultDescription = $_POST['fault_description'] ?? '';
 
-            if ($this->reportModel->createReport($boatName, $faultDescription)) {
-                $this->mailService->sendRepairNotification($boatName, $faultDescription);
+            if ($this->reportModel->create($boatName, $faultDescription)) {
+                // $this->mailService->sendRepairAssignedEmail('admin@example.com', $boatName, $faultDescription); // Uncomment when email is configured
                 header('Location: thanks.php');
                 exit;
             } else {
