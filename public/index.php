@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../vendor/autoload.php';
 require_once '../src/config/database.php';
 
@@ -18,6 +19,26 @@ switch ($requestUri) {
         break;
     case '/login':
         $controller->showLogin();
+        break;
+    case '/bosun/dashboard':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $bosunController = new \App\Controllers\BosunController();
+        $bosunController->dashboard();
+        break;
+    case '/bosun/update-status':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $reportId = $_POST['report_id'];
+            $status = $_POST['status'];
+            $bosunController = new \App\Controllers\BosunController();
+            $bosunController->updateReportStatus($reportId, $status);
+        }
         break;
     default:
         http_response_code(404);

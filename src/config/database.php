@@ -1,13 +1,13 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
-$dotenv->load();
+// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+// $dotenv->load();
 
-$host = $_ENV['DB_HOST'] ?? 'localhost';
-$db = $_ENV['DB_NAME'] ?? 'sailing_club';
-$user = $_ENV['DB_USER'] ?? 'root';
-$pass = $_ENV['DB_PASS'] ?? '';
+$host = 'localhost'; // $_ENV['DB_HOST'] ?? 'localhost';
+$db = 'sailing_club'; // $_ENV['DB_DATABASE'] ?? 'sailing_club';
+$user = 'root'; // $_ENV['DB_USERNAME'] ?? 'root';
+$pass = ''; // $_ENV['DB_PASSWORD'] ?? '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);

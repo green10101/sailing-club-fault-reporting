@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 require_once '../vendor/autoload.php';
 require_once '../src/config/database.php';
@@ -10,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if ($authController->login($username, $password)) {
-        header('Location: /sailing-club-fault-reporting/public/report.php');
+        header('Location: /bosun/dashboard');
         exit;
     } else {
         $error = 'Invalid username or password.';

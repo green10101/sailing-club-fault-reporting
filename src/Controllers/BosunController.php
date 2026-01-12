@@ -24,8 +24,8 @@ class BosunController
 
     public function updateReportStatus($reportId, $status)
     {
-        $this->reportModel->updateStatus($reportId, $status);
-        $this->mailService->sendRepairAssignedNotification($reportId);
+        $this->reportModel->updateReportStatus($reportId, $status);
+        // $this->mailService->sendRepairAssignedEmail('volunteer@example.com', $this->reportModel->getReportById($reportId)['boat_name'], $this->reportModel->getReportById($reportId)['fault_description']);
         header('Location: /bosun/dashboard');
     }
 
