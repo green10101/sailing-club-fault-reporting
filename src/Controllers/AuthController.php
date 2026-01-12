@@ -8,7 +8,12 @@ class AuthController
 {
     public function login($username, $password)
     {
-        global $pdo;
+        try {
+            $pdo = new \PDO('mysql:host=localhost;dbname=sailing_club', 'root', '');
+        } catch (Exception $e) {
+            echo "DB connection failed: " . $e->getMessage();
+            return false;
+        }
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
         $stmt->execute([$username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);

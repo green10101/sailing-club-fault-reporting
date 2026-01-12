@@ -18,7 +18,20 @@ switch ($requestUri) {
         $controller->showThanks();
         break;
     case '/login':
-        $controller->showLogin();
+        $authController = new \App\Controllers\AuthController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $username = $_POST['username'] ?? '';
+            $password = $_POST['password'] ?? '';
+            if ($authController->login($username, $password)) {
+                header('Location: /bosun/dashboard');
+                exit;
+            } else {
+                $error = 'Invalid username or password.';
+                include '../src/Views/public/login.php';
+            }
+        } else {
+            include '../src/Views/public/login.php';
+        }
         break;
     case '/bosun/dashboard':
         if (!isset($_SESSION['user'])) {

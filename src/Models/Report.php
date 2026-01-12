@@ -11,8 +11,7 @@ class Report
 
     public function __construct()
     {
-        global $pdo;
-        $this->db = $pdo;
+        $this->db = $GLOBALS['pdo'];
     }
 
     public function create($boatName, $faultDescription)
@@ -27,7 +26,7 @@ class Report
     {
         $stmt = $this->db->prepare("SELECT * FROM " . $this->table . " ORDER BY created_at DESC");
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function getReportById($id)
@@ -35,7 +34,7 @@ class Report
         $stmt = $this->db->prepare("SELECT * FROM " . $this->table . " WHERE id = :id");
         $stmt->bindParam(':id', $id);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function updateReportStatus($id, $status)

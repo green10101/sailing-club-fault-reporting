@@ -36,4 +36,14 @@ class PublicController
             }
         }
     }
+
+    public function showThanks()
+    {
+        include '../src/Views/public/thanks.php';
+    }
+
+    public function showLogin()
+    {
+        include '../src/Views/public/login.php';
+    }
 }
