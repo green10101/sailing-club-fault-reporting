@@ -44,4 +44,12 @@ class Report
         $stmt->bindParam(':id', $id);
         return $stmt->execute();
     }
+
+    public function updateReportNotes($id, $notes)
+    {
+        $stmt = $this->db->prepare("UPDATE " . $this->table . " SET bosun_notes = :notes WHERE id = :id");
+        $stmt->bindParam(':notes', $notes);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
 }

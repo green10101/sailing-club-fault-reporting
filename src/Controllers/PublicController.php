@@ -29,7 +29,7 @@ class PublicController
 
             if ($this->reportModel->create($boatName, $faultDescription)) {
                 // $this->mailService->sendRepairAssignedEmail('admin@example.com', $boatName, $faultDescription); // Uncomment when email is configured
-                header('Location: thanks.php');
+                header('Location: /thanks');
                 exit;
             } else {
                 // Handle error (e.g., show an error message)
@@ -39,6 +39,7 @@ class PublicController
 
     public function showThanks()
     {
+        $isBosun = isset($_SESSION['user']);
         include '../src/Views/public/thanks.php';
     }
 

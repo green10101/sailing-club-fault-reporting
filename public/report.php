@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $controller->submitReport($boatName, $faultDescription);
 
     if ($result) {
-        header('Location: thanks.php');
+        header('Location: /thanks');
         exit;
     } else {
         $error = "There was an error submitting your report. Please try again.";

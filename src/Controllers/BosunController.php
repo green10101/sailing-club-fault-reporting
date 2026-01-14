@@ -29,9 +29,9 @@ class BosunController
         header('Location: /bosun/dashboard');
     }
 
-    public function addReportNote($reportId, $note)
+    public function updateReportNotes($reportId, $notes)
     {
-        $this->reportModel->addNoteToReport($reportId, $note);
+        $this->reportModel->updateReportNotes($reportId, $notes);
         header('Location: /bosun/dashboard');
     }
 }

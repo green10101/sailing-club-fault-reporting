@@ -53,9 +53,22 @@ switch ($requestUri) {
             $bosunController->updateReportStatus($reportId, $status);
         }
         break;
-    default:
-        http_response_code(404);
-        echo "404 Not Found";
+    case '/bosun/update-notes':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $reportId = $_POST['report_id'];
+            $notes = $_POST['notes'];
+            $bosunController = new \App\Controllers\BosunController();
+            $bosunController->updateReportNotes($reportId, $notes);
+        }
+        break;
+    case '/logout':
+        session_destroy();
+        header('Location: /login');
+        exit;
         break;
 }
 ?>
