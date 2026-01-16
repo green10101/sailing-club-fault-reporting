@@ -1,5 +1,28 @@
 <?php
 // $reports is passed from controller
+$currentFilter = $_GET['filter'] ?? 'all';
+$currentSort = $_GET['sort'] ?? 'created_at';
+$currentOrder = $_GET['order'] ?? 'DESC';
+
+function getSortUrl($column, $currentFilter, $currentSort, $currentOrder) {
+    $sortableColumns = ['id', 'boat_name', 'status', 'created_at'];
+    if (!in_array($column, $sortableColumns)) {
+        return '#';
+    }
+    $newOrder = ($currentSort === $column && $currentOrder === 'ASC') ? 'DESC' : 'ASC';
+    return "?filter={$currentFilter}&sort={$column}&order={$newOrder}";
+}
+
+function getSortIcon($column, $currentSort, $currentOrder) {
+    $sortableColumns = ['id', 'boat_name', 'status', 'created_at'];
+    if (!in_array($column, $sortableColumns)) {
+        return '';
+    }
+    if ($currentSort !== $column) {
+        return '↕️'; // neutral sort icon
+    }
+    return $currentOrder === 'ASC' ? '↑' : '↓';
+}
 ?>
 
 <!DOCTYPE html>
@@ -18,12 +41,24 @@
             <a href="/logout" class="btn btn-secondary">Logout</a>
         </div>
         <h2>Reported Faults</h2>
+        <div class="mb-3">
+            <form method="GET" class="d-inline">
+                <label for="filter" class="form-label">Filter Reports:</label>
+                <select name="filter" id="filter" class="form-select d-inline w-auto" onchange="this.form.submit()">
+                    <option value="all" <?php echo ($currentFilter === 'all') ? 'selected' : ''; ?>>All Reports</option>
+                    <option value="active" <?php echo ($currentFilter === 'active') ? 'selected' : ''; ?>>Active Faults Only</option>
+                </select>
+                <input type="hidden" name="sort" value="<?php echo htmlspecialchars($currentSort); ?>">
+                <input type="hidden" name="order" value="<?php echo htmlspecialchars($currentOrder); ?>">
+            </form>
+        </div>
         <table class="table table-responsive">
             <thead>
                 <tr>
-                    <th>Boat Name</th>
+                    <th><a href="<?php echo getSortUrl('id', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">ID <?php echo getSortIcon('id', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('boat_name', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('boat_name', $currentSort, $currentOrder); ?></a></th>
                     <th>Fault Description</th>
-                    <th>Status</th>
+                    <th><a href="<?php echo getSortUrl('status', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Status <?php echo getSortIcon('status', $currentSort, $currentOrder); ?></a></th>
                     <th>Bosun Notes</th>
                     <th>Actions</th>
                 </tr>
@@ -31,39 +66,18 @@
             <tbody>
                 <?php foreach ($reports as $report): ?>
                     <tr>
+                        <td><?php echo htmlspecialchars($report['id']); ?></td>
                         <td><?php echo htmlspecialchars($report['boat_name']); ?></td>
                         <td><?php echo htmlspecialchars($report['fault_description']); ?></td>
                         <td><?php echo htmlspecialchars($report['status']); ?></td>
                         <td><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></td>
                         <td>
-                            <div class="d-flex flex-column gap-2">
-                                <!-- Status Update Section -->
-                                <div class="mb-2">
-                                    <form action="/bosun/update-status" method="post" class="d-inline">
-                                        <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
-                                        <div class="input-group input-group-sm">
-                                            <select name="status" class="form-select form-select-sm">
-                                                <option value="pending" <?php if ($report['status'] == 'pending') echo 'selected'; ?>>Pending</option>
-                                                <option value="in_progress" <?php if ($report['status'] == 'in_progress') echo 'selected'; ?>>In Progress</option>
-                                                <option value="waiting_parts" <?php if ($report['status'] == 'waiting_parts') echo 'selected'; ?>>Waiting for Parts</option>
-                                                <option value="completed" <?php if ($report['status'] == 'completed') echo 'selected'; ?>>Completed</option>
-                                            </select>
-                                            <button type="submit" class="btn btn-warning btn-sm">Update</button>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <!-- Notes Update Section -->
-                                <div>
-                                    <form action="/bosun/update-notes" method="post">
-                                        <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
-                                        <div class="mb-1">
-                                            <textarea name="notes" rows="2" class="form-control form-control-sm" placeholder="Add bosun notes..."><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></textarea>
-                                        </div>
-                                        <button type="submit" class="btn btn-info btn-sm">Update Notes</button>
-                                    </form>
-                                </div>
-                            </div>
+                            <a href="/bosun/edit/<?php echo $report['id']; ?>" class="btn btn-sm btn-outline-primary" title="Edit Report">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+                                </svg>
+                                Edit
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

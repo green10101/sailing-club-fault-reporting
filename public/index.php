@@ -5,7 +5,8 @@ require_once '../src/config/database.php';
 
 $controller = new \App\Controllers\PublicController();
 
-$requestUri = $_SERVER['REQUEST_URI'];
+// Parse the request URI to remove query string for routing
+$requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 switch ($requestUri) {
     case '/':
@@ -63,6 +64,19 @@ switch ($requestUri) {
             $notes = $_POST['notes'];
             $bosunController = new \App\Controllers\BosunController();
             $bosunController->updateReportNotes($reportId, $notes);
+        }
+        break;
+    case (preg_match('/^\/bosun\/edit\/(\d+)$/', $requestUri, $matches) ? $requestUri : null):
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $reportId = $matches[1];
+        $bosunController = new \App\Controllers\BosunController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $bosunController->updateReport($reportId);
+        } else {
+            $bosunController->editReport($reportId);
         }
         break;
     case '/logout':

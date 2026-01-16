@@ -11,7 +11,7 @@ CREATE TABLE reports (
     boat_name VARCHAR(100) NOT NULL,
     fault_description TEXT NOT NULL,
     reported_by INT,
-    status ENUM('pending', 'in_progress', 'waiting_parts', 'completed') DEFAULT 'pending',
+    status ENUM('New', 'In progress', 'Waiting parts', 'Complete') DEFAULT 'New',
     bosun_notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

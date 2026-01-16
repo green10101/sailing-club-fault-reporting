@@ -3,7 +3,7 @@ CREATE TABLE reports (
     boat_name VARCHAR(255) NOT NULL,
     fault_description TEXT NOT NULL,
     reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
+    status ENUM('New', 'In progress', 'Complete') DEFAULT 'New',
     bosun_id INT,
     FOREIGN KEY (bosun_id) REFERENCES users(id) ON DELETE SET NULL
 );

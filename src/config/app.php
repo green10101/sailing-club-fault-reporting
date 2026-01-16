@@ -17,7 +17,8 @@ define('MAIL_FROM', getenv('MAIL_FROM') ?: 'noreply@sailingclub.com');
 define('MAIL_TO', getenv('MAIL_TO') ?: 'bosun@sailingclub.com');
 
 // Other application constants
-define('REPORT_STATUS_PENDING', 'pending');
-define('REPORT_STATUS_IN_PROGRESS', 'in_progress');
-define('REPORT_STATUS_COMPLETED', 'completed');
+define('REPORT_STATUS_NEW', 'New');
+define('REPORT_STATUS_IN_PROGRESS', 'In progress');
+define('REPORT_STATUS_WAITING_PARTS', 'Waiting parts');
+define('REPORT_STATUS_COMPLETE', 'Complete');
 ?>
