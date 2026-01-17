@@ -31,7 +31,10 @@
                 <label for="fault_description">Fault Description</label>
                 <textarea id="fault_description" name="fault_description" class="form-control" rows="4" required></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Submit Report</button>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Submit Report</button>
+                <a href="/bosun/dashboard" class="btn btn-secondary">Cancel</a>
+            </div>
         </form>
     </div>
     <script src="/assets/js/app.js"></script>

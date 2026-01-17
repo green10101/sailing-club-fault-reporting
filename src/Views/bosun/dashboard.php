@@ -36,12 +36,11 @@ function getSortIcon($column, $currentSort, $currentOrder) {
 <body>
     <div class="container">
         <?php include '../src/Views/layouts/nav.php'; ?>
-        <h1>Reported Faults</h1>
-        <h2>Reported Faults<?php if ($filteredBoat): ?> for <?php echo htmlspecialchars($filteredBoat['boat_name']); ?><?php endif; ?></h2>
-        <div class="mb-3">
-            <form method="GET" class="d-inline">
+        <h1>Fault Reports<?php if ($filteredBoat): ?> for <?php echo htmlspecialchars($filteredBoat['boat_name']); ?><?php endif; ?></h1>
+        <div class="mb-3 filter-section">
+            <form method="GET" class="filter-form">
                 <label for="filter" class="form-label">Filter Reports:</label>
-                <select name="filter" id="filter" class="form-select d-inline w-auto" onchange="this.form.submit()">
+                <select name="filter" id="filter" class="form-select" onchange="this.form.submit()">
                     <option value="all" <?php echo ($currentFilter === 'all') ? 'selected' : ''; ?>>All Reports</option>
                     <option value="active" <?php echo ($currentFilter === 'active') ? 'selected' : ''; ?>>Active Faults Only</option>
                 </select>
