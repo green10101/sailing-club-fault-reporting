@@ -11,7 +11,7 @@
         <?php include '../src/Views/layouts/nav.php'; ?>
         <h1>Boat Status Report</h1>
         <?php
-        $currentFilter = $_GET['filter'] ?? 'all';
+        $currentFilter = $_GET['filter'] ?? 'current';
         $currentSort = $_GET['sort'] ?? 'boat_name';
         $currentOrder = $_GET['order'] ?? 'ASC';
         function getSortUrl($column, $currentFilter, $currentSort, $currentOrder) {
@@ -36,10 +36,10 @@
         <form method="GET" class="mb-3">
             <label for="filter" class="form-label">Filter:</label>
             <select name="filter" id="filter" class="form-select d-inline w-auto" onchange="this.form.submit()">
-                <option value="all" <?php echo ($currentFilter === 'all') ? 'selected' : ''; ?>>All</option>
-                <option value="not_retired" <?php echo ($currentFilter === 'not_retired') ? 'selected' : ''; ?>>Not Retired</option>
-                <option value="ok_or_minor" <?php echo ($currentFilter === 'ok_or_minor') ? 'selected' : ''; ?>>OK or Minor Faults</option>
-                <option value="not_operational" <?php echo ($currentFilter === 'not_operational') ? 'selected' : ''; ?>>Not Operational</option>
+                <option value="current" <?php echo ($currentFilter === 'current') ? 'selected' : ''; ?>>All Current Boats</option>
+                <option value="ok_or_minor" <?php echo ($currentFilter === 'ok_or_minor') ? 'selected' : ''; ?>>OK and Minor Faults</option>
+                <option value="not_operational" <?php echo ($currentFilter === 'not_operational') ? 'selected' : ''; ?>>Out of Operation</option>
+                <option value="all" <?php echo ($currentFilter === 'all') ? 'selected' : ''; ?>>All Boats inc Retired</option>
             </select>
         </form>
         <table class="table">

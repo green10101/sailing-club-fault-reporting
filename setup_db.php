@@ -96,6 +96,31 @@ try {
         echo "Added reporter_email column to reports table\n";
     }
 
+    // Add bosun assessment fields if they don't exist
+    $bosunAssessmentColStmt = $pdo->query("SHOW COLUMNS FROM reports LIKE 'bosun_assessment'");
+    if ($bosunAssessmentColStmt->rowCount() === 0) {
+        $pdo->exec("ALTER TABLE reports ADD COLUMN bosun_assessment VARCHAR(50) DEFAULT NULL");
+        echo "Added bosun_assessment column to reports table\n";
+    }
+    
+    $partRequiredColStmt = $pdo->query("SHOW COLUMNS FROM reports LIKE 'part_required'");
+    if ($partRequiredColStmt->rowCount() === 0) {
+        $pdo->exec("ALTER TABLE reports ADD COLUMN part_required VARCHAR(255) DEFAULT NULL");
+        echo "Added part_required column to reports table\n";
+    }
+    
+    $partStatusColStmt = $pdo->query("SHOW COLUMNS FROM reports LIKE 'part_status'");
+    if ($partStatusColStmt->rowCount() === 0) {
+        $pdo->exec("ALTER TABLE reports ADD COLUMN part_status VARCHAR(50) DEFAULT NULL");
+        echo "Added part_status column to reports table\n";
+    }
+    
+    $completionDateColStmt = $pdo->query("SHOW COLUMNS FROM reports LIKE 'completion_date'");
+    if ($completionDateColStmt->rowCount() === 0) {
+        $pdo->exec("ALTER TABLE reports ADD COLUMN completion_date DATETIME DEFAULT NULL");
+        echo "Added completion_date column to reports table\n";
+    }
+
     echo "Sample boats inserted.\n";
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage() . "\n";

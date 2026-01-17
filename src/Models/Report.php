@@ -97,14 +97,40 @@ class Report
         return $stmt->execute();
     }
 
-    public function updateReport($id, $boatId, $faultDescription, $status, $bosunNotes)
+    public function updateReport($id, $boatId, $faultDescription, $status, $bosunNotes, $bosunAssessment = null, $partRequired = null, $partStatus = null, $completionDate = null)
     {
-        $stmt = $this->db->prepare("UPDATE " . $this->table . " SET boat_id = :boat_id, fault_description = :fault_description, status = :status, bosun_notes = :bosun_notes WHERE id = :id");
-        $stmt->bindParam(':boat_id', $boatId);
-        $stmt->bindParam(':fault_description', $faultDescription);
-        $stmt->bindParam(':status', $status);
-        $stmt->bindParam(':bosun_notes', $bosunNotes);
-        $stmt->bindParam(':id', $id);
-        return $stmt->execute();
+        $query = "UPDATE " . $this->table . " SET boat_id = :boat_id, fault_description = :fault_description, status = :status, bosun_notes = :bosun_notes";
+        
+        $params = [
+            ':boat_id' => $boatId,
+            ':fault_description' => $faultDescription,
+            ':status' => $status,
+            ':bosun_notes' => $bosunNotes,
+            ':id' => $id
+        ];
+        
+        // Check if new columns exist and add them to the query
+        try {
+            $columnsCheck = $this->db->query("SHOW COLUMNS FROM " . $this->table . " LIKE 'bosun_assessment'");
+            if ($columnsCheck->rowCount() > 0) {
+                $query .= ", bosun_assessment = :bosun_assessment, part_required = :part_required, part_status = :part_status";
+                $params[':bosun_assessment'] = $bosunAssessment;
+                $params[':part_required'] = $partRequired;
+                $params[':part_status'] = $partStatus;
+            }
+            
+            // Check for completion_date column separately
+            $completionCheck = $this->db->query("SHOW COLUMNS FROM " . $this->table . " LIKE 'completion_date'");
+            if ($completionCheck->rowCount() > 0) {
+                $query .= ", completion_date = :completion_date";
+                $params[':completion_date'] = $completionDate;
+            }
+        } catch (\PDOException $e) {
+            // Columns don't exist yet, continue with basic update
+        }
+        
+        $query .= " WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($params);
     }
 }

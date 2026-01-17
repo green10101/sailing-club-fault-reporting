@@ -231,6 +231,16 @@ textarea {
   border-bottom: 2px solid var(--border-gray);
 }
 
+.table th a {
+  color: var(--white);
+  text-decoration: none;
+}
+
+.table th a:hover {
+  color: #b3d9ff;
+  text-decoration: none;
+}
+
 .table td {
   padding: 8px 12px;
   border-bottom: 1px solid var(--border-gray);

@@ -19,18 +19,19 @@ class Boat
         return $this->getBoatsFilteredSorted();
     }
 
-    public function getBoatsFilteredSorted($filter = 'all', $sortBy = 'boat_name', $sortOrder = 'ASC')
+    public function getBoatsFilteredSorted($filter = 'current', $sortBy = 'boat_name', $sortOrder = 'ASC')
     {
         $query = "SELECT * FROM " . $this->table;
         $params = [];
 
-        if ($filter === 'not_retired') {
+        if ($filter === 'current') {
             $query .= " WHERE status != 'Retired'";
         } elseif ($filter === 'ok_or_minor') {
             $query .= " WHERE status IN ('OK','Minor Faults')";
         } elseif ($filter === 'not_operational') {
             $query .= " WHERE status = 'Out of Operation'";
         }
+        // 'all' filter shows everything including retired boats
 
         $allowedSortColumns = ['boat_name','boat_type','status','created_at','updated_at'];
         if (!in_array($sortBy, $allowedSortColumns)) {

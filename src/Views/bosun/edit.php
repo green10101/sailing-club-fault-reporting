@@ -53,6 +53,42 @@
                         <textarea class="form-control" id="bosun_notes" name="bosun_notes" rows="4" placeholder="Add bosun notes..."><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></textarea>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="bosun_assessment" class="form-label">Bosun's Assessment</label>
+                        <select class="form-select" id="bosun_assessment" name="bosun_assessment">
+                            <option value="">Select assessment...</option>
+                            <option value="No Fault Found" <?php if (($report['bosun_assessment'] ?? '') == 'No Fault Found') echo 'selected'; ?>>No Fault Found</option>
+                            <option value="Damage/Impact" <?php if (($report['bosun_assessment'] ?? '') == 'Damage/Impact') echo 'selected'; ?>>Damage/Impact</option>
+                            <option value="Wear and Tear" <?php if (($report['bosun_assessment'] ?? '') == 'Wear and Tear') echo 'selected'; ?>>Wear and Tear</option>
+                            <option value="Consumable" <?php if (($report['bosun_assessment'] ?? '') == 'Consumable') echo 'selected'; ?>>Consumable</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="report_date" class="form-label">Date Report Generated</label>
+                        <input type="date" class="form-control" id="report_date" name="report_date" value="<?php echo !empty($report['created_at']) ? date('Y-m-d', strtotime($report['created_at'])) : ''; ?>" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="completion_date" class="form-label">Date Report Completed</label>
+                        <input type="date" class="form-control" id="completion_date" name="completion_date" value="<?php echo !empty($report['completion_date']) ? date('Y-m-d', strtotime($report['completion_date'])) : ''; ?>" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="part_required" class="form-label">Part Required</label>
+                        <input type="text" class="form-control" id="part_required" name="part_required" placeholder="Specify part name or number..." value="<?php echo htmlspecialchars($report['part_required'] ?? ''); ?>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="part_status" class="form-label">Part Status</label>
+                        <select class="form-select" id="part_status" name="part_status">
+                            <option value="">Select status...</option>
+                            <option value="Not in the Store" <?php if (($report['part_status'] ?? '') == 'Not in the Store') echo 'selected'; ?>>Not in the Store</option>
+                            <option value="In the Store" <?php if (($report['part_status'] ?? '') == 'In the Store') echo 'selected'; ?>>In the Store</option>
+                            <option value="On Order" <?php if (($report['part_status'] ?? '') == 'On Order') echo 'selected'; ?>>On Order</option>
+                        </select>
+                    </div>
+
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                         <a href="/bosun/dashboard" class="btn btn-secondary">Cancel</a>

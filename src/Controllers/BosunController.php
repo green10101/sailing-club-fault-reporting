@@ -22,7 +22,7 @@ class BosunController
     public function dashboard()
     {
         try {
-            $filter = $_GET['filter'] ?? 'all';
+            $filter = $_GET['filter'] ?? 'active';
             $sortBy = $_GET['sort'] ?? 'r.created_at';
             $sortOrder = $_GET['order'] ?? 'DESC';
             $boatId = $_GET['boat_id'] ?? null;
@@ -52,7 +52,7 @@ class BosunController
 
     public function boats()
     {
-        $filter = $_GET['filter'] ?? 'all';
+        $filter = $_GET['filter'] ?? 'current';
         $sortBy = $_GET['sort'] ?? 'boat_name';
         $sortOrder = $_GET['order'] ?? 'ASC';
         $boats = $this->boatModel->getBoatsFilteredSorted($filter, $sortBy, $sortOrder);
@@ -150,8 +150,24 @@ class BosunController
         $faultDescription = $_POST['fault_description'] ?? '';
         $status = $_POST['status'] ?? '';
         $bosunNotes = $_POST['bosun_notes'] ?? '';
+        $bosunAssessment = $_POST['bosun_assessment'] ?? '';
+        $partRequired = $_POST['part_required'] ?? '';
+        $partStatus = $_POST['part_status'] ?? '';
 
-        $this->reportModel->updateReport($reportId, $boatId, $faultDescription, $status, $bosunNotes);
+        // Get the current report to check if status changed to Complete
+        $currentReport = $this->reportModel->getReportById($reportId);
+        $completionDate = $currentReport['completion_date'] ?? null;
+        
+        // If status is Complete and we don't have a completion date yet, set it now
+        if ($status === 'Complete' && empty($completionDate)) {
+            $completionDate = date('Y-m-d H:i:s');
+        }
+        // If status is NOT Complete, clear the completion date
+        elseif ($status !== 'Complete') {
+            $completionDate = null;
+        }
+
+        $this->reportModel->updateReport($reportId, $boatId, $faultDescription, $status, $bosunNotes, $bosunAssessment, $partRequired, $partStatus, $completionDate);
         header('Location: /bosun/dashboard');
     }
 }

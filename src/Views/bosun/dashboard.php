@@ -1,6 +1,6 @@
 <?php
 // $reports is passed from controller
-$currentFilter = $_GET['filter'] ?? 'all';
+$currentFilter = $_GET['filter'] ?? 'active';
 $currentSort = $_GET['sort'] ?? 'r.created_at';
 $currentOrder = $_GET['order'] ?? 'DESC';
 
