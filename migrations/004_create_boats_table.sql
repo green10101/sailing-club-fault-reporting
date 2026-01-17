@@ -1,0 +1,9 @@
+CREATE TABLE boats (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    boat_name VARCHAR(100) NOT NULL UNIQUE,
+    boat_type VARCHAR(50) NOT NULL,
+    serial_number VARCHAR(50),
+    status ENUM('OK', 'Minor Faults', 'Out of Operation') DEFAULT 'OK',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

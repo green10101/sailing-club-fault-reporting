@@ -1,0 +1,1 @@
+ALTER TABLE boats ADD UNIQUE (boat_name);

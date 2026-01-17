@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boat Status - Bosun Dashboard</title>
+    <link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+    <div class="container">
+        <?php include '../src/Views/layouts/nav.php'; ?>
+        <h1>Boat Status Report</h1>
+        <?php
+        $currentFilter = $_GET['filter'] ?? 'all';
+        $currentSort = $_GET['sort'] ?? 'boat_name';
+        $currentOrder = $_GET['order'] ?? 'ASC';
+        function getSortUrl($column, $currentFilter, $currentSort, $currentOrder) {
+            $sortableColumns = ['boat_name','boat_type','status'];
+            if (!in_array($column, $sortableColumns)) {
+                return '#';
+            }
+            $newOrder = ($currentSort === $column && $currentOrder === 'ASC') ? 'DESC' : 'ASC';
+            return "?filter={$currentFilter}&sort={$column}&order={$newOrder}";
+        }
+        function getSortIcon($column, $currentSort, $currentOrder) {
+            $sortableColumns = ['boat_name','boat_type','status'];
+            if (!in_array($column, $sortableColumns)) {
+                return '';
+            }
+            if ($currentSort !== $column) {
+                return '↕️';
+            }
+            return $currentOrder === 'ASC' ? '↑' : '↓';
+        }
+        ?>
+        <form method="GET" class="mb-3">
+            <label for="filter" class="form-label">Filter:</label>
+            <select name="filter" id="filter" class="form-select d-inline w-auto" onchange="this.form.submit()">
+                <option value="all" <?php echo ($currentFilter === 'all') ? 'selected' : ''; ?>>All</option>
+                <option value="not_retired" <?php echo ($currentFilter === 'not_retired') ? 'selected' : ''; ?>>Not Retired</option>
+                <option value="ok_or_minor" <?php echo ($currentFilter === 'ok_or_minor') ? 'selected' : ''; ?>>OK or Minor Faults</option>
+                <option value="not_operational" <?php echo ($currentFilter === 'not_operational') ? 'selected' : ''; ?>>Not Operational</option>
+            </select>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><a href="<?php echo getSortUrl('boat_name', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('boat_name', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('boat_type', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Boat Type <?php echo getSortIcon('boat_type', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('status', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Status <?php echo getSortIcon('status', $currentSort, $currentOrder); ?></a></th>
+                    <th>Active Faults</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($boats as $boat): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($boat['boat_name']); ?></td>
+                        <td><?php echo htmlspecialchars($boat['boat_type']); ?></td>
+                        <td><?php echo htmlspecialchars($boat['status']); ?></td>
+                        <td>
+                            <a href="/bosun/dashboard?boat_id=<?php echo $boat['id']; ?>&filter=active">
+                                <?php echo $boat['active_faults']; ?> active
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/bosun/boat/edit/<?php echo $boat['id']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <div class="mb-3">
+            <a href="/bosun/boat/new" class="btn btn-primary">Add Boat</a>
+        </div>
+    </div>
+    <script src="/assets/js/app.js"></script>
+</body>
+</html>

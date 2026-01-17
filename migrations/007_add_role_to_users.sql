@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN role ENUM('admin', 'bosun') DEFAULT 'bosun' AFTER email;

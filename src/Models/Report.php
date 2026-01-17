@@ -14,28 +14,35 @@ class Report
         $this->db = $GLOBALS['pdo'];
     }
 
-    public function create($boatName, $faultDescription)
+    public function create($boatId, $faultDescription, $reporterName = '', $reporterEmail = '')
     {
-        $stmt = $this->db->prepare("INSERT INTO " . $this->table . " (boat_name, fault_description, created_at) VALUES (:boat_name, :fault_description, NOW())");
-        $stmt->bindParam(':boat_name', $boatName);
+        $stmt = $this->db->prepare("INSERT INTO " . $this->table . " (boat_id, fault_description, reporter_name, reporter_email, created_at) VALUES (:boat_id, :fault_description, :reporter_name, :reporter_email, NOW())");
+        $stmt->bindParam(':boat_id', $boatId);
         $stmt->bindParam(':fault_description', $faultDescription);
+        $stmt->bindParam(':reporter_name', $reporterName);
+        $stmt->bindParam(':reporter_email', $reporterEmail);
         return $stmt->execute();
     }
 
-    public function getAllReports($filter = 'all', $sortBy = 'created_at', $sortOrder = 'DESC')
+    public function getAllReports($filter = 'all', $sortBy = 'created_at', $sortOrder = 'DESC', $boatId = null)
     {
         try {
-            $query = "SELECT * FROM " . $this->table;
+            $query = "SELECT r.*, b.boat_name FROM " . $this->table . " r LEFT JOIN boats b ON r.boat_id = b.id";
             $params = [];
 
             if ($filter === 'active') {
-                $query .= " WHERE status IN ('New', 'In progress', 'Waiting parts')";
+                $query .= " WHERE r.status IN ('New', 'In progress', 'Waiting parts')";
+            }
+
+            if ($boatId !== null) {
+                $query .= ($filter === 'active' ? " AND" : " WHERE") . " r.boat_id = :boat_id";
+                $params[':boat_id'] = $boatId;
             }
 
             // Validate sort column to prevent SQL injection
-            $allowedSortColumns = ['id', 'boat_name', 'status', 'created_at'];
+            $allowedSortColumns = ['r.id', 'b.boat_name', 'r.status', 'r.created_at'];
             if (!in_array($sortBy, $allowedSortColumns)) {
-                $sortBy = 'created_at';
+                $sortBy = 'r.created_at';
             }
 
             // Validate sort order
@@ -68,7 +75,7 @@ class Report
 
     public function getReportById($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM " . $this->table . " WHERE id = :id");
+        $stmt = $this->db->prepare("SELECT r.*, b.boat_name FROM " . $this->table . " r LEFT JOIN boats b ON r.boat_id = b.id WHERE r.id = :id");
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -90,10 +97,10 @@ class Report
         return $stmt->execute();
     }
 
-    public function updateReport($id, $boatName, $faultDescription, $status, $bosunNotes)
+    public function updateReport($id, $boatId, $faultDescription, $status, $bosunNotes)
     {
-        $stmt = $this->db->prepare("UPDATE " . $this->table . " SET boat_name = :boat_name, fault_description = :fault_description, status = :status, bosun_notes = :bosun_notes WHERE id = :id");
-        $stmt->bindParam(':boat_name', $boatName);
+        $stmt = $this->db->prepare("UPDATE " . $this->table . " SET boat_id = :boat_id, fault_description = :fault_description, status = :status, bosun_notes = :bosun_notes WHERE id = :id");
+        $stmt->bindParam(':boat_id', $boatId);
         $stmt->bindParam(':fault_description', $faultDescription);
         $stmt->bindParam(':status', $status);
         $stmt->bindParam(':bosun_notes', $bosunNotes);

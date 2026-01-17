@@ -9,6 +9,7 @@ $db = 'sailing_club'; // $_ENV['DB_DATABASE'] ?? 'sailing_club';
 $user = 'root'; // $_ENV['DB_USERNAME'] ?? 'root';
 $pass = ''; // $_ENV['DB_PASSWORD'] ?? '';
 
+$pdo = null;
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

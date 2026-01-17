@@ -1,11 +1,11 @@
 <?php
 // $reports is passed from controller
 $currentFilter = $_GET['filter'] ?? 'all';
-$currentSort = $_GET['sort'] ?? 'created_at';
+$currentSort = $_GET['sort'] ?? 'r.created_at';
 $currentOrder = $_GET['order'] ?? 'DESC';
 
 function getSortUrl($column, $currentFilter, $currentSort, $currentOrder) {
-    $sortableColumns = ['id', 'boat_name', 'status', 'created_at'];
+    $sortableColumns = ['r.id', 'b.boat_name', 'r.status', 'r.created_at'];
     if (!in_array($column, $sortableColumns)) {
         return '#';
     }
@@ -14,7 +14,7 @@ function getSortUrl($column, $currentFilter, $currentSort, $currentOrder) {
 }
 
 function getSortIcon($column, $currentSort, $currentOrder) {
-    $sortableColumns = ['id', 'boat_name', 'status', 'created_at'];
+    $sortableColumns = ['r.id', 'b.boat_name', 'r.status', 'r.created_at'];
     if (!in_array($column, $sortableColumns)) {
         return '';
     }
@@ -35,12 +35,9 @@ function getSortIcon($column, $currentSort, $currentOrder) {
 </head>
 <body>
     <div class="container">
-        <h1>Bosun Dashboard</h1>
-        <div class="mb-3">
-            <a href="/" class="btn btn-primary">Report New Fault</a>
-            <a href="/logout" class="btn btn-secondary">Logout</a>
-        </div>
-        <h2>Reported Faults</h2>
+        <?php include '../src/Views/layouts/nav.php'; ?>
+        <h1>Reported Faults</h1>
+        <h2>Reported Faults<?php if ($filteredBoat): ?> for <?php echo htmlspecialchars($filteredBoat['boat_name']); ?><?php endif; ?></h2>
         <div class="mb-3">
             <form method="GET" class="d-inline">
                 <label for="filter" class="form-label">Filter Reports:</label>
@@ -55,10 +52,12 @@ function getSortIcon($column, $currentSort, $currentOrder) {
         <table class="table table-responsive">
             <thead>
                 <tr>
-                    <th><a href="<?php echo getSortUrl('id', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">ID <?php echo getSortIcon('id', $currentSort, $currentOrder); ?></a></th>
-                    <th><a href="<?php echo getSortUrl('boat_name', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('boat_name', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('r.id', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">ID <?php echo getSortIcon('r.id', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('b.boat_name', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('b.boat_name', $currentSort, $currentOrder); ?></a></th>
                     <th>Fault Description</th>
-                    <th><a href="<?php echo getSortUrl('status', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Status <?php echo getSortIcon('status', $currentSort, $currentOrder); ?></a></th>
+                    <th>Reported By</th>
+                    <th>Contact Email</th>
+                    <th><a href="<?php echo getSortUrl('r.status', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Status <?php echo getSortIcon('r.status', $currentSort, $currentOrder); ?></a></th>
                     <th>Bosun Notes</th>
                     <th>Actions</th>
                 </tr>
@@ -69,6 +68,8 @@ function getSortIcon($column, $currentSort, $currentOrder) {
                         <td><?php echo htmlspecialchars($report['id']); ?></td>
                         <td><?php echo htmlspecialchars($report['boat_name']); ?></td>
                         <td><?php echo htmlspecialchars($report['fault_description']); ?></td>
+                        <td><?php echo htmlspecialchars($report['reporter_name'] ?? ''); ?></td>
+                        <td><?php echo htmlspecialchars($report['reporter_email'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($report['status']); ?></td>
                         <td><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></td>
                         <td>

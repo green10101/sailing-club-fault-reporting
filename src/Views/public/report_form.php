@@ -11,8 +11,21 @@
         <h1>Report a Fault</h1>
         <form action="/report" method="POST">
             <div class="form-group">
-                <label for="boat_name">Boat Name</label>
-                <input type="text" id="boat_name" name="boat_name" class="form-control" required>
+                <label for="boat_id">Boat Name</label>
+                <select id="boat_id" name="boat_id" class="form-control" required>
+                    <option value="">Select a boat</option>
+                    <?php foreach ($boats as $boat): ?>
+                        <option value="<?php echo $boat['id']; ?>"><?php echo htmlspecialchars($boat['boat_name']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="reporter_name">Your Name</label>
+                <input type="text" id="reporter_name" name="reporter_name" class="form-control" value="<?php echo isset($_SESSION['user']['name']) ? htmlspecialchars($_SESSION['user']['name']) : ''; ?>" required>
+            </div>
+            <div class="form-group">
+                <label for="reporter_email">Your Email</label>
+                <input type="email" id="reporter_email" name="reporter_email" class="form-control" value="<?php echo isset($_SESSION['user']['email']) ? htmlspecialchars($_SESSION['user']['email']) : ''; ?>" required>
             </div>
             <div class="form-group">
                 <label for="fault_description">Fault Description</label>

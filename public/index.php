@@ -24,7 +24,7 @@ switch ($requestUri) {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
             if ($authController->login($username, $password)) {
-                header('Location: /bosun/dashboard');
+                header('Location: /bosun/boats');
                 exit;
             } else {
                 $error = 'Invalid username or password.';
@@ -34,6 +34,57 @@ switch ($requestUri) {
             include '../src/Views/public/login.php';
         }
         break;
+    case '/admin/users':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $adminController = new \App\Controllers\AdminController();
+        $adminController->users();
+        break;
+    case '/admin/user/new':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $adminController = new \App\Controllers\AdminController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->createUser();
+        } else {
+            $adminController->newUser();
+        }
+        break;
+    case (preg_match('/^\/admin\/user\/edit\/(\d+)$/', $requestUri, $matches) ? $requestUri : null):
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $userId = $matches[1];
+        $adminController = new \App\Controllers\AdminController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->updateUser($userId);
+        } else {
+            $adminController->editUser($userId);
+        }
+        break;
+    case (preg_match('/^\/admin\/user\/delete\/(\d+)$/', $requestUri, $matches) ? $requestUri : null):
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $userId = $matches[1];
+        $adminController = new \App\Controllers\AdminController();
+        $adminController->deleteUser($userId);
+        break;
+    case (preg_match('/^\/admin\/user\/reset-password\/(\d+)$/', $requestUri, $matches) ? $requestUri : null):
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $userId = $matches[1];
+        $adminController = new \App\Controllers\AdminController();
+        $adminController->resetPassword($userId);
+        break;
     case '/bosun/dashboard':
         if (!isset($_SESSION['user'])) {
             header('Location: /login');
@@ -41,6 +92,51 @@ switch ($requestUri) {
         }
         $bosunController = new \App\Controllers\BosunController();
         $bosunController->dashboard();
+        break;
+    case '/bosun/boats':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $bosunController = new \App\Controllers\BosunController();
+        $bosunController->boats();
+        break;
+    case '/bosun/boat/new':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $bosunController = new \App\Controllers\BosunController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $bosunController->createBoat();
+        } else {
+            $bosunController->newBoat();
+        }
+        break;
+    case (preg_match('/^\/bosun\/boat\/edit\/(\d+)$/', $requestUri, $matches) ? $requestUri : null):
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $boatId = $matches[1];
+        $bosunController = new \App\Controllers\BosunController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $bosunController->updateBoat($boatId);
+        } else {
+            $bosunController->editBoat($boatId);
+        }
+        break;
+    case '/bosun/update-boat-status':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $boatId = $_POST['boat_id'];
+            $status = $_POST['status'];
+            $bosunController = new \App\Controllers\BosunController();
+            $bosunController->updateBoatStatus($boatId, $status);
+        }
         break;
     case '/bosun/update-status':
         if (!isset($_SESSION['user'])) {

@@ -12,23 +12,25 @@
 </head>
 <body>
     <div class="container">
+        <?php include '../src/Views/layouts/nav.php'; ?>
         <h1>Edit Fault Report</h1>
-        <div class="mb-3">
-            <a href="/bosun/dashboard" class="btn btn-secondary">← Back to Dashboard</a>
-        </div>
 
         <div class="card">
             <div class="card-body">
                 <form action="/bosun/edit/<?php echo $report['id']; ?>" method="post">
                     <div class="mb-3">
                         <label for="id" class="form-label">Report ID</label>
-                        <input type="text" class="form-control" id="id" value="<?php echo htmlspecialchars($report['id']); ?>" readonly>
-                        <div class="form-text">ID cannot be modified</div>
+                        <p class="form-control-plaintext"><?php echo htmlspecialchars($report['id']); ?></p>
                     </div>
 
                     <div class="mb-3">
-                        <label for="boat_name" class="form-label">Boat Name</label>
-                        <input type="text" class="form-control" id="boat_name" name="boat_name" value="<?php echo htmlspecialchars($report['boat_name']); ?>" required>
+                        <label for="boat_id" class="form-label">Boat Name</label>
+                        <select class="form-select" id="boat_id" name="boat_id" required>
+                            <option value="">Select a boat</option>
+                            <?php foreach ($boats as $boat): ?>
+                                <option value="<?php echo $boat['id']; ?>" <?php if ($boat['id'] == $report['boat_id']) echo 'selected'; ?>><?php echo htmlspecialchars($boat['boat_name']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
 
                     <div class="mb-3">
