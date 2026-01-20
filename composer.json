@@ -3,7 +3,7 @@
   "description": "A web application for reporting faults in a sailing club's fleet of hire boats.",
   "type": "project",
   "require": {
-    "php": "^7.4 || ^8.0",
+    "php": ">=7.4",
     "monolog/monolog": "^2.0",
     "vlucas/phpdotenv": "^5.0"
   },
