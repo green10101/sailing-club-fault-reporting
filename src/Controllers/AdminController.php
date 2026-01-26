@@ -9,7 +9,7 @@ class AdminController
     public function users()
     {
         if (!$this->isAdmin()) {
-            header('Location: /login');
+            header('Location: index.php?route=/login');
             exit;
         }
         $users = User::getAllUsers();
@@ -19,7 +19,7 @@ class AdminController
     public function newUser()
     {
         if (!$this->isAdmin()) {
-            header('Location: /login');
+            header('Location: index.php?route=/login');
             exit;
         }
         include '../src/Views/admin/user_new.php';
@@ -28,11 +28,11 @@ class AdminController
     public function createUser()
     {
         if (!$this->isAdmin()) {
-            header('Location: /login');
+            header('Location: index.php?route=/login');
             exit;
         }
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /admin/users');
+            header('Location: index.php?route=/admin/users');
             exit;
         }
 
@@ -43,7 +43,7 @@ class AdminController
 
         try {
             User::createUser($password, $name, $email, $role);
-            header('Location: /admin/users');
+            header('Location: index.php?route=/admin/users');
         } catch (\PDOException $e) {
             $error = 'Failed to create user: ' . $e->getMessage();
             $prefill = compact('name', 'email', 'role');
@@ -54,12 +54,12 @@ class AdminController
     public function editUser($userId)
     {
         if (!$this->isAdmin()) {
-            header('Location: /login');
+            header('Location: index.php?route=/login');
             exit;
         }
         $user = User::getUserById($userId);
         if (!$user) {
-            header('Location: /admin/users');
+            header('Location: index.php?route=/admin/users');
             exit;
         }
         include '../src/Views/admin/user_edit.php';
@@ -68,11 +68,11 @@ class AdminController
     public function updateUser($userId)
     {
         if (!$this->isAdmin()) {
-            header('Location: /login');
+            header('Location: index.php?route=/login');
             exit;
         }
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /admin/users');
+            header('Location: index.php?route=/admin/users');
             exit;
         }
 
@@ -83,7 +83,7 @@ class AdminController
 
         try {
             User::updateUser($userId, $password, $name, $email, $role);
-            header('Location: /admin/users');
+            header('Location: index.php?route=/admin/users');
         } catch (\PDOException $e) {
             $error = 'Failed to update user: ' . $e->getMessage();
             $user = User::getUserById($userId);
@@ -94,27 +94,27 @@ class AdminController
     public function deleteUser($userId)
     {
         if (!$this->isAdmin()) {
-            header('Location: /login');
+            header('Location: index.php?route=/login');
             exit;
         }
 
         if (User::deleteUser($userId)) {
-            header('Location: /admin/users');
+            header('Location: index.php?route=/admin/users');
         } else {
-            header('Location: /admin/users?error=1');
+            header('Location: index.php?route=/admin/users?error=1');
         }
     }
 
     public function resetPassword($userId)
     {
         if (!$this->isAdmin()) {
-            header('Location: /login');
+            header('Location: index.php?route=/login');
             exit;
         }
 
         $user = User::getUserById($userId);
         if (!$user) {
-            header('Location: /admin/users');
+            header('Location: index.php?route=/admin/users');
             exit;
         }
 
@@ -122,7 +122,7 @@ class AdminController
             $newPassword = $_POST['new_password'] ?? '';
             if ($newPassword) {
                 User::resetPassword($userId, $newPassword);
-                header('Location: /admin/users');
+                header('Location: index.php?route=/admin/users');
             } else {
                 $error = 'Password cannot be empty.';
                 include '../src/Views/admin/reset_password.php';
