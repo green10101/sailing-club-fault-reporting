@@ -76,13 +76,12 @@ class AdminController
             exit;
         }
 
-        $password = $_POST['password'] ?? '';
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $role = $_POST['role'] ?? 'bosun';
 
         try {
-            User::updateUser($userId, $password, $name, $email, $role);
+            User::updateUser($userId, $name, $email, $role);
             header('Location: index.php?route=/admin/users');
         } catch (\PDOException $e) {
             $error = 'Failed to update user: ' . $e->getMessage();

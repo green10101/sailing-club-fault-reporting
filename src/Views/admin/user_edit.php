@@ -29,12 +29,6 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="text" class="form-control" id="password" name="password" value="<?php echo htmlspecialchars($user['password']); ?>" required>
-                        <small class="form-text text-muted">Plain text password (visible to admins)</small>
-                    </div>
-
-                    <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
                     </div>
@@ -46,6 +40,8 @@
                             <option value="admin" <?php echo $user['role'] === 'admin' ? 'selected' : ''; ?>>Admin</option>
                         </select>
                     </div>
+
+                    <p class="text-muted">To change the password, use the "Reset Password" button from the user list.</p>
 
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
