@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <h1>Report a Fault</h1>
-        <form action="/report" method="POST">
+        <form action="index.php?route=/report" method="POST">
             <div class="form-group">
                 <label for="boat_id">Boat Name</label>
                 <select id="boat_id" name="boat_id" class="form-control" required>

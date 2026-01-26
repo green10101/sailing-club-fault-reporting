@@ -1,20 +1,20 @@
 <?php
 // $reports is passed from controller
 $currentFilter = $_GET['filter'] ?? 'active';
-$currentSort = $_GET['sort'] ?? 'r.created_at';
+$currentSort = $_GET['sort'] ?? 'r.reported_at';
 $currentOrder = $_GET['order'] ?? 'DESC';
 
 function getSortUrl($column, $currentFilter, $currentSort, $currentOrder) {
-    $sortableColumns = ['r.id', 'b.boat_name', 'r.status', 'r.created_at'];
+    $sortableColumns = ['r.id', 'b.boat_name', 'r.status', 'r.reported_at'];
     if (!in_array($column, $sortableColumns)) {
         return '#';
     }
     $newOrder = ($currentSort === $column && $currentOrder === 'ASC') ? 'DESC' : 'ASC';
-    return "?filter={$currentFilter}&sort={$column}&order={$newOrder}";
+    return "index.php?route=/bosun/dashboard&filter={$currentFilter}&sort={$column}&order={$newOrder}";
 }
 
 function getSortIcon($column, $currentSort, $currentOrder) {
-    $sortableColumns = ['r.id', 'b.boat_name', 'r.status', 'r.created_at'];
+    $sortableColumns = ['r.id', 'b.boat_name', 'r.status', 'r.reported_at'];
     if (!in_array($column, $sortableColumns)) {
         return '';
     }
@@ -38,7 +38,8 @@ function getSortIcon($column, $currentSort, $currentOrder) {
         <?php include '../src/Views/layouts/nav.php'; ?>
         <h1>Fault Reports<?php if ($filteredBoat): ?> for <?php echo htmlspecialchars($filteredBoat['boat_name']); ?><?php endif; ?></h1>
         <div class="mb-3 filter-section">
-            <form method="GET" class="filter-form">
+            <form method="GET" action="index.php" class="filter-form">
+                <input type="hidden" name="route" value="/bosun/dashboard">
                 <label for="filter" class="form-label">Filter Reports:</label>
                 <select name="filter" id="filter" class="form-select" onchange="this.form.submit()">
                     <option value="all" <?php echo ($currentFilter === 'all') ? 'selected' : ''; ?>>All Reports</option>

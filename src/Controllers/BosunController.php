@@ -23,7 +23,7 @@ class BosunController
     {
         try {
             $filter = $_GET['filter'] ?? 'active';
-            $sortBy = $_GET['sort'] ?? 'r.created_at';
+            $sortBy = $_GET['sort'] ?? 'r.reported_at';
             $sortOrder = $_GET['order'] ?? 'DESC';
             $boatId = $_GET['boat_id'] ?? null;
             $reports = $this->reportModel->getAllReports($filter, $sortBy, $sortOrder, $boatId);
