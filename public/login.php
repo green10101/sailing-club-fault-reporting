@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if ($authController->login($username, $password)) {
-        header('Location: /bosun/dashboard');
+        header('Location: index.php?route=/bosun/dashboard');
         exit;
     } else {
         $error = 'Invalid username or password.';
