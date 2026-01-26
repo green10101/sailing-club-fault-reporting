@@ -75,8 +75,9 @@ class User {
     public static function createUser($password, $name, $email, $role = 'bosun') {
         $db = $GLOBALS['pdo'];
         try {
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $db->prepare("INSERT INTO users (password, name, email, role) VALUES (:password, :name, :email, :role)");
-            $stmt->bindParam(':password', $password); // Plain text password
+            $stmt->bindParam(':password', $hashedPassword);
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':role', $role);
@@ -88,9 +89,10 @@ class User {
 
     public static function updateUser($id, $password, $name, $email, $role) {
         $db = $GLOBALS['pdo'];
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $db->prepare("UPDATE users SET password = :password, name = :name, email = :email, role = :role WHERE id = :id");
         $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':password', $password);
+        $stmt->bindParam(':password', $hashedPassword);
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':role', $role);
