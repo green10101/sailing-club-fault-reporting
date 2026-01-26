@@ -11,7 +11,7 @@
         <?php include '../src/Views/layouts/nav.php'; ?>
         <h1>User Management</h1>
         <div class="mb-3">
-            <a href="/admin/user/new" class="btn btn-primary">Add User</a>
+            <a href="index.php?route=/admin/user/new" class="btn btn-primary">Add User</a>
         </div>
 
         <?php if (isset($_GET['error'])): ?>
@@ -21,7 +21,6 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Username</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
@@ -32,15 +31,14 @@
             <tbody>
                 <?php foreach ($users as $user): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($user['username']); ?></td>
                         <td><?php echo htmlspecialchars($user['name']); ?></td>
                         <td><?php echo htmlspecialchars($user['email']); ?></td>
                         <td><?php echo htmlspecialchars($user['role']); ?></td>
                         <td><code><?php echo htmlspecialchars($user['password']); ?></code></td>
                         <td>
-                            <a href="/admin/user/edit/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <a href="/admin/user/reset-password/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-warning">Reset Password</a>
-                            <a href="/admin/user/delete/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                            <a href="index.php?route=/admin/user/edit/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <a href="index.php?route=/admin/user/reset-password/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-warning">Reset Password</a>
+                            <a href="index.php?route=/admin/user/delete/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
