@@ -17,15 +17,10 @@
 
         <div class="card">
             <div class="card-body">
-                <form action="/admin/user/edit/<?php echo $user['id']; ?>" method="post">
+                <form action="index.php?route=/admin/user/edit/<?php echo $user['id']; ?>" method="post">
                     <div class="mb-3">
                         <label class="form-label">User ID</label>
                         <p class="form-control-plaintext"><?php echo htmlspecialchars($user['id']); ?></p>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
                     </div>
 
                     <div class="mb-3">

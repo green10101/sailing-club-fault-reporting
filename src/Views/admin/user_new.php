@@ -17,12 +17,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form action="/admin/user/new" method="post">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" value="<?php echo isset($prefill['username']) ? htmlspecialchars($prefill['username']) : ''; ?>" required>
-                    </div>
-
+                <form action="index.php?route=/admin/user/new" method="post">
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
                         <input type="text" class="form-control" id="name" name="name" value="<?php echo isset($prefill['name']) ? htmlspecialchars($prefill['name']) : ''; ?>" required>
