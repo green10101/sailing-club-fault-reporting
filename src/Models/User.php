@@ -50,8 +50,8 @@ class User {
     // Static method for database queries
     public static function findByUsername($username) {
         $db = $GLOBALS['pdo'];
-        // Support both email and username for backward compatibility
-        $stmt = $db->prepare("SELECT * FROM users WHERE email = :username OR username = :username");
+        // Use email as the login identifier
+        $stmt = $db->prepare("SELECT * FROM users WHERE email = :username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
