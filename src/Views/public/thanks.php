@@ -11,9 +11,9 @@
         <h1>Thank You!</h1>
         <p>Your fault report has been submitted successfully. We appreciate your help in keeping our fleet in good condition.</p>
         <?php if (isset($isBosun) && $isBosun): ?>
-            <a href="/bosun/dashboard" class="btn btn-primary">Back to Dashboard</a>
+            <a href="index.php?route=/bosun/dashboard" class="btn btn-primary">Back to Dashboard</a>
         <?php else: ?>
-            <a href="/" class="btn btn-primary">Return to Home</a>
+            <a href="index.php" class="btn btn-primary">Return to Home</a>
         <?php endif; ?>
     </div>
     <script src="/assets/js/app.js"></script>

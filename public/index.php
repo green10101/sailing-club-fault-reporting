@@ -178,7 +178,7 @@ switch ($requestUri) {
         break;
     case '/logout':
         session_destroy();
-        header('Location: /login');
+        header('Location: index.php?route=/login');
         exit;
         break;
 }
