@@ -24,7 +24,6 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
-                    <th>Password</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -34,7 +33,6 @@
                         <td><?php echo htmlspecialchars($user['name']); ?></td>
                         <td><?php echo htmlspecialchars($user['email']); ?></td>
                         <td><?php echo htmlspecialchars($user['role']); ?></td>
-                        <td><code><?php echo htmlspecialchars($user['password']); ?></code></td>
                         <td>
                             <a href="index.php?route=/admin/user/edit/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
                             <a href="index.php?route=/admin/user/reset-password/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-warning">Reset Password</a>
