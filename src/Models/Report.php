@@ -40,9 +40,9 @@ class Report
             }
 
             // Validate sort column to prevent SQL injection
-            $allowedSortColumns = ['r.id', 'b.boat_name', 'r.status', 'r.created_at'];
+            $allowedSortColumns = ['r.id', 'b.boat_name', 'r.status', 'r.reported_at'];
             if (!in_array($sortBy, $allowedSortColumns)) {
-                $sortBy = 'r.created_at';
+                $sortBy = 'r.reported_at';
             }
 
             // Validate sort order
@@ -65,7 +65,7 @@ class Report
             if ($filter === 'active') {
                 $fallbackQuery .= " WHERE status IN ('New', 'In progress', 'Waiting parts')";
             }
-            $fallbackQuery .= " ORDER BY created_at DESC";
+            $fallbackQuery .= " ORDER BY reported_at DESC";
             
             $stmt = $this->db->prepare($fallbackQuery);
             $stmt->execute();
