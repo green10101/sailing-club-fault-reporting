@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 
 echo "<h2>Debug Information</h2>";
 echo "PHP Version: " . phpversion() . "<br><br>";
-
+echo "". phpversion() . "";
 // Check if vendor exists
 echo "Vendor folder exists: " . (file_exists(__DIR__ . '/../vendor/autoload.php') ? 'YES' : 'NO') . "<br>";
 
