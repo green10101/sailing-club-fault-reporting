@@ -16,7 +16,7 @@ class Report
 
     public function create($boatId, $faultDescription, $reporterName = '', $reporterEmail = '')
     {
-        $stmt = $this->db->prepare("INSERT INTO " . $this->table . " (boat_id, fault_description, reporter_name, reporter_email, created_at) VALUES (:boat_id, :fault_description, :reporter_name, :reporter_email, NOW())");
+        $stmt = $this->db->prepare("INSERT INTO " . $this->table . " (boat_id, fault_description, reporter_name, reporter_email, reported_at) VALUES (:boat_id, :fault_description, :reporter_name, :reporter_email, NOW())");
         $stmt->bindParam(':boat_id', $boatId);
         $stmt->bindParam(':fault_description', $faultDescription);
         $stmt->bindParam(':reporter_name', $reporterName);

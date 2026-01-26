@@ -35,7 +35,7 @@ class PublicController
 
             if ($this->reportModel->create($boatId, $faultDescription, $reporterName, $reporterEmail)) {
                 // $this->mailService->sendRepairAssignedEmail('admin@example.com', $boatName, $faultDescription); // Uncomment when email is configured
-                header('Location: /thanks');
+                header('Location: index.php?route=/thanks');
                 exit;
             } else {
                 // Handle error (e.g., show an error message)
