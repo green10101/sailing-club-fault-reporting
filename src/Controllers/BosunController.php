@@ -47,7 +47,7 @@ class BosunController
     {
         $this->reportModel->updateReportStatus($reportId, $status);
         // $this->mailService->sendRepairAssignedEmail('volunteer@example.com', $this->reportModel->getReportById($reportId)['boat_name'], $this->reportModel->getReportById($reportId)['fault_description']);
-        header('Location: /bosun/dashboard');
+        header('Location: index.php?route=/bosun/dashboard');
     }
 
     public function boats()
@@ -66,11 +66,11 @@ class BosunController
     public function updateBoatStatus($boatId, $status)
     {
         if ($this->boatModel->updateStatus($boatId, $status)) {
-            header('Location: /bosun/boats');
+            header('Location: index.php?route=/bosun/boats');
         } else {
             // Handle error, perhaps log or show message
             error_log("Failed to update boat status for boat_id: $boatId");
-            header('Location: /bosun/boats?error=1');
+            header('Location: index.php?route=/bosun/boats&error=1');
         }
     }
 
@@ -78,7 +78,7 @@ class BosunController
     {
         $report = $this->reportModel->getReportById($reportId);
         if (!$report) {
-            header('Location: /bosun/dashboard');
+            header('Location: index.php?route=/bosun/dashboard');
             exit;
         }
         $boats = $this->boatModel->getAllBoats();
@@ -89,7 +89,7 @@ class BosunController
     {
         $boat = $this->boatModel->getBoatById($boatId);
         if (!$boat) {
-            header('Location: /bosun/boats');
+            header('Location: index.php?route=/bosun/boats');
             exit;
         }
         include '../src/Views/bosun/boat_edit.php';
@@ -98,7 +98,7 @@ class BosunController
     public function updateBoat($boatId)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /bosun/boats');
+            header('Location: index.php?route=/bosun/boats');
             exit;
         }
 
@@ -108,7 +108,7 @@ class BosunController
         $status = $_POST['status'] ?? '';
 
         $this->boatModel->updateDetails($boatId, $boatName, $boatType, $serialNumber, $status);
-        header('Location: /bosun/boats');
+        header('Location: index.php?route=/bosun/boats');
     }
 
     public function newBoat()
@@ -119,7 +119,7 @@ class BosunController
     public function createBoat()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /bosun/boats');
+            header('Location: index.php?route=/bosun/boats');
             exit;
         }
 
@@ -130,7 +130,7 @@ class BosunController
 
         try {
             $this->boatModel->createBoat($boatName, $boatType, $serialNumber, $status);
-            header('Location: /bosun/boats');
+            header('Location: index.php?route=/bosun/boats');
         } catch (\PDOException $e) {
             $error = 'Failed to create boat: ' . $e->getMessage();
             // Re-render form with previous values
@@ -142,7 +142,7 @@ class BosunController
     public function updateReport($reportId)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /bosun/dashboard');
+            header('Location: index.php?route=/bosun/dashboard');
             exit;
         }
 
@@ -168,6 +168,6 @@ class BosunController
         }
 
         $this->reportModel->updateReport($reportId, $boatId, $faultDescription, $status, $bosunNotes, $bosunAssessment, $partRequired, $partStatus, $completionDate);
-        header('Location: /bosun/dashboard');
+        header('Location: index.php?route=/bosun/dashboard');
     }
 }

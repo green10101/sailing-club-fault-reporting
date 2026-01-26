@@ -59,19 +59,19 @@
                         <td><?php echo htmlspecialchars($boat['boat_type']); ?></td>
                         <td><?php echo htmlspecialchars($boat['status']); ?></td>
                         <td>
-                            <a href="/bosun/dashboard?boat_id=<?php echo $boat['id']; ?>&filter=active">
+                            <a href="index.php?route=/bosun/dashboard&boat_id=<?php echo $boat['id']; ?>&filter=active">
                                 <?php echo $boat['active_faults']; ?> active
                             </a>
                         </td>
                         <td>
-                            <a href="/bosun/boat/edit/<?php echo $boat['id']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <a href="index.php?route=/bosun/boat/edit/<?php echo $boat['id']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
         <div class="mb-3">
-            <a href="/bosun/boat/new" class="btn btn-primary">Add Boat</a>
+            <a href="index.php?route=/bosun/boat/new" class="btn btn-primary">Add Boat</a>
         </div>
     </div>
     <script src="/assets/js/app.js"></script>

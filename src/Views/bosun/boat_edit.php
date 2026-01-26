@@ -13,7 +13,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form action="/bosun/boat/edit/<?php echo $boat['id']; ?>" method="post">
+                <form action="index.php?route=/bosun/boat/edit/<?php echo $boat['id']; ?>" method="post">
                     <div class="mb-3">
                         <label class="form-label">Boat ID</label>
                         <p class="form-control-plaintext"><?php echo htmlspecialchars($boat['id']); ?></p>

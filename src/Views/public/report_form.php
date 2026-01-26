@@ -33,7 +33,7 @@
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Submit Report</button>
-                <a href="/bosun/dashboard" class="btn btn-secondary">Cancel</a>
+                <a href="index.php?route=/bosun/dashboard" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>

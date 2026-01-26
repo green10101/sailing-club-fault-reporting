@@ -17,7 +17,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form action="/bosun/edit/<?php echo $report['id']; ?>" method="post">
+                <form action="index.php?route=/bosun/edit/<?php echo $report['id']; ?>" method="post">
                     <div class="mb-3">
                         <label for="id" class="form-label">Report ID</label>
                         <p class="form-control-plaintext"><?php echo htmlspecialchars($report['id']); ?></p>
@@ -91,7 +91,7 @@
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">Save Changes</button>
-                        <a href="/bosun/dashboard" class="btn btn-secondary">Cancel</a>
+                        <a href="index.php?route=/bosun/dashboard" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
             </div>

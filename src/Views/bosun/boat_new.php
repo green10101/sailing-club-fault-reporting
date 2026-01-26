@@ -16,7 +16,7 @@
         <?php endif; ?>
         <div class="card">
             <div class="card-body">
-                <form action="/bosun/boat/new" method="post">
+                <form action="index.php?route=/bosun/boat/new" method="post">
                     <div class="mb-3">
                         <label for="boat_name" class="form-label">Boat Name</label>
                         <input type="text" class="form-control" id="boat_name" name="boat_name" value="<?php echo isset($prefill['boatName']) ? htmlspecialchars($prefill['boatName']) : ''; ?>" required>
