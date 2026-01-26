@@ -43,13 +43,15 @@ class User {
     }
 
     public function verifyPassword($password) {
-        return $password === $this->password; // Plain text comparison
+        // Use password_verify for hashed passwords
+        return password_verify($password, $this->password);
     }
 
     // Static method for database queries
     public static function findByUsername($username) {
         $db = $GLOBALS['pdo'];
-        $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
+        // Support both email and username for backward compatibility
+        $stmt = $db->prepare("SELECT * FROM users WHERE email = :username OR username = :username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
