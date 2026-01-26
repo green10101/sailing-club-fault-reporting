@@ -9,7 +9,7 @@ class AuthController
     public function login($username, $password)
     {
         $user = User::findByUsername($username);
-        if ($user && $user['password'] === $password) { // Plain text comparison
+        if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user'] = $user;
             return true;
         }
