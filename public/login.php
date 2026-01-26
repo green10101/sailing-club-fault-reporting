@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if (isset($error)): ?>
             <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
-        <form method="POST" action="login.php">
+        <form method="POST" action="index.php?route=/login">
             <div class="form-group">
                 <label for="username">Email Address</label>
                 <input type="email" id="username" name="username" class="form-control" required>

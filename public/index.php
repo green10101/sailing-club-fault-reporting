@@ -35,7 +35,7 @@ switch ($requestUri) {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
             if ($authController->login($username, $password)) {
-                header('Location: /bosun/boats');
+                header('Location: index.php?route=/bosun/dashboard');
                 exit;
             } else {
                 $error = 'Invalid username or password.';
