@@ -1,4 +1,9 @@
 <?php
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 require_once '../vendor/autoload.php';
 require_once '../src/config/database.php';
@@ -180,6 +185,10 @@ switch ($requestUri) {
         session_destroy();
         header('Location: index.php?route=/login');
         exit;
+        break;
+    default:
+        http_response_code(404);
+        echo "404 Not Found - Route: " . htmlspecialchars($requestUri);
         break;
 }
 ?>
