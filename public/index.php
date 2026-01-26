@@ -14,6 +14,11 @@ $controller = new \App\Controllers\PublicController();
 // Support both URL path and ?route= query parameter
 $requestUri = $_GET['route'] ?? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
+// Normalize the route - treat /index.php and empty as /
+if ($requestUri === '/index.php' || $requestUri === '' || $requestUri === '/bosun/public/index.php') {
+    $requestUri = '/';
+}
+
 switch ($requestUri) {
     case '/':
         $controller->showReportForm();
