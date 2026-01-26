@@ -6,7 +6,8 @@ require_once '../src/config/database.php';
 $controller = new \App\Controllers\PublicController();
 
 // Parse the request URI to remove query string for routing
-$requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+// Support both URL path and ?route= query parameter
+$requestUri = $_GET['route'] ?? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 switch ($requestUri) {
     case '/':
