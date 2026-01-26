@@ -1,9 +1,9 @@
 <?php
 // This script creates an admin user
-// Upload to your server and run it once, then delete it
+// Upload to PUBLIC folder and run it once, then delete it
 
-require_once 'vendor/autoload.php';
-require_once 'src/config/database.php';
+require_once '../vendor/autoload.php';
+require_once '../src/config/database.php';
 
 $email = 'admin@sailingclub.com';
 $password = 'admin123';
