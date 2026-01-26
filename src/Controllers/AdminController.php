@@ -36,18 +36,17 @@ class AdminController
             exit;
         }
 
-        $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $role = $_POST['role'] ?? 'bosun';
 
         try {
-            User::createUser($username, $password, $name, $email, $role);
+            User::createUser($password, $name, $email, $role);
             header('Location: /admin/users');
         } catch (\PDOException $e) {
             $error = 'Failed to create user: ' . $e->getMessage();
-            $prefill = compact('username', 'name', 'email', 'role');
+            $prefill = compact('name', 'email', 'role');
             include '../src/Views/admin/user_new.php';
         }
     }
@@ -77,14 +76,13 @@ class AdminController
             exit;
         }
 
-        $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $role = $_POST['role'] ?? 'bosun';
 
         try {
-            User::updateUser($userId, $username, $password, $name, $email, $role);
+            User::updateUser($userId, $password, $name, $email, $role);
             header('Location: /admin/users');
         } catch (\PDOException $e) {
             $error = 'Failed to update user: ' . $e->getMessage();

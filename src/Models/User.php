@@ -59,24 +59,23 @@ class User {
 
     public static function getAllUsers() {
         $db = $GLOBALS['pdo'];
-        $stmt = $db->prepare("SELECT id, username, password, name, email, role FROM users ORDER BY username");
+        $stmt = $db->prepare("SELECT id, password, name, email, role FROM users ORDER BY email");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public static function getUserById($id) {
         $db = $GLOBALS['pdo'];
-        $stmt = $db->prepare("SELECT id, username, password, name, email, role FROM users WHERE id = :id");
+        $stmt = $db->prepare("SELECT id, password, name, email, role FROM users WHERE id = :id");
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public static function createUser($username, $password, $name, $email, $role = 'bosun') {
+    public static function createUser($password, $name, $email, $role = 'bosun') {
         $db = $GLOBALS['pdo'];
         try {
-            $stmt = $db->prepare("INSERT INTO users (username, password, name, email, role) VALUES (:username, :password, :name, :email, :role)");
-            $stmt->bindParam(':username', $username);
+            $stmt = $db->prepare("INSERT INTO users (password, name, email, role) VALUES (:password, :name, :email, :role)");
             $stmt->bindParam(':password', $password); // Plain text password
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':email', $email);
@@ -87,11 +86,10 @@ class User {
         }
     }
 
-    public static function updateUser($id, $username, $password, $name, $email, $role) {
+    public static function updateUser($id, $password, $name, $email, $role) {
         $db = $GLOBALS['pdo'];
-        $stmt = $db->prepare("UPDATE users SET username = :username, password = :password, name = :name, email = :email, role = :role WHERE id = :id");
+        $stmt = $db->prepare("UPDATE users SET password = :password, name = :name, email = :email, role = :role WHERE id = :id");
         $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':username', $username);
         $stmt->bindParam(':password', $password);
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':email', $email);
