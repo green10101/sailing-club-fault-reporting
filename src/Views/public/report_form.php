@@ -36,6 +36,9 @@
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Submit Report</button>
+                <?php if (isset($_SESSION['user'])): ?>
+                    <a href="index.php?route=/bosun/boats" class="btn btn-secondary">Cancel</a>
+                <?php endif; ?>
             </div>
         </form>
     </div>
