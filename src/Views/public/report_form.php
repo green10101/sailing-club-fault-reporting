@@ -8,7 +8,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Report a Fault</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1>Report a Fault</h1>
+            <a href="index.php?route=/login" class="btn btn-secondary">Staff Login</a>
+        </div>
         <form action="index.php?route=/report" method="POST">
             <div class="form-group">
                 <label for="boat_id">Boat Name</label>
@@ -33,7 +36,6 @@
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Submit Report</button>
-                <a href="index.php?route=/bosun/dashboard" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>

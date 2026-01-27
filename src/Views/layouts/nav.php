@@ -9,7 +9,7 @@ $isAdmin = strpos($currentPath, '/admin/') === 0;
     <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
         <a href="index.php?route=/bosun/boats" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isBoats ? 'opacity: 0.7;' : ''; ?>padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">Boat Status</a>
         <a href="index.php?route=/bosun/dashboard" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isDashboard ? 'opacity: 0.7;' : ''; ?>padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">Fault Reports</a>
-        <a href="index.php" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isReport ? 'opacity: 0.7;' : ''; ?>padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">Report New Fault</a>
+        <a href="index.php?route=/report-form" class="btn" style="background-color: #004d99; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">Report a Fault</a>
         <?php if (isset($_SESSION['user']) && isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
             <a href="index.php?route=/admin/users" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isAdmin ? 'opacity: 0.7;' : ''; ?>padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">User Management</a>
         <?php endif; ?>

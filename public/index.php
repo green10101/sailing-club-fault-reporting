@@ -21,6 +21,16 @@ if ($requestUri === '/index.php' || $requestUri === '' || $requestUri === '/bosu
 
 switch ($requestUri) {
     case '/':
+        // If user is logged in, redirect to boat status
+        if (isset($_SESSION['user'])) {
+            header('Location: index.php?route=/bosun/boats');
+            exit;
+        }
+        // Otherwise show public report form
+        $controller->showReportForm();
+        break;
+    case '/report-form':
+        // Show report form for both logged-in staff and public users
         $controller->showReportForm();
         break;
     case '/report':
@@ -35,7 +45,7 @@ switch ($requestUri) {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
             if ($authController->login($username, $password)) {
-                header('Location: index.php?route=/bosun/dashboard');
+                header('Location: index.php?route=/bosun/boats');
                 exit;
             } else {
                 $error = 'Invalid username or password.';
@@ -188,7 +198,7 @@ switch ($requestUri) {
         break;
     case '/logout':
         session_destroy();
-        header('Location: index.php?route=/login');
+        header('Location: index.php');
         exit;
         break;
     default:
