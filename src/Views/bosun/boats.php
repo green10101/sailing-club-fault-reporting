@@ -14,6 +14,22 @@
         $currentFilter = $_GET['filter'] ?? 'current';
         $currentSort = $_GET['sort'] ?? 'boat_name';
         $currentOrder = $_GET['order'] ?? 'ASC';
+        
+        function getStatusDisplay($status) {
+            switch ($status) {
+                case 'OK':
+                    return '<span style="color: #28a745; font-weight: 600;">✓ OK</span>';
+                case 'Minor Faults':
+                    return '<span style="color: #ffc107; font-weight: 600;">⚠️ Minor Faults</span>';
+                case 'Out of Operation':
+                    return '<span style="color: #dc3545; font-weight: 600;">⛔ Out of Operation</span>';
+                case 'Retired':
+                    return '<span style="color: #6c757d; font-weight: 600;">🔒 Retired</span>';
+                default:
+                    return htmlspecialchars($status);
+            }
+        }
+        
         function getSortUrl($column, $currentFilter, $currentSort, $currentOrder) {
             $sortableColumns = ['boat_name','boat_type','status'];
             if (!in_array($column, $sortableColumns)) {
@@ -58,7 +74,7 @@
                     <tr>
                         <td><?php echo htmlspecialchars($boat['boat_name']); ?></td>
                         <td><?php echo htmlspecialchars($boat['boat_type']); ?></td>
-                        <td><?php echo htmlspecialchars($boat['status']); ?></td>
+                        <td><?php echo getStatusDisplay($boat['status']); ?></td>
                         <td>
                             <a href="index.php?route=/bosun/dashboard&boat_id=<?php echo $boat['id']; ?>&filter=active">
                                 <?php echo $boat['active_faults']; ?> active
