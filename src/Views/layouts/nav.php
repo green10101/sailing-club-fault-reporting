@@ -5,14 +5,14 @@ $isDashboard = strpos($currentPath, '/bosun/dashboard') === 0 || strpos($current
 $isReport = $currentPath === '/' || $currentPath === '/report';
 $isAdmin = strpos($currentPath, '/admin/') === 0;
 ?>
-<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4" style="background-color: #f8f9fa; padding: 1rem; margin-bottom: 2rem; border-bottom: 1px solid #dee2e6;">
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-        <a href="index.php?route=/bosun/boats" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isBoats ? 'opacity: 0.7;' : ''; ?>padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">Boat Status</a>
-        <a href="index.php?route=/bosun/dashboard" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isDashboard ? 'opacity: 0.7;' : ''; ?>padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">Fault Reports</a>
-        <a href="index.php?route=/report-form" class="btn" style="background-color: #004d99; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">Report a Fault</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4" style="background-color: #f8f9fa; padding: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid #dee2e6;">
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+        <a href="index.php?route=/bosun/boats" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isBoats ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">Boat Status</a>
+        <a href="index.php?route=/bosun/dashboard" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isDashboard ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">Fault Reports</a>
+        <a href="index.php?route=/report-form" class="btn" style="background-color: #004d99; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">Report a Fault</a>
         <?php if (isset($_SESSION['user']) && isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
-            <a href="index.php?route=/admin/users" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isAdmin ? 'opacity: 0.7;' : ''; ?>padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">User Management</a>
+            <a href="index.php?route=/admin/users" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isAdmin ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">User Management</a>
         <?php endif; ?>
-        <a href="index.php?route=/logout" class="btn btn-secondary" style="margin-left: auto;">Logout</a>
+        <a href="index.php?route=/logout" class="btn btn-secondary" style="margin-left: auto; padding: 8px 12px; font-size: 0.9rem;">Logout</a>
     </div>
 </nav>
