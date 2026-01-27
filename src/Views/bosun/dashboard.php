@@ -56,7 +56,6 @@ function getSortIcon($column, $currentSort, $currentOrder) {
                     <th><a href="<?php echo getSortUrl('b.boat_name', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('b.boat_name', $currentSort, $currentOrder); ?></a></th>
                     <th>Fault Description</th>
                     <th>Reported By</th>
-                    <th>Contact Email</th>
                     <th><a href="<?php echo getSortUrl('r.status', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Status <?php echo getSortIcon('r.status', $currentSort, $currentOrder); ?></a></th>
                     <th>Bosun Notes</th>
                     <th>Actions</th>
@@ -69,7 +68,6 @@ function getSortIcon($column, $currentSort, $currentOrder) {
                         <td><?php echo htmlspecialchars($report['boat_name']); ?></td>
                         <td><?php echo htmlspecialchars($report['fault_description']); ?></td>
                         <td><?php echo htmlspecialchars($report['reporter_name'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($report['reporter_email'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($report['status']); ?></td>
                         <td><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></td>
                         <td>
