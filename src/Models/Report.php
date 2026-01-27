@@ -27,7 +27,7 @@ class Report
     public function getAllReports($filter = 'all', $sortBy = 'created_at', $sortOrder = 'DESC', $boatId = null)
     {
         try {
-            $query = "SELECT r.*, b.boat_name FROM " . $this->table . " r LEFT JOIN boats b ON r.boat_id = b.id";
+            $query = "SELECT r.*, b.boat_name, b.boat_type FROM " . $this->table . " r LEFT JOIN boats b ON r.boat_id = b.id";
             $params = [];
 
             if ($filter === 'active') {
