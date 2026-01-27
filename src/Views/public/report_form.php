@@ -10,7 +10,9 @@
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <h1>Report a Fault</h1>
-            <a href="index.php?route=/login" class="btn btn-secondary">Staff Login</a>
+            <?php if (!isset($_SESSION['user'])): ?>
+                <a href="index.php?route=/login" class="btn btn-secondary">Staff Login</a>
+            <?php endif; ?>
         </div>
         <form action="index.php?route=/report" method="POST">
             <div class="form-group">
