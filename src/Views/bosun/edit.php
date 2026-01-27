@@ -66,12 +66,12 @@
 
                     <div class="mb-3">
                         <label for="report_date" class="form-label">Date Report Generated</label>
-                        <input type="date" class="form-control" id="report_date" name="report_date" value="<?php echo !empty($report['created_at']) ? date('Y-m-d', strtotime($report['created_at'])) : ''; ?>" readonly>
+                        <input type="text" class="form-control" id="report_date" name="report_date" value="<?php echo !empty($report['reported_at']) ? date('d/m/Y', strtotime($report['reported_at'])) : ''; ?>" readonly>
                     </div>
 
                     <div class="mb-3">
                         <label for="completion_date" class="form-label">Date Report Completed</label>
-                        <input type="date" class="form-control" id="completion_date" name="completion_date" value="<?php echo !empty($report['completion_date']) ? date('Y-m-d', strtotime($report['completion_date'])) : ''; ?>" readonly>
+                        <input type="date" class="form-control" id="completion_date" name="completion_date" value="<?php echo !empty($report['completion_date']) ? date('Y-m-d', strtotime($report['completion_date'])) : ''; ?>">
                     </div>
 
                     <div class="mb-3">

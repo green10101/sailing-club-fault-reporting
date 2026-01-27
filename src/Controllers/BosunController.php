@@ -153,18 +153,23 @@ class BosunController
         $bosunAssessment = $_POST['bosun_assessment'] ?? '';
         $partRequired = $_POST['part_required'] ?? '';
         $partStatus = $_POST['part_status'] ?? '';
+        $manualCompletionDate = $_POST['completion_date'] ?? '';
 
-        // Get the current report to check if status changed to Complete
-        $currentReport = $this->reportModel->getReportById($reportId);
-        $completionDate = $currentReport['completion_date'] ?? null;
+        // Handle completion date
+        $completionDate = null;
         
-        // If status is Complete and we don't have a completion date yet, set it now
-        if ($status === 'Complete' && empty($completionDate)) {
-            $completionDate = date('Y-m-d H:i:s');
+        // If manually set, use that date
+        if (!empty($manualCompletionDate)) {
+            $completionDate = $manualCompletionDate . ' 00:00:00';
         }
-        // If status is NOT Complete, clear the completion date
-        elseif ($status !== 'Complete') {
-            $completionDate = null;
+        // Otherwise, if status is Complete and no manual date, auto-set to now
+        elseif ($status === 'Complete') {
+            $currentReport = $this->reportModel->getReportById($reportId);
+            if (empty($currentReport['completion_date'])) {
+                $completionDate = date('Y-m-d H:i:s');
+            } else {
+                $completionDate = $currentReport['completion_date'];
+            }
         }
 
         $this->reportModel->updateReport($reportId, $boatId, $faultDescription, $status, $bosunNotes, $bosunAssessment, $partRequired, $partStatus, $completionDate);
