@@ -89,6 +89,7 @@
         </table>
         <div class="mb-3">
             <a href="index.php?route=/bosun/boat/new" class="btn btn-primary">Add Boat</a>
+            <a href="index.php?route=/bosun/print-report" class="btn btn-success" target="_blank">🖨️ Print Active Faults Report</a>
         </div>
     </div>
     <script src="/assets/js/app.js"></script>

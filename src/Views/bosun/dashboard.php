@@ -36,7 +36,10 @@ function getSortIcon($column, $currentSort, $currentOrder) {
 <body>
     <div class="container">
         <?php include '../src/Views/layouts/nav.php'; ?>
-        <h1>Fault Reports<?php if ($filteredBoat): ?> for <?php echo htmlspecialchars($filteredBoat['boat_name']); ?><?php endif; ?></h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h1 style="margin: 0;">Fault Reports<?php if ($filteredBoat): ?> for <?php echo htmlspecialchars($filteredBoat['boat_name']); ?><?php endif; ?></h1>
+            <a href="index.php?route=/bosun/print-report" class="btn btn-success" target="_blank">🖨️ Print Report</a>
+        </div>
         <div class="mb-3 filter-section">
             <form method="GET" action="index.php" class="filter-form">
                 <input type="hidden" name="route" value="/bosun/dashboard">

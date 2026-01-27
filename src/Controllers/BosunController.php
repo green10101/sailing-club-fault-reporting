@@ -170,4 +170,31 @@ class BosunController
         $this->reportModel->updateReport($reportId, $boatId, $faultDescription, $status, $bosunNotes, $bosunAssessment, $partRequired, $partStatus, $completionDate);
         header('Location: index.php?route=/bosun/dashboard');
     }
+
+    public function printReport()
+    {
+        // Get all active faults (statuses: New, In progress, Waiting parts)
+        $reports = $this->reportModel->getAllReports('active', 'b.boat_name', 'ASC', null);
+        
+        // Group faults by boat
+        $boatGroups = [];
+        $totalFaults = 0;
+        
+        foreach ($reports as $report) {
+            $boatName = $report['boat_name'];
+            if (!isset($boatGroups[$boatName])) {
+                $boatGroups[$boatName] = [
+                    'boat_type' => $report['boat_type'] ?? 'Unknown',
+                    'faults' => []
+                ];
+            }
+            $boatGroups[$boatName]['faults'][] = $report;
+            $totalFaults++;
+        }
+        
+        // Sort boats alphabetically
+        ksort($boatGroups);
+        
+        include '../src/Views/bosun/print_report.php';
+    }
 }

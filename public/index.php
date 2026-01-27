@@ -122,6 +122,14 @@ switch ($requestUri) {
         $bosunController = new \App\Controllers\BosunController();
         $bosunController->boats();
         break;
+    case '/bosun/print-report':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $bosunController = new \App\Controllers\BosunController();
+        $bosunController->printReport();
+        break;
     case '/bosun/boat/new':
         if (!isset($_SESSION['user'])) {
             header('Location: /login');
