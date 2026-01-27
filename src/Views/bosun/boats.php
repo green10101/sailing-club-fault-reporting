@@ -33,7 +33,8 @@
             return $currentOrder === 'ASC' ? '↑' : '↓';
         }
         ?>
-        <form method="GET" class="mb-3">
+        <form method="GET" action="index.php" class="mb-3">
+            <input type="hidden" name="route" value="/bosun/boats">
             <label for="filter" class="form-label">Filter:</label>
             <select name="filter" id="filter" class="form-select d-inline w-auto" onchange="this.form.submit()">
                 <option value="current" <?php echo ($currentFilter === 'current') ? 'selected' : ''; ?>>All Current Boats</option>
