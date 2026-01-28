@@ -59,14 +59,14 @@ class User {
 
     public static function getAllUsers() {
         $db = $GLOBALS['pdo'];
-        $stmt = $db->prepare("SELECT id, password, name, email, role FROM users ORDER BY email");
+        $stmt = $db->prepare("SELECT id, password, name, email, role, login_count FROM users ORDER BY email");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public static function getUserById($id) {
         $db = $GLOBALS['pdo'];
-        $stmt = $db->prepare("SELECT id, password, name, email, role FROM users WHERE id = :id");
+        $stmt = $db->prepare("SELECT id, password, name, email, role, login_count FROM users WHERE id = :id");
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -109,6 +109,13 @@ class User {
         $stmt = $db->prepare("UPDATE users SET password = :password WHERE id = :id");
         $stmt->bindParam(':id', $id);
         $stmt->bindParam(':password', $newPassword);
+        return $stmt->execute();
+    }
+
+    public static function incrementLoginCount($id) {
+        $db = $GLOBALS['pdo'];
+        $stmt = $db->prepare("UPDATE users SET login_count = login_count + 1 WHERE id = :id");
+        $stmt->bindParam(':id', $id);
         return $stmt->execute();
     }
 }

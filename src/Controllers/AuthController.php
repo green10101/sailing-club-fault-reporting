@@ -11,6 +11,8 @@ class AuthController
         $user = User::findByUsername($username);
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user'] = $user;
+            // Increment the login count
+            User::incrementLoginCount($user['id']);
             return true;
         }
         return false;

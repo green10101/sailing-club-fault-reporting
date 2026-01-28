@@ -24,6 +24,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
+                    <th>Logins</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -33,6 +34,7 @@
                         <td><?php echo htmlspecialchars($user['name']); ?></td>
                         <td><?php echo htmlspecialchars($user['email']); ?></td>
                         <td><?php echo htmlspecialchars($user['role']); ?></td>
+                        <td><?php echo isset($user['login_count']) ? (int)$user['login_count'] : 0; ?></td>
                         <td>
                             <a href="index.php?route=/admin/user/edit/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
                             <a href="index.php?route=/admin/user/reset-password/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-warning">Reset Password</a>
