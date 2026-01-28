@@ -92,19 +92,19 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
             <a href="<?php echo buildFilterUrl('New', $currentBoatId, $currentSort, $currentOrder); ?>" 
                class="btn btn-sm" 
                style="<?php echo ($currentStatus === 'New' ? 'background-color: #dc3545; color: white; border: 1px solid #dc3545;' : 'background-color: transparent; color: #dc3545; border: 1px solid #dc3545;'); ?>; display: flex; align-items: center; gap: 0.5rem;">
-                <span>🔴 New</span>
+                <span>❗ New</span>
                 <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countNew ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('In progress', $currentBoatId, $currentSort, $currentOrder); ?>" 
                class="btn btn-sm" 
                style="<?php echo ($currentStatus === 'In progress' ? 'background-color: #ffa502; color: white; border: 1px solid #ffa502;' : 'background-color: transparent; color: #ffa502; border: 1px solid #ffa502;'); ?>; display: flex; align-items: center; gap: 0.5rem;">
-                <span>🟠 In Progress</span>
+                <span>🔧 In Progress</span>
                 <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countInProgress ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('Waiting parts', $currentBoatId, $currentSort, $currentOrder); ?>" 
                class="btn btn-sm <?php echo ($currentStatus === 'Waiting parts' ? 'btn-primary' : 'btn-outline-primary'); ?>" 
                style="display: flex; align-items: center; gap: 0.5rem;">
-                <span>🔵 Waiting Parts</span>
+                <span>📦 Waiting Parts</span>
                 <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countWaitingParts ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('Complete', $currentBoatId, $currentSort, $currentOrder); ?>" 
@@ -133,23 +133,23 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
                         <td><?php echo htmlspecialchars($report['boat_name']); ?></td>
                         <td><?php echo htmlspecialchars($report['fault_description']); ?></td>
                         <td><?php echo htmlspecialchars($report['reporter_name'] ?? ''); ?></td>
-                        <td>
+                        <td style="text-align: center;">
                             <?php 
                                 $statusClass = 'status-new';
-                                $statusIcon = '🔴';
+                                $statusIcon = '❗';
                                 if ($report['status'] === 'In progress') {
                                     $statusClass = 'status-in-progress';
-                                    $statusIcon = '🟠';
+                                    $statusIcon = '🔧';
                                 } elseif ($report['status'] === 'Waiting parts') {
                                     $statusClass = 'status-waiting-parts';
-                                    $statusIcon = '🔵';
+                                    $statusIcon = '📦';
                                 } elseif ($report['status'] === 'Complete') {
                                     $statusClass = 'status-complete';
                                     $statusIcon = '✅';
                                 }
                             ?>
-                            <span class="status-badge <?php echo $statusClass; ?>">
-                                <?php echo $statusIcon . ' ' . htmlspecialchars($report['status']); ?>
+                            <span class="status-badge <?php echo $statusClass; ?>" style="font-size: 1.25rem;">
+                                <?php echo $statusIcon; ?>
                             </span>
                         </td>
                         <td><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></td>
