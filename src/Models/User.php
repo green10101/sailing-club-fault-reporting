@@ -97,6 +97,15 @@ class User {
         return $stmt->execute();
     }
 
+    public static function updateUserProfile($id, $name, $email) {
+        $db = $GLOBALS['pdo'];
+        $stmt = $db->prepare("UPDATE users SET name = :name, email = :email WHERE id = :id");
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':email', $email);
+        return $stmt->execute();
+    }
+
     public static function deleteUser($id) {
         $db = $GLOBALS['pdo'];
         $stmt = $db->prepare("DELETE FROM users WHERE id = :id");

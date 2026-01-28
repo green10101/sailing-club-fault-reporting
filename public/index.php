@@ -204,6 +204,54 @@ switch ($requestUri) {
             $bosunController->editReport($reportId);
         }
         break;
+    case '/profile':
+        if (!isset($_SESSION['user'])) {
+            header('Location: index.php?route=/login');
+            exit;
+        }
+        $userProfileController = new \App\Controllers\UserProfileController();
+        $userProfileController->profile();
+        break;
+    case '/profile/edit':
+        if (!isset($_SESSION['user'])) {
+            header('Location: index.php?route=/login');
+            exit;
+        }
+        $userProfileController = new \App\Controllers\UserProfileController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userProfileController->updateProfile();
+        } else {
+            $userProfileController->editProfile();
+        }
+        break;
+    case '/profile/update':
+        if (!isset($_SESSION['user'])) {
+            header('Location: index.php?route=/login');
+            exit;
+        }
+        $userProfileController = new \App\Controllers\UserProfileController();
+        $userProfileController->updateProfile();
+        break;
+    case '/profile/change-password':
+        if (!isset($_SESSION['user'])) {
+            header('Location: index.php?route=/login');
+            exit;
+        }
+        $userProfileController = new \App\Controllers\UserProfileController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userProfileController->updatePassword();
+        } else {
+            $userProfileController->editPassword();
+        }
+        break;
+    case '/profile/update-password':
+        if (!isset($_SESSION['user'])) {
+            header('Location: index.php?route=/login');
+            exit;
+        }
+        $userProfileController = new \App\Controllers\UserProfileController();
+        $userProfileController->updatePassword();
+        break;
     case '/logout':
         session_destroy();
         header('Location: index.php');

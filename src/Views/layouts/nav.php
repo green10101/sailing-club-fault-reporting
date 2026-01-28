@@ -4,6 +4,7 @@ $isBoats = strpos($currentPath, '/bosun/boats') === 0 || strpos($currentPath, '/
 $isDashboard = strpos($currentPath, '/bosun/dashboard') === 0 || strpos($currentPath, '/bosun/edit/') === 0;
 $isReportForm = strpos($currentPath, '/report-form') !== false;
 $isAdmin = strpos($currentPath, '/admin/') === 0;
+$isProfile = strpos($currentPath, '/profile') === 0;
 ?>
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4" style="background-color: #f8f9fa; padding: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid #dee2e6;">
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
@@ -12,6 +13,9 @@ $isAdmin = strpos($currentPath, '/admin/') === 0;
         <a href="index.php?route=/report-form" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isReportForm ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">Report a Fault</a>
         <?php if (isset($_SESSION['user']) && isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
             <a href="index.php?route=/admin/users" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isAdmin ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">User Management</a>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['user'])): ?>
+            <a href="index.php?route=/profile" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isProfile ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">My Profile</a>
         <?php endif; ?>
         <a href="index.php?route=/logout" class="btn btn-secondary" style="margin-left: auto; padding: 8px 12px; font-size: 0.9rem;">Logout</a>
     </div>
