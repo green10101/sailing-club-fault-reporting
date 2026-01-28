@@ -23,9 +23,14 @@ class BosunController
     {
         try {
             $status = $_GET['status'] ?? null;
-            // Determine the filter based on status parameter
-            // If status is 'All', show all reports; otherwise show active faults (default)
-            $filter = ($status === 'All') ? 'all' : 'active';
+            // Determine the filter based on status parameter:
+            // - If status is 'All', show all reports
+            // - If a specific status is selected (New, In progress, etc), don't apply base filter
+            // - If no status is selected (null), show active faults only
+            $filter = 'all';
+            if ($status === null) {
+                $filter = 'active';
+            }
             
             $sortBy = $_GET['sort'] ?? 'r.reported_at';
             $sortOrder = $_GET['order'] ?? 'DESC';

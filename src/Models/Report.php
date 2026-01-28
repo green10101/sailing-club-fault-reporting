@@ -32,12 +32,13 @@ class Report
 
             $whereConditions = [];
 
-            if ($filter === 'active') {
+            // Apply active filter only if no specific status is selected
+            if ($filter === 'active' && $status === null) {
                 $whereConditions[] = "r.status IN ('New', 'In progress', 'Waiting parts')";
             }
 
-            // Add status filter if specified
-            if ($status !== null && $status !== 'all') {
+            // Add specific status filter if specified
+            if ($status !== null && $status !== 'All') {
                 $whereConditions[] = "r.status = :status";
                 $params[':status'] = $status;
             }
