@@ -23,10 +23,11 @@ class BosunController
     {
         try {
             $filter = $_GET['filter'] ?? 'active';
+            $status = $_GET['status'] ?? null;
             $sortBy = $_GET['sort'] ?? 'r.reported_at';
             $sortOrder = $_GET['order'] ?? 'DESC';
             $boatId = $_GET['boat_id'] ?? null;
-            $reports = $this->reportModel->getAllReports($filter, $sortBy, $sortOrder, $boatId);
+            $reports = $this->reportModel->getAllReports($filter, $sortBy, $sortOrder, $boatId, $status);
             $boats = $this->boatModel->getAllBoats();
             $filteredBoat = null;
             if ($boatId) {

@@ -24,19 +24,31 @@ class Report
         return $stmt->execute();
     }
 
-    public function getAllReports($filter = 'all', $sortBy = 'created_at', $sortOrder = 'DESC', $boatId = null)
+    public function getAllReports($filter = 'all', $sortBy = 'created_at', $sortOrder = 'DESC', $boatId = null, $status = null)
     {
         try {
             $query = "SELECT r.*, b.boat_name, b.boat_type FROM " . $this->table . " r LEFT JOIN boats b ON r.boat_id = b.id";
             $params = [];
 
+            $whereConditions = [];
+
             if ($filter === 'active') {
-                $query .= " WHERE r.status IN ('New', 'In progress', 'Waiting parts')";
+                $whereConditions[] = "r.status IN ('New', 'In progress', 'Waiting parts')";
+            }
+
+            // Add status filter if specified
+            if ($status !== null && $status !== 'all') {
+                $whereConditions[] = "r.status = :status";
+                $params[':status'] = $status;
             }
 
             if ($boatId !== null) {
-                $query .= ($filter === 'active' ? " AND" : " WHERE") . " r.boat_id = :boat_id";
+                $whereConditions[] = "r.boat_id = :boat_id";
                 $params[':boat_id'] = $boatId;
+            }
+
+            if (!empty($whereConditions)) {
+                $query .= " WHERE " . implode(" AND ", $whereConditions);
             }
 
             // Validate sort column to prevent SQL injection
