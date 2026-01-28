@@ -78,28 +78,40 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
         <div class="mb-3 status-filter-section" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
             <label style="font-weight: 600; align-self: center;">Status:</label>
             <a href="<?php echo buildFilterUrl(null, $currentBoatId, $currentSort, $currentOrder); ?>" 
-               class="btn btn-sm <?php echo (!$currentStatus ? 'btn-primary' : 'btn-outline-primary'); ?>">
-                ⭐ All Active
+               class="btn btn-sm <?php echo (!$currentStatus ? 'btn-primary' : 'btn-outline-primary'); ?>" 
+               style="display: flex; align-items: center; gap: 0.5rem;">
+                <span>⭐ All Active</span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countAllActive ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('All', $currentBoatId, $currentSort, $currentOrder); ?>" 
-               class="btn btn-sm <?php echo ($currentStatus === 'All' ? 'btn-secondary' : 'btn-outline-secondary'); ?>">
-                All Reports
+               class="btn btn-sm <?php echo ($currentStatus === 'All' ? 'btn-secondary' : 'btn-outline-secondary'); ?>" 
+               style="display: flex; align-items: center; gap: 0.5rem;">
+                <span>All Reports</span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countAllReports ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('New', $currentBoatId, $currentSort, $currentOrder); ?>" 
-               class="btn btn-sm <?php echo ($currentStatus === 'New' ? 'btn-danger' : 'btn-outline-danger'); ?>">
-                🔴 New
+               class="btn btn-sm <?php echo ($currentStatus === 'New' ? 'btn-danger' : 'btn-outline-danger'); ?>" 
+               style="display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔴 New</span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countNew ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('In progress', $currentBoatId, $currentSort, $currentOrder); ?>" 
-               class="btn btn-sm" style="<?php echo ($currentStatus === 'In progress' ? 'background-color: #ffa502; color: white; border: 1px solid #ffa502;' : 'background-color: transparent; color: #ffa502; border: 1px solid #ffa502;'); ?>">
-                🟠 In Progress
+               class="btn btn-sm" 
+               style="<?php echo ($currentStatus === 'In progress' ? 'background-color: #ffa502; color: white; border: 1px solid #ffa502;' : 'background-color: transparent; color: #ffa502; border: 1px solid #ffa502;'); ?>; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🟠 In Progress</span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countInProgress ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('Waiting parts', $currentBoatId, $currentSort, $currentOrder); ?>" 
-               class="btn btn-sm <?php echo ($currentStatus === 'Waiting parts' ? 'btn-primary' : 'btn-outline-primary'); ?>">
-                🔵 Waiting Parts
+               class="btn btn-sm <?php echo ($currentStatus === 'Waiting parts' ? 'btn-primary' : 'btn-outline-primary'); ?>" 
+               style="display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔵 Waiting Parts</span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countWaitingParts ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('Complete', $currentBoatId, $currentSort, $currentOrder); ?>" 
-               class="btn btn-sm" style="<?php echo ($currentStatus === 'Complete' ? 'background-color: #55efc4; color: #00b894; border: 1px solid #00b894;' : 'background-color: transparent; color: #00b894; border: 1px solid #00b894;'); ?>">
-                ✅ Complete
+               class="btn btn-sm" 
+               style="<?php echo ($currentStatus === 'Complete' ? 'background-color: #55efc4; color: #00b894; border: 1px solid #00b894;' : 'background-color: transparent; color: #00b894; border: 1px solid #00b894;'); ?>; display: flex; align-items: center; gap: 0.5rem;">
+                <span>✅ Complete</span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; min-width: 2rem; text-align: center;"><?php echo $countComplete ?? 0; ?></span>
             </a>
         </div>
         <table class="table table-responsive">

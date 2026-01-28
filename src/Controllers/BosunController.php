@@ -42,6 +42,14 @@ class BosunController
             $totalReports = $this->reportModel->getReportsCount($filter, $boatId, $status);
             $totalPages = ceil($totalReports / $perPage);
             
+            // Calculate counts for each status filter
+            $countAllActive = $this->reportModel->getReportsCount('active', $boatId, null);
+            $countAllReports = $this->reportModel->getReportsCount('all', $boatId, 'All');
+            $countNew = $this->reportModel->getReportsCount('all', $boatId, 'New');
+            $countInProgress = $this->reportModel->getReportsCount('all', $boatId, 'In progress');
+            $countWaitingParts = $this->reportModel->getReportsCount('all', $boatId, 'Waiting parts');
+            $countComplete = $this->reportModel->getReportsCount('all', $boatId, 'Complete');
+            
             $boats = $this->boatModel->getAllBoats();
             $filteredBoat = null;
             if ($boatId) {
