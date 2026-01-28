@@ -90,8 +90,8 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
                 <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countAllReports ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('New', $currentBoatId, $currentSort, $currentOrder); ?>" 
-               class="btn btn-sm <?php echo ($currentStatus === 'New' ? 'btn-danger' : 'btn-outline-danger'); ?>" 
-               style="display: flex; align-items: center; gap: 0.5rem;">
+               class="btn btn-sm" 
+               style="<?php echo ($currentStatus === 'New' ? 'background-color: #dc3545; color: white; border: 1px solid #dc3545;' : 'background-color: transparent; color: #dc3545; border: 1px solid #dc3545;'); ?>; display: flex; align-items: center; gap: 0.5rem;">
                 <span>🔴 New</span>
                 <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countNew ?? 0; ?></span>
             </a>
