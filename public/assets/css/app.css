@@ -520,47 +520,47 @@ code {
   white-space: nowrap;
 }
 
-.status-new {
-  background-color: #fee;
-  color: #c00;
+.status-badge.status-new {
+  background-color: #fee !important;
+  color: #c00 !important;
   border-left: 4px solid #c00;
 }
 
-.status-new::before {
-  content: "🔴";
+.status-badge.status-new::before {
+  content: "🔴 ";
   font-size: 1.1rem;
 }
 
-.status-in-progress {
-  background-color: #ffeaa7;
-  color: #d63031;
+.status-badge.status-in-progress {
+  background-color: #ffeaa7 !important;
+  color: #d63031 !important;
   border-left: 4px solid #ffa502;
 }
 
-.status-in-progress::before {
-  content: "🟠";
+.status-badge.status-in-progress::before {
+  content: "🟠 ";
   font-size: 1.1rem;
 }
 
-.status-waiting-parts {
-  background-color: #74b9ff;
-  color: #0055d4;
+.status-badge.status-waiting-parts {
+  background-color: #74b9ff !important;
+  color: #0055d4 !important;
   border-left: 4px solid #0055d4;
 }
 
-.status-waiting-parts::before {
-  content: "🔵";
+.status-badge.status-waiting-parts::before {
+  content: "🔵 ";
   font-size: 1.1rem;
 }
 
-.status-complete {
-  background-color: #55efc4;
-  color: #00b894;
+.status-badge.status-complete {
+  background-color: #55efc4 !important;
+  color: #00b894 !important;
   border-left: 4px solid #00b894;
 }
 
-.status-complete::before {
-  content: "✅";
+.status-badge.status-complete::before {
+  content: "✅ ";
   font-size: 1.1rem;
 }
 
