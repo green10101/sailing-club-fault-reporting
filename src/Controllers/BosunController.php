@@ -35,7 +35,13 @@ class BosunController
             $sortBy = $_GET['sort'] ?? 'r.reported_at';
             $sortOrder = $_GET['order'] ?? 'DESC';
             $boatId = $_GET['boat_id'] ?? null;
-            $reports = $this->reportModel->getAllReports($filter, $sortBy, $sortOrder, $boatId, $status);
+            $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+            $perPage = 50; // Show 50 reports per page
+            
+            $reports = $this->reportModel->getAllReports($filter, $sortBy, $sortOrder, $boatId, $status, $page, $perPage);
+            $totalReports = $this->reportModel->getReportsCount($filter, $boatId, $status);
+            $totalPages = ceil($totalReports / $perPage);
+            
             $boats = $this->boatModel->getAllBoats();
             $filteredBoat = null;
             if ($boatId) {
@@ -46,6 +52,9 @@ class BosunController
             // Log error and show basic dashboard
             error_log("Error in dashboard: " . $e->getMessage());
             $reports = $this->reportModel->getAllReports();
+            $totalReports = 0;
+            $totalPages = 1;
+            $page = 1;
             $boats = $this->boatModel->getAllBoats();
             $filteredBoat = null;
             include '../src/Views/bosun/dashboard.php';

@@ -24,7 +24,7 @@ class Report
         return $stmt->execute();
     }
 
-    public function getAllReports($filter = 'all', $sortBy = 'created_at', $sortOrder = 'DESC', $boatId = null, $status = null)
+    public function getAllReports($filter = 'all', $sortBy = 'created_at', $sortOrder = 'DESC', $boatId = null, $status = null, $page = 1, $perPage = 50)
     {
         try {
             $query = "SELECT r.*, b.boat_name, b.boat_type FROM " . $this->table . " r LEFT JOIN boats b ON r.boat_id = b.id";
@@ -66,8 +66,24 @@ class Report
 
             $query .= " ORDER BY {$sortBy} {$sortOrder}";
 
+            // Add pagination
+            $offset = ($page - 1) * $perPage;
+            $query .= " LIMIT :limit OFFSET :offset";
+            $params[':limit'] = (int)$perPage;
+            $params[':offset'] = (int)$offset;
+
             $stmt = $this->db->prepare($query);
-            $stmt->execute($params);
+            
+            // Bind integer parameters separately to avoid PDO issues
+            foreach ($params as $key => $value) {
+                if ($key === ':limit' || $key === ':offset') {
+                    $stmt->bindValue($key, $value, PDO::PARAM_INT);
+                } else {
+                    $stmt->bindValue($key, $value);
+                }
+            }
+            
+            $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         }
         catch (Exception $e) {
@@ -145,5 +161,42 @@ class Report
         $query .= " WHERE id = :id";
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
+    }
+
+    public function getReportsCount($filter = 'all', $boatId = null, $status = null)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM " . $this->table . " r";
+            $params = [];
+            $whereConditions = [];
+
+            // Apply active filter only if no specific status is selected
+            if ($filter === 'active' && $status === null) {
+                $whereConditions[] = "r.status IN ('New', 'In progress', 'Waiting parts')";
+            }
+
+            // Add specific status filter if specified
+            if ($status !== null && $status !== 'All') {
+                $whereConditions[] = "r.status = :status";
+                $params[':status'] = $status;
+            }
+
+            if ($boatId !== null) {
+                $whereConditions[] = "r.boat_id = :boat_id";
+                $params[':boat_id'] = $boatId;
+            }
+
+            if (!empty($whereConditions)) {
+                $query .= " WHERE " . implode(" AND ", $whereConditions);
+            }
+
+            $stmt = $this->db->prepare($query);
+            $stmt->execute($params);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return (int)$result['total'];
+        } catch (Exception $e) {
+            error_log("Error in getReportsCount: " . $e->getMessage());
+            return 0;
+        }
     }
 }

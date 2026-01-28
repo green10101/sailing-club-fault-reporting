@@ -4,17 +4,18 @@ $currentStatus = $_GET['status'] ?? null;
 $currentBoatId = $_GET['boat_id'] ?? null;
 $currentSort = $_GET['sort'] ?? 'r.reported_at';
 $currentOrder = $_GET['order'] ?? 'DESC';
+$currentPage = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 
 // Determine if we're showing only active faults
 $showActiveOnly = ($currentStatus !== 'Complete' && $currentStatus !== 'All');
 
-function getSortUrl($column, $currentStatus, $currentBoatId, $currentSort, $currentOrder) {
+function getSortUrl($column, $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage) {
     $sortableColumns = ['r.id', 'b.boat_name', 'r.status', 'r.reported_at'];
     if (!in_array($column, $sortableColumns)) {
         return '#';
     }
     $newOrder = ($currentSort === $column && $currentOrder === 'ASC') ? 'DESC' : 'ASC';
-    $url = "index.php?route=/bosun/dashboard&sort={$column}&order={$newOrder}";
+    $url = "index.php?route=/bosun/dashboard&sort={$column}&order={$newOrder}&page={$currentPage}";
     if ($currentStatus) {
         $url .= "&status={$currentStatus}";
     }
@@ -35,10 +36,21 @@ function getSortIcon($column, $currentSort, $currentOrder) {
     return $currentOrder === 'ASC' ? '↑' : '↓';
 }
 
-function buildFilterUrl($status, $currentBoatId, $currentSort, $currentOrder) {
-    $url = "index.php?route=/bosun/dashboard&sort={$currentSort}&order={$currentOrder}";
+function buildFilterUrl($status, $currentBoatId, $currentSort, $currentOrder, $page = 1) {
+    $url = "index.php?route=/bosun/dashboard&sort={$currentSort}&order={$currentOrder}&page={$page}";
     if ($status) {
         $url .= "&status={$status}";
+    }
+    if ($currentBoatId) {
+        $url .= "&boat_id={$currentBoatId}";
+    }
+    return $url;
+}
+
+function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $currentOrder) {
+    $url = "index.php?route=/bosun/dashboard&page={$page}&sort={$currentSort}&order={$currentOrder}";
+    if ($currentStatus) {
+        $url .= "&status={$currentStatus}";
     }
     if ($currentBoatId) {
         $url .= "&boat_id={$currentBoatId}";
@@ -93,11 +105,11 @@ function buildFilterUrl($status, $currentBoatId, $currentSort, $currentOrder) {
         <table class="table table-responsive">
             <thead>
                 <tr>
-                    <th><a href="<?php echo getSortUrl('r.id', $currentStatus, $currentBoatId, $currentSort, $currentOrder); ?>" class="text-decoration-none">ID <?php echo getSortIcon('r.id', $currentSort, $currentOrder); ?></a></th>
-                    <th><a href="<?php echo getSortUrl('b.boat_name', $currentStatus, $currentBoatId, $currentSort, $currentOrder); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('b.boat_name', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('r.id', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">ID <?php echo getSortIcon('r.id', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('b.boat_name', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('b.boat_name', $currentSort, $currentOrder); ?></a></th>
                     <th>Fault Description</th>
                     <th>Reported By</th>
-                    <th><a href="<?php echo getSortUrl('r.status', $currentStatus, $currentBoatId, $currentSort, $currentOrder); ?>" class="text-decoration-none">Status <?php echo getSortIcon('r.status', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('r.status', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">Status <?php echo getSortIcon('r.status', $currentSort, $currentOrder); ?></a></th>
                     <th>Bosun Notes</th>
                     <th>Actions</th>
                 </tr>
@@ -141,6 +153,23 @@ function buildFilterUrl($status, $currentBoatId, $currentSort, $currentOrder) {
                 <?php endforeach; ?>
             </tbody>
         </table>
+
+        <?php if (isset($totalPages) && $totalPages > 1): ?>
+            <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 2rem; flex-wrap: wrap;">
+                <?php if ($currentPage > 1): ?>
+                    <a href="<?php echo buildPageUrl($currentPage - 1, $currentStatus, $currentBoatId, $currentSort, $currentOrder); ?>" class="btn btn-sm btn-outline-primary">« Previous</a>
+                <?php endif; ?>
+
+                <span style="padding: 0.5rem 1rem; background: #f8f9fa; border-radius: 6px; font-weight: 600;">
+                    Page <?php echo $currentPage; ?> of <?php echo $totalPages; ?>
+                    <span style="color: #6c757d; font-weight: normal;">(<?php echo $totalReports; ?> total reports)</span>
+                </span>
+
+                <?php if ($currentPage < $totalPages): ?>
+                    <a href="<?php echo buildPageUrl($currentPage + 1, $currentStatus, $currentBoatId, $currentSort, $currentOrder); ?>" class="btn btn-sm btn-outline-primary">Next »</a>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
     </div>
     <script src="/assets/js/app.js"></script>
 </body>
