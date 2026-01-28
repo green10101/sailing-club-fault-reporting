@@ -8,9 +8,9 @@
     <title>Sailing Club Fault Reporting</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16.png">
-    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32.png?v=1">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16.png?v=1">
+    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png?v=1">
     
     <!-- Web App Manifest -->
     <link rel="manifest" href="/manifest.json">
