@@ -1,0 +1,49 @@
+{
+  "name": "Sailing Club Fault Reporting",
+  "short_name": "Fault Reports",
+  "description": "Sailing club fault and maintenance reporting system",
+  "start_url": "/index.php?route=/bosun/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007bff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["productivity"],
+  "screenshots": [
+    {
+      "src": "/assets/icons/screenshot-540.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/screenshot-1080.png",
+      "sizes": "1080x1440",
+      "type": "image/png"
+    }
+  ]
+}
