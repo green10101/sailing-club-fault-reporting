@@ -14,6 +14,13 @@ class Report
         $this->db = $GLOBALS['pdo'];
     }
 
+    public function deleteReport($id)
+    {
+        $stmt = $this->db->prepare("DELETE FROM " . $this->table . " WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
     public function create($boatId, $faultDescription, $reporterName = '', $reporterEmail = '')
     {
         $stmt = $this->db->prepare("INSERT INTO " . $this->table . " (boat_id, fault_description, reporter_name, reporter_email, reported_at) VALUES (:boat_id, :fault_description, :reporter_name, :reporter_email, NOW())");

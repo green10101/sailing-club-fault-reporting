@@ -135,4 +135,19 @@ class AdminController
     {
         return isset($_SESSION['user']) && isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin';
     }
+
+    public function deleteReport($id)
+    {
+        if (!$this->isAdmin()) {
+            header('Location: index.php?route=/login');
+            exit;
+        }
+
+        $reportModel = new \App\Models\Report();
+        $reportModel->deleteReport($id);
+        
+        $_SESSION['flash_message'] = 'Fault report deleted successfully.';
+        header('Location: index.php?route=/bosun/dashboard');
+        exit;
+    }
 }
