@@ -71,7 +71,21 @@ function getSortIcon($column, $currentSort, $currentOrder) {
                         <td><?php echo htmlspecialchars($report['boat_name']); ?></td>
                         <td><?php echo htmlspecialchars($report['fault_description']); ?></td>
                         <td><?php echo htmlspecialchars($report['reporter_name'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($report['status']); ?></td>
+                        <td>
+                            <?php 
+                                $statusClass = 'status-new';
+                                if ($report['status'] === 'In progress') {
+                                    $statusClass = 'status-in-progress';
+                                } elseif ($report['status'] === 'Waiting parts') {
+                                    $statusClass = 'status-waiting-parts';
+                                } elseif ($report['status'] === 'Complete') {
+                                    $statusClass = 'status-complete';
+                                }
+                            ?>
+                            <span class="status-badge <?php echo $statusClass; ?>">
+                                <?php echo htmlspecialchars($report['status']); ?>
+                            </span>
+                        </td>
                         <td><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></td>
                         <td>
                             <a href="index.php?route=/bosun/edit/<?php echo $report['id']; ?>" class="btn btn-sm btn-outline-primary" title="Edit Report">

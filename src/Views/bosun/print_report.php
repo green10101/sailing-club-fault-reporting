@@ -91,9 +91,41 @@
             border-radius: 3px;
         }
         
-        .status-new { background: #e3f2fd; color: #1976d2; }
-        .status-inprogress { background: #fff3e0; color: #f57c00; }
-        .status-waiting { background: #fce4ec; color: #c2185b; }
+        .status-new { 
+            background: #fee; 
+            color: #c00; 
+            border-left: 3px solid #c00;
+        }
+        .status-new::before {
+            content: "🔴 ";
+        }
+        
+        .status-inprogress { 
+            background: #ffeaa7; 
+            color: #d63031; 
+            border-left: 3px solid #ffa502;
+        }
+        .status-inprogress::before {
+            content: "🟠 ";
+        }
+        
+        .status-waitingparts { 
+            background: #74b9ff; 
+            color: #0055d4; 
+            border-left: 3px solid #0055d4;
+        }
+        .status-waitingparts::before {
+            content: "🔵 ";
+        }
+        
+        .status-complete {
+            background: #55efc4;
+            color: #00b894;
+            border-left: 3px solid #00b894;
+        }
+        .status-complete::before {
+            content: "✅ ";
+        }
         
         .fault-description {
             margin: 8px 0;
@@ -203,7 +235,17 @@
                 <div class="fault-card">
                     <div class="fault-header">
                         <span class="fault-id">Fault #<?php echo htmlspecialchars($fault['id']); ?></span>
-                        <span class="fault-status status-<?php echo strtolower(str_replace(' ', '', $fault['status'])); ?>">
+                        <?php 
+                            $statusClass = 'status-new';
+                            if ($fault['status'] === 'In progress') {
+                                $statusClass = 'status-inprogress';
+                            } elseif ($fault['status'] === 'Waiting parts') {
+                                $statusClass = 'status-waitingparts';
+                            } elseif ($fault['status'] === 'Complete') {
+                                $statusClass = 'status-complete';
+                            }
+                        ?>
+                        <span class="fault-status <?php echo $statusClass; ?>">
                             <?php echo htmlspecialchars($fault['status']); ?>
                         </span>
                     </div>
