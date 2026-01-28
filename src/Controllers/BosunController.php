@@ -22,8 +22,11 @@ class BosunController
     public function dashboard()
     {
         try {
-            $filter = $_GET['filter'] ?? 'active';
             $status = $_GET['status'] ?? null;
+            // Determine the filter based on status parameter
+            // If status is 'All', show all reports; otherwise show active faults (default)
+            $filter = ($status === 'All') ? 'all' : 'active';
+            
             $sortBy = $_GET['sort'] ?? 'r.reported_at';
             $sortOrder = $_GET['order'] ?? 'DESC';
             $boatId = $_GET['boat_id'] ?? null;

@@ -1,17 +1,19 @@
 <?php
 // $reports is passed from controller
-$currentFilter = $_GET['filter'] ?? 'active';
 $currentStatus = $_GET['status'] ?? null;
 $currentSort = $_GET['sort'] ?? 'r.reported_at';
 $currentOrder = $_GET['order'] ?? 'DESC';
 
-function getSortUrl($column, $currentFilter, $currentStatus, $currentSort, $currentOrder) {
+// Determine if we're showing only active faults
+$showActiveOnly = ($currentStatus !== 'Complete' && $currentStatus !== 'All');
+
+function getSortUrl($column, $currentStatus, $currentSort, $currentOrder) {
     $sortableColumns = ['r.id', 'b.boat_name', 'r.status', 'r.reported_at'];
     if (!in_array($column, $sortableColumns)) {
         return '#';
     }
     $newOrder = ($currentSort === $column && $currentOrder === 'ASC') ? 'DESC' : 'ASC';
-    $url = "index.php?route=/bosun/dashboard&filter={$currentFilter}&sort={$column}&order={$newOrder}";
+    $url = "index.php?route=/bosun/dashboard&sort={$column}&order={$newOrder}";
     if ($currentStatus) {
         $url .= "&status={$currentStatus}";
     }
@@ -45,38 +47,30 @@ function getSortIcon($column, $currentSort, $currentOrder) {
             <h1 style="margin: 0;">Fault Reports<?php if ($filteredBoat): ?> for <?php echo htmlspecialchars($filteredBoat['boat_name']); ?><?php endif; ?></h1>
             <a href="index.php?route=/bosun/print-report" class="btn btn-success" target="_blank">🖨️ Print Report</a>
         </div>
-        <div class="mb-3 filter-section">
-            <form method="GET" action="index.php" class="filter-form">
-                <input type="hidden" name="route" value="/bosun/dashboard">
-                <label for="filter" class="form-label">Filter Reports:</label>
-                <select name="filter" id="filter" class="form-select" onchange="this.form.submit()">
-                    <option value="all" <?php echo ($currentFilter === 'all') ? 'selected' : ''; ?>>All Reports</option>
-                    <option value="active" <?php echo ($currentFilter === 'active') ? 'selected' : ''; ?>>Active Faults Only</option>
-                </select>
-                <input type="hidden" name="sort" value="<?php echo htmlspecialchars($currentSort); ?>">
-                <input type="hidden" name="order" value="<?php echo htmlspecialchars($currentOrder); ?>">
-            </form>
-        </div>
         
         <div class="mb-3 status-filter-section" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
             <label style="font-weight: 600; align-self: center;">Status:</label>
-            <a href="index.php?route=/bosun/dashboard&filter=<?php echo htmlspecialchars($currentFilter); ?>&sort=<?php echo htmlspecialchars($currentSort); ?>&order=<?php echo htmlspecialchars($currentOrder); ?>" 
+            <a href="index.php?route=/bosun/dashboard&sort=<?php echo htmlspecialchars($currentSort); ?>&order=<?php echo htmlspecialchars($currentOrder); ?>" 
                class="btn btn-sm <?php echo (!$currentStatus ? 'btn-primary' : 'btn-outline-primary'); ?>">
-                All Statuses
+                ⭐ All Active
             </a>
-            <a href="index.php?route=/bosun/dashboard&filter=<?php echo htmlspecialchars($currentFilter); ?>&status=New&sort=<?php echo htmlspecialchars($currentSort); ?>&order=<?php echo htmlspecialchars($currentOrder); ?>" 
+            <a href="index.php?route=/bosun/dashboard&status=All&sort=<?php echo htmlspecialchars($currentSort); ?>&order=<?php echo htmlspecialchars($currentOrder); ?>" 
+               class="btn btn-sm <?php echo ($currentStatus === 'All' ? 'btn-secondary' : 'btn-outline-secondary'); ?>">
+                All Reports
+            </a>
+            <a href="index.php?route=/bosun/dashboard&status=New&sort=<?php echo htmlspecialchars($currentSort); ?>&order=<?php echo htmlspecialchars($currentOrder); ?>" 
                class="btn btn-sm <?php echo ($currentStatus === 'New' ? 'btn-danger' : 'btn-outline-danger'); ?>">
                 🔴 New
             </a>
-            <a href="index.php?route=/bosun/dashboard&filter=<?php echo htmlspecialchars($currentFilter); ?>&status=In+progress&sort=<?php echo htmlspecialchars($currentSort); ?>&order=<?php echo htmlspecialchars($currentOrder); ?>" 
+            <a href="index.php?route=/bosun/dashboard&status=In+progress&sort=<?php echo htmlspecialchars($currentSort); ?>&order=<?php echo htmlspecialchars($currentOrder); ?>" 
                class="btn btn-sm" style="<?php echo ($currentStatus === 'In progress' ? 'background-color: #ffa502; color: white; border: 1px solid #ffa502;' : 'background-color: transparent; color: #ffa502; border: 1px solid #ffa502;'); ?>">
                 🟠 In Progress
             </a>
-            <a href="index.php?route=/bosun/dashboard&filter=<?php echo htmlspecialchars($currentFilter); ?>&status=Waiting+parts&sort=<?php echo htmlspecialchars($currentSort); ?>&order=<?php echo htmlspecialchars($currentOrder); ?>" 
+            <a href="index.php?route=/bosun/dashboard&status=Waiting+parts&sort=<?php echo htmlspecialchars($currentSort); ?>&order=<?php echo htmlspecialchars($currentOrder); ?>" 
                class="btn btn-sm <?php echo ($currentStatus === 'Waiting parts' ? 'btn-primary' : 'btn-outline-primary'); ?>">
                 🔵 Waiting Parts
             </a>
-            <a href="index.php?route=/bosun/dashboard&filter=<?php echo htmlspecialchars($currentFilter); ?>&status=Complete&sort=<?php echo htmlspecialchars($currentSort); ?>&order=<?php echo htmlspecialchars($currentOrder); ?>" 
+            <a href="index.php?route=/bosun/dashboard&status=Complete&sort=<?php echo htmlspecialchars($currentSort); ?>&order=<?php echo htmlspecialchars($currentOrder); ?>" 
                class="btn btn-sm" style="<?php echo ($currentStatus === 'Complete' ? 'background-color: #55efc4; color: #00b894; border: 1px solid #00b894;' : 'background-color: transparent; color: #00b894; border: 1px solid #00b894;'); ?>">
                 ✅ Complete
             </a>
@@ -84,11 +78,11 @@ function getSortIcon($column, $currentSort, $currentOrder) {
         <table class="table table-responsive">
             <thead>
                 <tr>
-                    <th><a href="<?php echo getSortUrl('r.id', $currentFilter, $currentStatus, $currentSort, $currentOrder); ?>" class="text-decoration-none">ID <?php echo getSortIcon('r.id', $currentSort, $currentOrder); ?></a></th>
-                    <th><a href="<?php echo getSortUrl('b.boat_name', $currentFilter, $currentStatus, $currentSort, $currentOrder); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('b.boat_name', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('r.id', $currentStatus, $currentSort, $currentOrder); ?>" class="text-decoration-none">ID <?php echo getSortIcon('r.id', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('b.boat_name', $currentStatus, $currentSort, $currentOrder); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('b.boat_name', $currentSort, $currentOrder); ?></a></th>
                     <th>Fault Description</th>
                     <th>Reported By</th>
-                    <th><a href="<?php echo getSortUrl('r.status', $currentFilter, $currentStatus, $currentSort, $currentOrder); ?>" class="text-decoration-none">Status <?php echo getSortIcon('r.status', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('r.status', $currentStatus, $currentSort, $currentOrder); ?>" class="text-decoration-none">Status <?php echo getSortIcon('r.status', $currentSort, $currentOrder); ?></a></th>
                     <th>Bosun Notes</th>
                     <th>Actions</th>
                 </tr>
