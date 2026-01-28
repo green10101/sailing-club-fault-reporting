@@ -97,16 +97,20 @@ function getSortIcon($column, $currentSort, $currentOrder) {
                         <td>
                             <?php 
                                 $statusClass = 'status-new';
+                                $statusIcon = '🔴';
                                 if ($report['status'] === 'In progress') {
                                     $statusClass = 'status-in-progress';
+                                    $statusIcon = '🟠';
                                 } elseif ($report['status'] === 'Waiting parts') {
                                     $statusClass = 'status-waiting-parts';
+                                    $statusIcon = '🔵';
                                 } elseif ($report['status'] === 'Complete') {
                                     $statusClass = 'status-complete';
+                                    $statusIcon = '✅';
                                 }
                             ?>
                             <span class="status-badge <?php echo $statusClass; ?>">
-                                <?php echo htmlspecialchars($report['status']); ?>
+                                <?php echo $statusIcon . ' ' . htmlspecialchars($report['status']); ?>
                             </span>
                         </td>
                         <td><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></td>
