@@ -11,7 +11,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <h1>Report a Fault</h1>
             <?php if (!isset($_SESSION['user'])): ?>
-                <a href="index.php?route=/login" class="btn btn-secondary">Staff Login</a>
+                <a href="index.php?route=/login" class="btn btn-secondary">Bosun Login</a>
             <?php endif; ?>
         </div>
         <form action="index.php?route=/report" method="POST">
