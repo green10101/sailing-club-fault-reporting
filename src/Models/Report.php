@@ -17,17 +17,17 @@ class Report
     public function deleteReport($id)
     {
         $stmt = $this->db->prepare("DELETE FROM " . $this->table . " WHERE id = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
     public function create($boatId, $faultDescription, $reporterName = '', $reporterEmail = '')
     {
         $stmt = $this->db->prepare("INSERT INTO " . $this->table . " (boat_id, fault_description, reporter_name, reporter_email, reported_at) VALUES (:boat_id, :fault_description, :reporter_name, :reporter_email, NOW())");
-        $stmt->bindParam(':boat_id', $boatId);
-        $stmt->bindParam(':fault_description', $faultDescription);
-        $stmt->bindParam(':reporter_name', $reporterName);
-        $stmt->bindParam(':reporter_email', $reporterEmail);
+        $stmt->bindValue(':boat_id', $boatId);
+        $stmt->bindValue(':fault_description', $faultDescription);
+        $stmt->bindValue(':reporter_name', $reporterName);
+        $stmt->bindValue(':reporter_email', $reporterEmail);
         return $stmt->execute();
     }
 
@@ -112,7 +112,7 @@ class Report
     public function getReportById($id)
     {
         $stmt = $this->db->prepare("SELECT r.*, b.boat_name FROM " . $this->table . " r LEFT JOIN boats b ON r.boat_id = b.id WHERE r.id = :id");
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
         $stmt->execute();
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
@@ -120,16 +120,16 @@ class Report
     public function updateReportStatus($id, $status)
     {
         $stmt = $this->db->prepare("UPDATE " . $this->table . " SET status = :status WHERE id = :id");
-        $stmt->bindParam(':status', $status);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':status', $status);
+        $stmt->bindValue(':id', $id);
         return $stmt->execute();
     }
 
     public function updateReportNotes($id, $notes)
     {
         $stmt = $this->db->prepare("UPDATE " . $this->table . " SET bosun_notes = :notes WHERE id = :id");
-        $stmt->bindParam(':notes', $notes);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':notes', $notes);
+        $stmt->bindValue(':id', $id);
         return $stmt->execute();
     }
 

@@ -53,22 +53,22 @@ class Boat
     public function createBoat($boatName, $boatType, $serialNumber, $status)
     {
         $stmt = $this->db->prepare("INSERT INTO " . $this->table . " (boat_name, boat_type, serial_number, status, created_at) VALUES (:boat_name, :boat_type, :serial_number, :status, NOW())");
-        $stmt->bindParam(':boat_name', $boatName);
-        $stmt->bindParam(':boat_type', $boatType);
+        $stmt->bindValue(':boat_name', $boatName);
+        $stmt->bindValue(':boat_type', $boatType);
         // Treat empty serial numbers as NULL to avoid unique '' collisions
         if ($serialNumber === '' || $serialNumber === null) {
             $stmt->bindValue(':serial_number', null, PDO::PARAM_NULL);
         } else {
             $stmt->bindValue(':serial_number', $serialNumber, PDO::PARAM_STR);
         }
-        $stmt->bindParam(':status', $status);
+        $stmt->bindValue(':status', $status);
         return $stmt->execute();
     }
 
     public function getBoatById($id)
     {
         $stmt = $this->db->prepare("SELECT * FROM " . $this->table . " WHERE id = :id");
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -76,31 +76,31 @@ class Boat
     public function updateStatus($id, $status)
     {
         $stmt = $this->db->prepare("UPDATE " . $this->table . " SET status = :status, updated_at = NOW() WHERE id = :id");
-        $stmt->bindParam(':status', $status);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':status', $status);
+        $stmt->bindValue(':id', $id);
         return $stmt->execute();
     }
 
     public function updateDetails($id, $boatName, $boatType, $serialNumber, $status)
     {
         $stmt = $this->db->prepare("UPDATE " . $this->table . " SET boat_name = :boat_name, boat_type = :boat_type, serial_number = :serial_number, status = :status, updated_at = NOW() WHERE id = :id");
-        $stmt->bindParam(':boat_name', $boatName);
-        $stmt->bindParam(':boat_type', $boatType);
+        $stmt->bindValue(':boat_name', $boatName);
+        $stmt->bindValue(':boat_type', $boatType);
         // Treat empty serial numbers as NULL
         if ($serialNumber === '' || $serialNumber === null) {
             $stmt->bindValue(':serial_number', null, PDO::PARAM_NULL);
         } else {
             $stmt->bindValue(':serial_number', $serialNumber, PDO::PARAM_STR);
         }
-        $stmt->bindParam(':status', $status);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':status', $status);
+        $stmt->bindValue(':id', $id);
         return $stmt->execute();
     }
 
     public function getActiveFaultCount($boatId)
     {
         $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM reports WHERE boat_id = :boat_id AND status != 'Complete'");
-        $stmt->bindParam(':boat_id', $boatId);
+        $stmt->bindValue(':boat_id', $boatId);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['count'];
