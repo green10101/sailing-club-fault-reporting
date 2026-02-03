@@ -52,7 +52,7 @@ class User {
         $db = $GLOBALS['pdo'];
         // Use email as the login identifier
         $stmt = $db->prepare("SELECT * FROM users WHERE email = :username");
-        $stmt->bindParam(':username', $username);
+        $stmt->bindValue(':username', $username);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -67,7 +67,7 @@ class User {
     public static function getUserById($id) {
         $db = $GLOBALS['pdo'];
         $stmt = $db->prepare("SELECT id, password, name, email, role, login_count FROM users WHERE id = :id");
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -77,10 +77,10 @@ class User {
         try {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $db->prepare("INSERT INTO users (password, name, email, role) VALUES (:password, :name, :email, :role)");
-            $stmt->bindParam(':password', $hashedPassword);
-            $stmt->bindParam(':name', $name);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':role', $role);
+            $stmt->bindValue(':password', $hashedPassword);
+            $stmt->bindValue(':name', $name);
+            $stmt->bindValue(':email', $email);
+            $stmt->bindValue(':role', $role);
             return $stmt->execute();
         } catch (\PDOException $e) {
             throw $e;
@@ -90,41 +90,41 @@ class User {
     public static function updateUser($id, $name, $email, $role) {
         $db = $GLOBALS['pdo'];
         $stmt = $db->prepare("UPDATE users SET name = :name, email = :email, role = :role WHERE id = :id");
-        $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':name', $name);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':role', $role);
+        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':name', $name);
+        $stmt->bindValue(':email', $email);
+        $stmt->bindValue(':role', $role);
         return $stmt->execute();
     }
 
     public static function updateUserProfile($id, $name, $email) {
         $db = $GLOBALS['pdo'];
         $stmt = $db->prepare("UPDATE users SET name = :name, email = :email WHERE id = :id");
-        $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':name', $name);
-        $stmt->bindParam(':email', $email);
+        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':name', $name);
+        $stmt->bindValue(':email', $email);
         return $stmt->execute();
     }
 
     public static function deleteUser($id) {
         $db = $GLOBALS['pdo'];
         $stmt = $db->prepare("DELETE FROM users WHERE id = :id");
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
         return $stmt->execute();
     }
 
     public static function resetPassword($id, $newPassword) {
         $db = $GLOBALS['pdo'];
         $stmt = $db->prepare("UPDATE users SET password = :password WHERE id = :id");
-        $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':password', $newPassword);
+        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':password', $newPassword);
         return $stmt->execute();
     }
 
     public static function incrementLoginCount($id) {
         $db = $GLOBALS['pdo'];
         $stmt = $db->prepare("UPDATE users SET login_count = login_count + 1 WHERE id = :id");
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
         return $stmt->execute();
     }
 }
