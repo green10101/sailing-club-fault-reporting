@@ -87,41 +87,41 @@
         
         .fault-status {
             font-size: 10pt;
-            padding: 2px 8px;
-            border-radius: 3px;
+            padding: 0;
+            border-radius: 0;
         }
         
         .status-new { 
-            background: #fee; 
-            color: #c00; 
-            border-left: 3px solid #c00;
+            background: transparent; 
+            color: inherit; 
+            border-left: none;
         }
         .status-new::before {
             content: "🔴 ";
         }
         
         .status-inprogress { 
-            background: #ffeaa7; 
-            color: #d63031; 
-            border-left: 3px solid #ffa502;
+            background: transparent; 
+            color: inherit; 
+            border-left: none;
         }
         .status-inprogress::before {
             content: "🟠 ";
         }
         
         .status-waitingparts { 
-            background: #74b9ff; 
-            color: #0055d4; 
-            border-left: 3px solid #0055d4;
+            background: transparent; 
+            color: inherit; 
+            border-left: none;
         }
         .status-waitingparts::before {
             content: "🔵 ";
         }
         
         .status-complete {
-            background: #55efc4;
-            color: #00b894;
-            border-left: 3px solid #00b894;
+            background: transparent;
+            color: inherit;
+            border-left: none;
         }
         .status-complete::before {
             content: "✅ ";
