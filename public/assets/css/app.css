@@ -512,35 +512,45 @@ code {
 /* Status Badge Styling */
 .status-badge {
   display: inline-block;
-  padding: 0;
-  border-radius: 0;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
   font-weight: 600;
   font-size: 0.9rem;
   white-space: nowrap;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  text-decoration: none !important;
+  line-height: 1 !important;
 }
 
 .status-badge.status-new {
   background-color: transparent !important;
   color: inherit !important;
-  border-left: none;
+  border-left: none !important;
+  border: none !important;
 }
 
 .status-badge.status-in-progress {
   background-color: transparent !important;
   color: inherit !important;
-  border-left: none;
+  border-left: none !important;
+  border: none !important;
 }
 
 .status-badge.status-waiting-parts {
   background-color: transparent !important;
   color: inherit !important;
-  border-left: none;
+  border-left: none !important;
+  border: none !important;
 }
 
 .status-badge.status-complete {
   background-color: transparent !important;
   color: inherit !important;
-  border-left: none;
+  border-left: none !important;
+  border: none !important;
 }
 
 /* Status select styling with background colors */
