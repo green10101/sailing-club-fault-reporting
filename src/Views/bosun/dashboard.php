@@ -115,7 +115,7 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
         </div>
 
         <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
-            <button id="printSelectedBtn" class="btn btn-success" style="display: none; gap: 0.5rem; align-items: center;">
+            <button id="printSelectedBtn" class="btn btn-success" style="gap: 0.5rem; align-items: center; display: flex;">
                 🖨️ Print Selected
             </button>
             <a href="index.php?route=/bosun/print-report" class="btn btn-success" target="_blank">🖨️ Print All Reports</a>
@@ -238,7 +238,7 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
         function updateButtonVisibility() {
             const selectedCount = Array.from(reportCheckboxes).filter(cb => cb.checked).length;
             if (printSelectedBtn) {
-                printSelectedBtn.style.display = selectedCount > 0 ? 'flex' : 'none';
+                printSelectedBtn.disabled = selectedCount === 0;
             }
         }
 
