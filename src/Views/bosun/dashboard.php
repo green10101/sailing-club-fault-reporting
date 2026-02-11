@@ -72,66 +72,60 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
         <?php include '../src/Views/layouts/nav.php'; ?>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <h1 style="margin: 0;">Fault Reports<?php if ($filteredBoat): ?> for <?php echo htmlspecialchars($filteredBoat['boat_name']); ?><?php endif; ?></h1>
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
-                    <button id="printSelectedBtn" class="btn btn-success" style="display: none; gap: 0.5rem; align-items: center;">
-                        🖨️ Print Selected
-                    </button>
-                    <button id="clearSelectBtn" class="btn btn-outline-secondary" style="display: none;">
-                        Clear Selection
-                    </button>
-                <?php endif; ?>
-                <a href="index.php?route=/bosun/print-report" class="btn btn-success" target="_blank">🖨️ Print All Reports</a>
-            </div>
         </div>
         
-        <div class="mb-3 status-filter-section" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <label style="font-weight: 600; align-self: center;">Status:</label>
+        <div class="mb-3 status-filter-section" style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; font-size: 0.9rem;">
+            <label style="font-weight: 600; white-space: nowrap; margin: 0;">Status:</label>
             <a href="<?php echo buildFilterUrl(null, $currentBoatId, $currentSort, $currentOrder); ?>" 
                class="btn btn-sm <?php echo (!$currentStatus ? 'btn-primary' : 'btn-outline-secondary'); ?>" 
-               style="display: flex; align-items: center; gap: 0.5rem;">
+               style="display: flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.875rem;">
                 <span>⭐ All Active</span>
-                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countAllActive ?? 0; ?></span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.125rem 0.375rem; border-radius: 10px; font-size: 0.7rem;"><?php echo $countAllActive ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('All', $currentBoatId, $currentSort, $currentOrder); ?>" 
                class="btn btn-sm <?php echo ($currentStatus === 'All' ? 'btn-primary' : 'btn-outline-secondary'); ?>" 
-               style="display: flex; align-items: center; gap: 0.5rem;">
+               style="display: flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.875rem;">
                 <span>All Reports</span>
-                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countAllReports ?? 0; ?></span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.125rem 0.375rem; border-radius: 10px; font-size: 0.7rem;"><?php echo $countAllReports ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('New', $currentBoatId, $currentSort, $currentOrder); ?>" 
                class="btn btn-sm <?php echo ($currentStatus === 'New' ? 'btn-primary' : 'btn-outline-secondary'); ?>" 
-               style="display: flex; align-items: center; gap: 0.5rem;">
+               style="display: flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.875rem;">
                 <span>❗ New</span>
-                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countNew ?? 0; ?></span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.125rem 0.375rem; border-radius: 10px; font-size: 0.7rem;"><?php echo $countNew ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('In progress', $currentBoatId, $currentSort, $currentOrder); ?>" 
                class="btn btn-sm <?php echo ($currentStatus === 'In progress' ? 'btn-primary' : 'btn-outline-secondary'); ?>" 
-               style="display: flex; align-items: center; gap: 0.5rem;">
+               style="display: flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.875rem;">
                 <span>🔧 In Progress</span>
-                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countInProgress ?? 0; ?></span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.125rem 0.375rem; border-radius: 10px; font-size: 0.7rem;"><?php echo $countInProgress ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('Waiting parts', $currentBoatId, $currentSort, $currentOrder); ?>" 
                class="btn btn-sm <?php echo ($currentStatus === 'Waiting parts' ? 'btn-primary' : 'btn-outline-secondary'); ?>" 
-               style="display: flex; align-items: center; gap: 0.5rem;">
+               style="display: flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.875rem;">
                 <span>⏰ Waiting Parts</span>
-                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;"><?php echo $countWaitingParts ?? 0; ?></span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.125rem 0.375rem; border-radius: 10px; font-size: 0.7rem;"><?php echo $countWaitingParts ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('Complete', $currentBoatId, $currentSort, $currentOrder); ?>" 
                class="btn btn-sm <?php echo ($currentStatus === 'Complete' ? 'btn-primary' : 'btn-outline-secondary'); ?>" 
-               style="display: flex; align-items: center; gap: 0.5rem;">
+               style="display: flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.875rem;">
                 <span>✅ Complete</span>
-                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; min-width: 2rem; text-align: center;"><?php echo $countComplete ?? 0; ?></span>
+                <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.125rem 0.375rem; border-radius: 10px; font-size: 0.7rem; min-width: 1.5rem; text-align: center;"><?php echo $countComplete ?? 0; ?></span>
             </a>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+            <button id="printSelectedBtn" class="btn btn-success" style="display: none; gap: 0.5rem; align-items: center;">
+                🖨️ Print Selected
+            </button>
+            <a href="index.php?route=/bosun/print-report" class="btn btn-success" target="_blank">🖨️ Print All Reports</a>
         </div>
         <table class="table table-responsive">
             <thead>
                 <tr>
-                    <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
-                        <th style="width: 40px;">
-                            <input type="checkbox" id="selectAllCheckbox" title="Select all reports on this page">
-                        </th>
-                    <?php endif; ?>
+                    <th style="width: 40px;">
+                        <input type="checkbox" id="selectAllCheckbox" title="Select all reports on this page">
+                    </th>
                     <th><a href="<?php echo getSortUrl('r.id', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">ID <?php echo getSortIcon('r.id', $currentSort, $currentOrder); ?></a></th>
                     <th><a href="<?php echo getSortUrl('b.boat_name', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('b.boat_name', $currentSort, $currentOrder); ?></a></th>
                     <th>Fault Description</th>
@@ -144,11 +138,9 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
             <tbody>
                 <?php foreach ($reports as $report): ?>
                     <tr>
-                        <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
-                            <td style="text-align: center;">
-                                <input type="checkbox" class="report-checkbox" value="<?php echo htmlspecialchars($report['id']); ?>" title="Select this report">
-                            </td>
-                        <?php endif; ?>
+                        <td style="text-align: center;">
+                            <input type="checkbox" class="report-checkbox" value="<?php echo htmlspecialchars($report['id']); ?>" title="Select this report">
+                        </td>
                         <td><?php echo htmlspecialchars($report['id']); ?></td>
                         <td><?php echo htmlspecialchars($report['boat_name']); ?></td>
                         <td><?php echo htmlspecialchars($report['fault_description']); ?></td>
@@ -212,12 +204,10 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
     </div>
     <script src="/assets/js/app.js"></script>
     <script>
-        <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
-        // Multi-select functionality for admins only
+        // Multi-select functionality for all users
         const selectAllCheckbox = document.getElementById('selectAllCheckbox');
         const reportCheckboxes = document.querySelectorAll('.report-checkbox');
         const printSelectedBtn = document.getElementById('printSelectedBtn');
-        const clearSelectBtn = document.getElementById('clearSelectBtn');
 
         // Select all checkbox
         if (selectAllCheckbox) {
@@ -250,9 +240,6 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
             if (printSelectedBtn) {
                 printSelectedBtn.style.display = selectedCount > 0 ? 'flex' : 'none';
             }
-            if (clearSelectBtn) {
-                clearSelectBtn.style.display = selectedCount > 0 ? 'block' : 'none';
-            }
         }
 
         // Print selected reports
@@ -268,21 +255,6 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
                 }
             });
         }
-
-        // Clear selection
-        if (clearSelectBtn) {
-            clearSelectBtn.addEventListener('click', function() {
-                reportCheckboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-                if (selectAllCheckbox) {
-                    selectAllCheckbox.checked = false;
-                    selectAllCheckbox.indeterminate = false;
-                }
-                updateButtonVisibility();
-            });
-        }
-        <?php endif; ?>
     </script>
 </body>
 </html>
