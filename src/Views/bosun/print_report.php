@@ -209,7 +209,7 @@
     </style>
 </head>
 <body>
-    <a href="index.php?route=/bosun/boats" class="back-button no-print">← Back</a>
+    <a href="index.php?route=/bosun/dashboard" class="back-button no-print">← Back</a>
     <button onclick="window.print()" class="print-button no-print">🖨️ Print Report</button>
     
     <div class="report-header">
