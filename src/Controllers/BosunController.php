@@ -204,8 +204,16 @@ class BosunController
 
     public function printReport()
     {
-        // Get all active faults (statuses: New, In progress, Waiting parts)
-        $reports = $this->reportModel->getAllReports('active', 'b.boat_name', 'ASC', null);
+        // Check if specific report IDs are requested (from multi-select)
+        $reportIds = isset($_GET['report_ids']) ? explode(',', $_GET['report_ids']) : null;
+        
+        if ($reportIds) {
+            // Get only selected reports
+            $reports = $this->reportModel->getReportsByIds($reportIds);
+        } else {
+            // Get all active faults (statuses: New, In progress, Waiting parts)
+            $reports = $this->reportModel->getAllReports('active', 'b.boat_name', 'ASC', null);
+        }
         
         // Group faults by boat
         $boatGroups = [];

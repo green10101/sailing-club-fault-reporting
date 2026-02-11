@@ -117,6 +117,34 @@ class Report
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
+    public function getReportsByIds($ids)
+    {
+        if (empty($ids)) {
+            return [];
+        }
+        
+        // Sanitize IDs - ensure they are all integers
+        $sanitizedIds = [];
+        foreach ($ids as $id) {
+            $sanitizedId = (int)$id;
+            if ($sanitizedId > 0) {
+                $sanitizedIds[] = $sanitizedId;
+            }
+        }
+        
+        if (empty($sanitizedIds)) {
+            return [];
+        }
+        
+        // Build query with proper placeholders
+        $placeholders = implode(',', array_fill(0, count($sanitizedIds), '?'));
+        $query = "SELECT r.*, b.boat_name, b.boat_type FROM " . $this->table . " r LEFT JOIN boats b ON r.boat_id = b.id WHERE r.id IN ({$placeholders}) ORDER BY b.boat_name ASC, r.reported_at DESC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($sanitizedIds);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function updateReportStatus($id, $status)
     {
         $stmt = $this->db->prepare("UPDATE " . $this->table . " SET status = :status WHERE id = :id");

@@ -72,7 +72,17 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
         <?php include '../src/Views/layouts/nav.php'; ?>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <h1 style="margin: 0;">Fault Reports<?php if ($filteredBoat): ?> for <?php echo htmlspecialchars($filteredBoat['boat_name']); ?><?php endif; ?></h1>
-            <a href="index.php?route=/bosun/print-report" class="btn btn-success" target="_blank">🖨️ Print Report</a>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
+                    <button id="printSelectedBtn" class="btn btn-success" style="display: none; gap: 0.5rem; align-items: center;">
+                        🖨️ Print Selected
+                    </button>
+                    <button id="clearSelectBtn" class="btn btn-outline-secondary" style="display: none;">
+                        Clear Selection
+                    </button>
+                <?php endif; ?>
+                <a href="index.php?route=/bosun/print-report" class="btn btn-success" target="_blank">🖨️ Print All Reports</a>
+            </div>
         </div>
         
         <div class="mb-3 status-filter-section" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
@@ -117,6 +127,11 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
         <table class="table table-responsive">
             <thead>
                 <tr>
+                    <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
+                        <th style="width: 40px;">
+                            <input type="checkbox" id="selectAllCheckbox" title="Select all reports on this page">
+                        </th>
+                    <?php endif; ?>
                     <th><a href="<?php echo getSortUrl('r.id', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">ID <?php echo getSortIcon('r.id', $currentSort, $currentOrder); ?></a></th>
                     <th><a href="<?php echo getSortUrl('b.boat_name', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('b.boat_name', $currentSort, $currentOrder); ?></a></th>
                     <th>Fault Description</th>
@@ -129,6 +144,11 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
             <tbody>
                 <?php foreach ($reports as $report): ?>
                     <tr>
+                        <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="report-checkbox" value="<?php echo htmlspecialchars($report['id']); ?>" title="Select this report">
+                            </td>
+                        <?php endif; ?>
                         <td><?php echo htmlspecialchars($report['id']); ?></td>
                         <td><?php echo htmlspecialchars($report['boat_name']); ?></td>
                         <td><?php echo htmlspecialchars($report['fault_description']); ?></td>
@@ -191,5 +211,78 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
         <?php endif; ?>
     </div>
     <script src="/assets/js/app.js"></script>
+    <script>
+        <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
+        // Multi-select functionality for admins only
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const reportCheckboxes = document.querySelectorAll('.report-checkbox');
+        const printSelectedBtn = document.getElementById('printSelectedBtn');
+        const clearSelectBtn = document.getElementById('clearSelectBtn');
+
+        // Select all checkbox
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                reportCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateButtonVisibility();
+            });
+        }
+
+        // Individual checkboxes
+        reportCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                // Update select all checkbox state
+                const allChecked = Array.from(reportCheckboxes).every(cb => cb.checked);
+                const someChecked = Array.from(reportCheckboxes).some(cb => cb.checked);
+                
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.checked = allChecked;
+                    selectAllCheckbox.indeterminate = someChecked && !allChecked;
+                }
+                
+                updateButtonVisibility();
+            });
+        });
+
+        function updateButtonVisibility() {
+            const selectedCount = Array.from(reportCheckboxes).filter(cb => cb.checked).length;
+            if (printSelectedBtn) {
+                printSelectedBtn.style.display = selectedCount > 0 ? 'flex' : 'none';
+            }
+            if (clearSelectBtn) {
+                clearSelectBtn.style.display = selectedCount > 0 ? 'block' : 'none';
+            }
+        }
+
+        // Print selected reports
+        if (printSelectedBtn) {
+            printSelectedBtn.addEventListener('click', function() {
+                const selectedIds = Array.from(reportCheckboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value)
+                    .join(',');
+                
+                if (selectedIds) {
+                    window.open(`index.php?route=/bosun/print-report&report_ids=${selectedIds}`, '_blank');
+                }
+            });
+        }
+
+        // Clear selection
+        if (clearSelectBtn) {
+            clearSelectBtn.addEventListener('click', function() {
+                reportCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = false;
+                }
+                updateButtonVisibility();
+            });
+        }
+        <?php endif; ?>
+    </script>
 </body>
 </html>
