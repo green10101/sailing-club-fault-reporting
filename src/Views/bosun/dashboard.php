@@ -91,13 +91,13 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
             <a href="<?php echo buildFilterUrl('New', $currentBoatId, $currentSort, $currentOrder); ?>" 
                class="btn btn-sm <?php echo ($currentStatus === 'New' ? 'btn-primary' : 'btn-outline-secondary'); ?>" 
                style="display: flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.875rem;">
-                <span>❗ New</span>
+                <span>🆕 New</span>
                 <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.125rem 0.375rem; border-radius: 10px; font-size: 0.7rem;"><?php echo $countNew ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('In progress', $currentBoatId, $currentSort, $currentOrder); ?>" 
                class="btn btn-sm <?php echo ($currentStatus === 'In progress' ? 'btn-primary' : 'btn-outline-secondary'); ?>" 
                style="display: flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.875rem;">
-                <span>🔧 In Progress</span>
+                <span>🛠️ In Progress</span>
                 <span class="badge" style="background-color: rgba(0,0,0,0.15); padding: 0.125rem 0.375rem; border-radius: 10px; font-size: 0.7rem;"><?php echo $countInProgress ?? 0; ?></span>
             </a>
             <a href="<?php echo buildFilterUrl('Waiting parts', $currentBoatId, $currentSort, $currentOrder); ?>" 
@@ -148,10 +148,10 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
                         <td style="text-align: center;">
                             <?php 
                                 $statusClass = 'status-new';
-                                $statusIcon = '❗';
+                                $statusIcon = '🆕';
                                 if ($report['status'] === 'In progress') {
                                     $statusClass = 'status-in-progress';
-                                    $statusIcon = '🔧';
+                                    $statusIcon = '🛠️';
                                 } elseif ($report['status'] === 'Waiting parts') {
                                     $statusClass = 'status-waiting-parts';
                                     $statusIcon = '⏰';
