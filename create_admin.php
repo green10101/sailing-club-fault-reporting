@@ -17,13 +17,15 @@ try {
         echo "Role: " . ($admin['role'] ?? 'not set') . "\n";
     } else {
         echo "Admin user does not exist. Creating...\n";
-        $stmt = $pdo->prepare("INSERT INTO users (username, name, email, password, role) VALUES ('admin', 'Administrator', 'admin@example.com', 'admin123', 'admin')");
+        $hashedPassword = password_hash('admin123', PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare("INSERT INTO users (username, name, email, password, role) VALUES ('admin', 'Administrator', 'admin@example.com', :password, 'admin')");
+        $stmt->bindValue(':password', $hashedPassword);
         $stmt->execute();
         echo "Admin user created successfully!\n";
         echo "Username: admin\n";
         echo "Name: Administrator\n";
         echo "Email: admin@example.com\n";
-        echo "Password: admin123\n";
+        echo "Password: admin123 (hashed)\n";
     }
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage() . "\n";
