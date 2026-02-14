@@ -18,6 +18,7 @@
         <div class="card">
             <div class="card-body">
                 <form action="index.php?route=/admin/user/edit/<?php echo $user['id']; ?>" method="post">
+                    <?php echo csrfField(); ?>
                     <div class="mb-3">
                         <label class="form-label">User ID</label>
                         <p class="form-control-plaintext"><?php echo htmlspecialchars($user['id']); ?></p>

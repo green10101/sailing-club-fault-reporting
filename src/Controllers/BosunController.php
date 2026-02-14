@@ -102,6 +102,12 @@ class BosunController
 
     public function editReport($reportId)
     {
+        // Verify user is authenticated
+        if (!isset($_SESSION['user'])) {
+            header('Location: index.php?route=/login');
+            exit;
+        }
+
         $report = $this->reportModel->getReportById($reportId);
         if (!$report) {
             header('Location: index.php?route=/bosun/dashboard');
@@ -113,6 +119,12 @@ class BosunController
 
     public function editBoat($boatId)
     {
+        // Verify user is authenticated and is a bosun
+        if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] !== 'bosun' && $_SESSION['user']['role'] !== 'admin')) {
+            header('Location: index.php?route=/login');
+            exit;
+        }
+
         $boat = $this->boatModel->getBoatById($boatId);
         if (!$boat) {
             header('Location: index.php?route=/bosun/boats');
@@ -123,8 +135,20 @@ class BosunController
 
     public function updateBoat($boatId)
     {
+        // Verify user is authenticated and is a bosun
+        if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] !== 'bosun' && $_SESSION['user']['role'] !== 'admin')) {
+            header('Location: index.php?route=/login');
+            exit;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?route=/bosun/boats');
+            exit;
+        }
+
+        // Verify CSRF token
+        if (!verifyCsrfToken()) {
+            header('Location: index.php?route=/bosun/boats?error=csrf');
             exit;
         }
 
@@ -149,6 +173,12 @@ class BosunController
             exit;
         }
 
+        // Verify CSRF token
+        if (!verifyCsrfToken()) {
+            header('Location: index.php?route=/bosun/boats?error=csrf');
+            exit;
+        }
+
         $boatName = $_POST['boat_name'] ?? '';
         $boatType = $_POST['boat_type'] ?? '';
         $serialNumber = $_POST['serial_number'] ?? '';
@@ -167,8 +197,20 @@ class BosunController
 
     public function updateReport($reportId)
     {
+        // Verify user is authenticated
+        if (!isset($_SESSION['user'])) {
+            header('Location: index.php?route=/login');
+            exit;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?route=/bosun/dashboard');
+            exit;
+        }
+
+        // Verify CSRF token
+        if (!verifyCsrfToken()) {
+            header('Location: index.php?route=/bosun/edit/' . $reportId . '?error=csrf');
             exit;
         }
 

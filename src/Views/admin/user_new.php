@@ -18,6 +18,7 @@
         <div class="card">
             <div class="card-body">
                 <form action="index.php?route=/admin/user/new" method="post">
+                    <?php echo csrfField(); ?>
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
                         <input type="text" class="form-control" id="name" name="name" value="<?php echo isset($prefill['name']) ? htmlspecialchars($prefill['name']) : ''; ?>" required>

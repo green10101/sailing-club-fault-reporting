@@ -20,6 +20,7 @@
         <?php endif; ?>
 
         <form method="POST" action="index.php?route=/profile/update-password" style="max-width: 500px; margin: 2rem 0;">
+            <?php echo csrfField(); ?>
             <div class="form-group mb-3">
                 <label for="current_password" class="form-label">Current Password</label>
                 <input type="password" id="current_password" name="current_password" class="form-control" required>

@@ -47,9 +47,25 @@ class UserProfileController
             exit;
         }
 
+        // Verify CSRF token
+        if (!verifyCsrfToken()) {
+            $error = 'Security token validation failed. Please try again.';
+            $user = User::getUserById($_SESSION['user']['id']);
+            include '../src/Views/user/profile_edit.php';
+            exit;
+        }
+
         $userId = $_SESSION['user']['id'];
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
+
+        // Validate email format
+        if (!isValidEmail($email)) {
+            $error = 'Invalid email format.';
+            $user = User::getUserById($userId);
+            include '../src/Views/user/profile_edit.php';
+            exit;
+        }
 
         try {
             // Update the user without changing role
@@ -87,6 +103,13 @@ class UserProfileController
             exit;
         }
 
+        // Verify CSRF token
+        if (!verifyCsrfToken()) {
+            $error = 'Security token validation failed. Please try again.';
+            include '../src/Views/user/password_change.php';
+            exit;
+        }
+
         $userId = $_SESSION['user']['id'];
         $currentPassword = $_POST['current_password'] ?? '';
         $newPassword = $_POST['new_password'] ?? '';
@@ -108,9 +131,15 @@ class UserProfileController
             exit;
         }
 
-        // Verify password is not empty
+        // Verify password is not empty and meets minimum length
         if (empty($newPassword)) {
             $error = 'New password cannot be empty.';
+            include '../src/Views/user/password_change.php';
+            exit;
+        }
+
+        if (strlen($newPassword) < 6) {
+            $error = 'New password must be at least 6 characters long.';
             include '../src/Views/user/password_change.php';
             exit;
         }

@@ -4,7 +4,19 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Load security configuration
+require_once '../src/config/security.php';
+
+// Configure secure session settings before starting session
+configureSecureSession();
 session_start();
+
+// Add security headers
+addSecurityHeaders();
+
+// Initialize CSRF token
+initializeCsrfToken();
+
 require_once '../vendor/autoload.php';
 require_once '../src/config/database.php';
 

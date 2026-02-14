@@ -36,10 +36,33 @@ class AdminController
             exit;
         }
 
+        // Verify CSRF token
+        if (!verifyCsrfToken()) {
+            $error = 'Security token validation failed. Please try again.';
+            include '../src/Views/admin/user_new.php';
+            exit;
+        }
+
         $password = $_POST['password'] ?? '';
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $role = $_POST['role'] ?? 'bosun';
+
+        // Validate email format
+        if (!isValidEmail($email)) {
+            $error = 'Invalid email format.';
+            $prefill = compact('name', 'email', 'role');
+            include '../src/Views/admin/user_new.php';
+            exit;
+        }
+
+        // Validate password length
+        if (strlen($password) < 6) {
+            $error = 'Password must be at least 6 characters long.';
+            $prefill = compact('name', 'email', 'role');
+            include '../src/Views/admin/user_new.php';
+            exit;
+        }
 
         try {
             User::createUser($password, $name, $email, $role);
@@ -76,9 +99,25 @@ class AdminController
             exit;
         }
 
+        // Verify CSRF token
+        if (!verifyCsrfToken()) {
+            $error = 'Security token validation failed. Please try again.';
+            $user = User::getUserById($userId);
+            include '../src/Views/admin/user_edit.php';
+            exit;
+        }
+
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $role = $_POST['role'] ?? 'bosun';
+
+        // Validate email format
+        if (!isValidEmail($email)) {
+            $error = 'Invalid email format.';
+            $user = User::getUserById($userId);
+            include '../src/Views/admin/user_edit.php';
+            exit;
+        }
 
         try {
             User::updateUser($userId, $name, $email, $role);
@@ -118,9 +157,24 @@ class AdminController
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Verify CSRF token
+            if (!verifyCsrfToken()) {
+                $error = 'Security token validation failed. Please try again.';
+                include '../src/Views/admin/reset_password.php';
+                exit;
+            }
+
             $newPassword = $_POST['new_password'] ?? '';
             if ($newPassword) {
-                User::resetPassword($userId, $newPassword);
+                // Validate password length
+                if (strlen($newPassword) < 6) {
+                    $error = 'Password must be at least 6 characters long.';
+                    include '../src/Views/admin/reset_password.php';
+                    exit;
+                }
+
+                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                User::resetPassword($userId, $hashedPassword);
                 header('Location: index.php?route=/admin/users');
             } else {
                 $error = 'Password cannot be empty.';

@@ -18,6 +18,7 @@
         <div class="card">
             <div class="card-body">
                 <form action="index.php?route=/bosun/edit/<?php echo $report['id']; ?>" method="post">
+                    <?php echo csrfField(); ?>
                     <div class="mb-3">
                         <label for="id" class="form-label">Report ID</label>
                         <p class="form-control-plaintext"><?php echo htmlspecialchars($report['id']); ?></p>

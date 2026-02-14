@@ -1,21 +1,42 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
+// Load security configuration
+require_once '../src/config/security.php';
+
+// Configure secure session settings before starting session
+configureSecureSession();
 session_start();
+
+// Add security headers
+addSecurityHeaders();
+
+// Initialize CSRF token
+initializeCsrfToken();
+
 require_once '../vendor/autoload.php';
 require_once '../src/config/database.php';
 
 $authController = new \App\Controllers\AuthController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-
-    if ($authController->login($username, $password)) {
-        header('Location: index.php?route=/bosun/dashboard');
-        exit;
+    // Verify CSRF token
+    if (!verifyCsrfToken()) {
+        $error = 'Security token validation failed. Please try again.';
     } else {
-        $error = 'Invalid username or password.';
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        // Check if login is rate limited
+        if (isLoginRateLimited($username)) {
+            $error = 'Too many login attempts. Please try again in 15 minutes.';
+        } elseif ($authController->login($username, $password)) {
+            header('Location: index.php?route=/bosun/dashboard');
+            exit;
+        } else {
+            $error = 'Invalid username or password.';
+        }
     }
 }
 ?>

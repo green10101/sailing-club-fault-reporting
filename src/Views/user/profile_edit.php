@@ -16,6 +16,7 @@
         <?php endif; ?>
 
         <form method="POST" action="index.php?route=/profile/update" style="max-width: 500px; margin: 2rem 0;">
+            <?php echo csrfField(); ?>
             <div class="form-group mb-3">
                 <label for="name" class="form-label">Name</label>
                 <input type="text" id="name" name="name" class="form-control" value="<?php echo htmlspecialchars($user['name']); ?>" required>

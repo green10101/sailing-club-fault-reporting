@@ -18,6 +18,7 @@
         <div class="card">
             <div class="card-body">
                 <form action="index.php?route=/admin/user/reset-password/<?php echo $user['id']; ?>" method="post">
+                    <?php echo csrfField(); ?>
                     <div class="mb-3">
                         <label for="new_password" class="form-label">New Password</label>
                         <input type="text" class="form-control" id="new_password" name="new_password" required autofocus>

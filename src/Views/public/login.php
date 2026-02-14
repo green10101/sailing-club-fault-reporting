@@ -13,6 +13,7 @@
             <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
         <form method="POST" action="index.php?route=/login">
+            <?php echo csrfField(); ?>
             <div class="form-group">
                 <label for="username">Email Address</label>
                 <input type="email" id="username" name="username" class="form-control" required>
