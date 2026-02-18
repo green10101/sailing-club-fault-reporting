@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boat Status - Bosun Dashboard</title>
+    <title>Asset Status - Bosun Dashboard</title>
     <link rel="stylesheet" href="/assets/css/app.css">
 </head>
 <body>
     <div class="container">
         <?php include '../src/Views/layouts/nav.php'; ?>
-        <h1>Boat Status Report</h1>
+        <h1>Asset Status Report</h1>
         <?php
         $currentFilter = $_GET['filter'] ?? 'current';
         $currentSort = $_GET['sort'] ?? 'boat_name';
@@ -53,17 +53,17 @@
             <input type="hidden" name="route" value="/bosun/boats">
             <label for="filter" class="form-label">Filter:</label>
             <select name="filter" id="filter" class="form-select d-inline w-auto" onchange="this.form.submit()">
-                <option value="current" <?php echo ($currentFilter === 'current') ? 'selected' : ''; ?>>All Current Boats</option>
+                <option value="current" <?php echo ($currentFilter === 'current') ? 'selected' : ''; ?>>All Current Assets</option>
                 <option value="ok_or_minor" <?php echo ($currentFilter === 'ok_or_minor') ? 'selected' : ''; ?>>OK and Minor Faults</option>
                 <option value="not_operational" <?php echo ($currentFilter === 'not_operational') ? 'selected' : ''; ?>>Out of Operation</option>
-                <option value="all" <?php echo ($currentFilter === 'all') ? 'selected' : ''; ?>>All Boats inc Retired</option>
+                <option value="all" <?php echo ($currentFilter === 'all') ? 'selected' : ''; ?>>All Assets inc Retired</option>
             </select>
         </form>
         <table class="table">
             <thead>
                 <tr>
-                    <th><a href="<?php echo getSortUrl('boat_name', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Boat Name <?php echo getSortIcon('boat_name', $currentSort, $currentOrder); ?></a></th>
-                    <th><a href="<?php echo getSortUrl('boat_type', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Boat Type <?php echo getSortIcon('boat_type', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('boat_name', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Asset Name <?php echo getSortIcon('boat_name', $currentSort, $currentOrder); ?></a></th>
+                    <th><a href="<?php echo getSortUrl('boat_type', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Asset Type <?php echo getSortIcon('boat_type', $currentSort, $currentOrder); ?></a></th>
                     <th><a href="<?php echo getSortUrl('status', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Status <?php echo getSortIcon('status', $currentSort, $currentOrder); ?></a></th>
                     <th>Active Faults</th>
                     <th>Actions</th>
@@ -88,7 +88,7 @@
             </tbody>
         </table>
         <div class="mb-3">
-            <a href="index.php?route=/bosun/boat/new" class="btn btn-primary">Add Boat</a>
+            <a href="index.php?route=/bosun/boat/new" class="btn btn-primary">Add Asset</a>
             <a href="index.php?route=/bosun/print-report" class="btn btn-success" target="_blank">🖨️ Print Active Faults Report</a>
         </div>
     </div>

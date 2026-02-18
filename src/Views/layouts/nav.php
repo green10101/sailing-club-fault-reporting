@@ -8,7 +8,7 @@ $isProfile = strpos($currentPath, '/profile') === 0;
 ?>
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4" style="background-color: #f8f9fa; padding: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid #dee2e6;">
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-        <a href="index.php?route=/bosun/boats" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isBoats ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">Boat Status</a>
+        <a href="index.php?route=/bosun/boats" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isBoats ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">Asset Status</a>
         <a href="index.php?route=/bosun/dashboard" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isDashboard ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">Fault Reports</a>
         <a href="index.php?route=/report-form" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isReportForm ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">Report a Fault</a>
         <?php if (isset($_SESSION['user']) && isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
