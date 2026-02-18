@@ -216,7 +216,7 @@
         <h1>Active Faults Work Report</h1>
         <div class="report-meta">
             Generated: <?php echo date('l, F j, Y \a\t g:i A'); ?><br>
-            Total Boats with Faults: <?php echo count($boatGroups); ?> | 
+            Total Assets with Faults: <?php echo count($boatGroups); ?> | 
             Total Active Faults: <?php echo $totalFaults; ?>
         </div>
     </div>
