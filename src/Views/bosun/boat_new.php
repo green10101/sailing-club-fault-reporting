@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/app.css">
-    <title>New Boat</title>
+    <title>New Asset</title>
 </head>
 <body>
     <div class="container">
         <?php include '../src/Views/layouts/nav.php'; ?>
-        <h1>Add New Boat</h1>
+        <h1>Add New Asset</h1>
 
         <?php if (isset($error)): ?>
             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
@@ -19,12 +19,12 @@
                 <form action="index.php?route=/bosun/boat/new" method="post">
                     <?php echo csrfField(); ?>
                     <div class="mb-3">
-                        <label for="boat_name" class="form-label">Boat Name</label>
+                        <label for="boat_name" class="form-label">Asset Name</label>
                         <input type="text" class="form-control" id="boat_name" name="boat_name" value="<?php echo isset($prefill['boatName']) ? htmlspecialchars($prefill['boatName']) : ''; ?>" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="boat_type" class="form-label">Boat Type</label>
+                        <label for="boat_type" class="form-label">Asset Type</label>
                         <input type="text" class="form-control" id="boat_type" name="boat_type" value="<?php echo isset($prefill['boatType']) ? htmlspecialchars($prefill['boatType']) : ''; ?>" required>
                     </div>
 
@@ -44,7 +44,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Create Boat</button>
+                    <button type="submit" class="btn btn-primary">Create Asset</button>
                 </form>
             </div>
         </div>

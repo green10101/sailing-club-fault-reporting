@@ -4,29 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/app.css">
-    <title>Edit Boat</title>
+    <title>Edit Asset</title>
 </head>
 <body>
     <div class="container">
         <?php include '../src/Views/layouts/nav.php'; ?>
-        <h1>Edit Boat</h1>
+        <h1>Edit Asset</h1>
 
         <div class="card">
             <div class="card-body">
                 <form action="index.php?route=/bosun/boat/edit/<?php echo $boat['id']; ?>" method="post">
                     <?php echo csrfField(); ?>
                     <div class="mb-3">
-                        <label class="form-label">Boat ID</label>
+                        <label class="form-label">Asset ID</label>
                         <p class="form-control-plaintext"><?php echo htmlspecialchars($boat['id']); ?></p>
                     </div>
 
                     <div class="mb-3">
-                        <label for="boat_name" class="form-label">Boat Name</label>
+                        <label for="boat_name" class="form-label">Asset Name</label>
                         <input type="text" class="form-control" id="boat_name" name="boat_name" value="<?php echo htmlspecialchars($boat['boat_name']); ?>" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="boat_type" class="form-label">Boat Type</label>
+                        <label for="boat_type" class="form-label">Asset Type</label>
                         <input type="text" class="form-control" id="boat_type" name="boat_type" value="<?php echo htmlspecialchars($boat['boat_type']); ?>" required>
                     </div>
 
