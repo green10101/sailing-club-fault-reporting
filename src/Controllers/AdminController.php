@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controllers;
+namespace src\Controllers;
 
-use App\Models\User;
+use src\Models\User;
 
 class AdminController
 {
@@ -197,7 +197,7 @@ class AdminController
             exit;
         }
 
-        $reportModel = new \App\Models\Report();
+        $reportModel = new \src\Models\Report();
         $reportModel->deleteReport($id);
         
         $_SESSION['flash_message'] = 'Fault report deleted successfully.';

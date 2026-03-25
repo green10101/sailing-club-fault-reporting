@@ -64,7 +64,7 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/bosun/assets/css/app.css">
     <title>Bosun Dashboard</title>
 </head>
 <body>

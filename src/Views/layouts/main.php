@@ -16,7 +16,7 @@
     <!-- Web App Manifest -->
     <link rel="manifest" href="/manifest.json">
     
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/bosun/assets/css/app.css">
     <script src="/assets/js/app.js" defer></script>
 </head>
 <body>

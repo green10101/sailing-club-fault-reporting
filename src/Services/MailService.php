@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace src\Services;
 
 // use PHPMailer\PHPMailer\PHPMailer;
 // use PHPMailer\PHPMailer\Exception;

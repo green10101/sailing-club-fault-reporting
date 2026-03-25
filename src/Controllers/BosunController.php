@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controllers;
+namespace src\Controllers;
 
-use App\Models\Report;
-use App\Models\Boat;
-use App\Services\MailService;
+use src\Models\Report;
+use src\Models\Boat;
+use src\Services\MailService;
 
 class BosunController
 {

@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isLoginRateLimited($username)) {
             $error = 'Too many login attempts. Please try again in 15 minutes.';
         } elseif ($authController->login($username, $password)) {
-            header('Location: index.php?route=/bosun/dashboard');
+            header('Location: /bosun/dashboard');
             exit;
         } else {
             $error = 'Invalid username or password.';
