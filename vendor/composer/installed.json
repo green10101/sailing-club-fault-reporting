@@ -24,7 +24,7 @@
             },
             "time": "2025-12-27T19:43:20+00:00",
             "type": "library",
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "GrahamCampbell\\ResultType\\": "src/"
@@ -130,7 +130,7 @@
                     "dev-main": "2.x-dev"
                 }
             },
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Monolog\\": "src/Monolog"
@@ -203,7 +203,7 @@
                     "dev-master": "1.9-dev"
                 }
             },
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "PhpOption\\": "src/PhpOption/"
@@ -273,7 +273,7 @@
                     "dev-master": "3.x-dev"
                 }
             },
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Psr\\Log\\": "src"
@@ -333,7 +333,7 @@
                     "name": "symfony/polyfill"
                 }
             },
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "files": [
                     "bootstrap.php"
@@ -420,7 +420,7 @@
                     "name": "symfony/polyfill"
                 }
             },
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "files": [
                     "bootstrap.php"
@@ -501,7 +501,7 @@
                     "name": "symfony/polyfill"
                 }
             },
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "files": [
                     "bootstrap.php"
@@ -605,7 +605,7 @@
                     "dev-master": "5.6-dev"
                 }
             },
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Dotenv\\": "src/"
