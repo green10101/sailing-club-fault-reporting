@@ -32,7 +32,13 @@ $requestUri = preg_replace('#^/public#', '', $requestUri);
 
 
 // Normalize the route - treat /index.php and empty as /
-if ($requestUri === '/index.php' || $requestUri === '' || $requestUri === '/bosun/public/index.php') {
+if (
+    $requestUri === '/index.php' ||
+    $requestUri === '' ||
+    $requestUri === '/bosun' ||
+    $requestUri === '/bosun/' ||
+    $requestUri === '/bosun/public/index.php'
+) {
     $requestUri = '/';
 }
 
@@ -41,6 +47,8 @@ if ($requestUri === '/boats') {
     $requestUri = '/bosun/boats';
 } elseif ($requestUri === '/dashboard') {
     $requestUri = '/bosun/dashboard';
+} elseif ($requestUri === '/bosun/login') {
+    $requestUri = '/login';
 }
 
 switch ($requestUri) {
