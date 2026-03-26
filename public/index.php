@@ -30,17 +30,27 @@ $requestUri = $_GET['route'] ?? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
 // Remove /bosun prefix if present
 $requestUri = preg_replace('#^/bosun#', '', $requestUri);
 
+// Remove /public prefix if present (some hosts expose paths as /public/*)
+$requestUri = preg_replace('#^/public#', '', $requestUri);
+
 
 // Normalize the route - treat /index.php and empty as /
 if ($requestUri === '/index.php' || $requestUri === '' || $requestUri === '/bosun/public/index.php') {
     $requestUri = '/';
 }
 
+// Route aliases for hosts that drop the /bosun segment during rewrite.
+if ($requestUri === '/boats') {
+    $requestUri = '/bosun/boats';
+} elseif ($requestUri === '/dashboard') {
+    $requestUri = '/bosun/dashboard';
+}
+
 switch ($requestUri) {
     case '/':
         // If user is logged in, redirect to boat status
         if (isset($_SESSION['user'])) {
-            header('Location: /bosun/boats');
+            header('Location: index.php?route=/bosun/boats');
             exit;
         }
         // Otherwise show public report form
@@ -62,7 +72,7 @@ switch ($requestUri) {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
             if ($authController->login($username, $password)) {
-                header('Location: /bosun/boats');
+                header('Location: index.php?route=/bosun/boats');
                 exit;
             } else {
                 $error = 'Invalid username or password.';
