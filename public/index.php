@@ -17,7 +17,8 @@ addSecurityHeaders();
 // Initialize CSRF token
 initializeCsrfToken();
 
-require_once '../vendor/autoload.php';
+require_once '../src/config/vendor_bootstrap.php';
+loadVendorAutoload();
 require_once '../src/config/database.php';
 
 $controller = new \src\Controllers\PublicController();
