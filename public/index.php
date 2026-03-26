@@ -27,9 +27,6 @@ $controller = new \src\Controllers\PublicController();
 // Support both URL path and ?route= query parameter
 $requestUri = $_GET['route'] ?? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Remove /bosun prefix if present
-$requestUri = preg_replace('#^/bosun#', '', $requestUri);
-
 // Remove /public prefix if present (some hosts expose paths as /public/*)
 $requestUri = preg_replace('#^/public#', '', $requestUri);
 
