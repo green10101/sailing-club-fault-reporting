@@ -1,5 +1,5 @@
 # Dependencies
-/vendor/
+#/vendor/
 
 # Environment
 .env
@@ -16,3 +16,4 @@ Thumbs.db
 composer.lock
 public/error_log
 vendor.zip
+.htaccess
