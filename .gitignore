@@ -13,7 +13,6 @@
 Thumbs.db
 
 # Composer
-composer.lock
 public/error_log
 vendor.zip
 .htaccess

@@ -3,7 +3,7 @@
         'name' => 'mark/sailing_club_fault_reporting',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '924add653cfcc0a66278bf5ec115c5d6353ef853',
+        'reference' => 'a8dcb57d085c6c0bba0281846b583a8f88d970b9',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -22,7 +22,7 @@
         'mark/sailing_club_fault_reporting' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '924add653cfcc0a66278bf5ec115c5d6353ef853',
+            'reference' => 'a8dcb57d085c6c0bba0281846b583a8f88d970b9',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
