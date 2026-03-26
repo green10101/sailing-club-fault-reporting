@@ -3,6 +3,9 @@ Options -Indexes
 
 RewriteEngine On
 
+# Ensure the app base URL (/bosun/) lands on the root route.
+RewriteRule ^$ public/index.php?route=/ [L,QSA]
+
 # Don't rewrite if the request is already inside the public/ directory
 RewriteCond %{REQUEST_URI} !^/bosun/public/
 
