@@ -1,3 +1,22 @@
+# Block directory listing
+Options -Indexes
+
 RewriteEngine On
-RewriteRule ^bosun/?$ /bosun/public/ [L]
-RewriteRule ^bosun/(.*)$ /bosun/public/$1 [L]
+
+# Don't rewrite if the request is already inside the public/ directory
+RewriteCond %{REQUEST_URI} !^/bosun/public/
+
+# Route everything else through public/
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Block direct access to sensitive files
+<FilesMatch "\.(env|lock|sql|sh|yml|yaml|log)$">
+	Order allow,deny
+	Deny from all
+</FilesMatch>
+
+# Deny access to hidden files (e.g. .env, .git)
+<FilesMatch "^\.">
+	Order allow,deny
+	Deny from all
+</FilesMatch>
