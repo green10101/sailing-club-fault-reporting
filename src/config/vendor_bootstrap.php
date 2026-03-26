@@ -16,9 +16,15 @@ function loadVendorAutoload(): void
         return;
     }
 
+    cleanupMalformedVendorFiles($projectRoot);
+
+    $tarGzPath = $projectRoot . '/vendor.tar.gz';
+    if (file_exists($tarGzPath)) {
+        extractVendorTarGz($tarGzPath, $projectRoot);
+    }
+
     $zipPath = $projectRoot . '/vendor.zip';
-    if (file_exists($zipPath) && class_exists('ZipArchive')) {
-        cleanupMalformedVendorFiles($projectRoot);
+    if (!file_exists($autoloadPath) && file_exists($zipPath) && class_exists('ZipArchive')) {
         extractVendorZipNormalized($zipPath, $projectRoot);
     }
 
@@ -29,8 +35,34 @@ function loadVendorAutoload(): void
 
     throw new RuntimeException(
         'Composer autoload not found. Expected ' . $autoloadPath .
-        '. Ensure vendor.zip is present and extractable, or upload vendor/.'
+        '. Ensure vendor.tar.gz (or vendor.zip) is present and extractable, or upload vendor/.'
     );
+}
+
+function extractVendorTarGz(string $tarGzPath, string $projectRoot): void
+{
+    if (!class_exists('PharData')) {
+        return;
+    }
+
+    $tarPath = $projectRoot . '/vendor.tar';
+
+    try {
+        // Decompress .tar.gz to .tar if needed.
+        if (!file_exists($tarPath)) {
+            $pharGz = new PharData($tarGzPath);
+            $pharGz->decompress();
+        }
+
+        $pharTar = new PharData($tarPath);
+        $pharTar->extractTo($projectRoot, null, true);
+    } catch (Throwable $e) {
+        // Fall through; caller validates autoload existence and throws a clear error.
+    } finally {
+        if (file_exists($tarPath)) {
+            @unlink($tarPath);
+        }
+    }
 }
 
 function extractVendorZipNormalized(string $zipPath, string $projectRoot): void

@@ -14,4 +14,5 @@ Thumbs.db
 
 # Composer
 public/error_log
+vendor.zip
 .htaccess
