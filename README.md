@@ -83,6 +83,56 @@ sailing-club-fault-reporting
 5. Run the application:
    - Start a local server or use Docker to run the application.
 
+## Production Deployment
+
+For a production deployment, only deploy the files required to run the application.
+
+### Required at Runtime
+
+- `public/`
+- `src/`
+- `resources/`
+- `.htaccess`
+- `.env`
+- `vendor/` if dependencies are installed before deployment
+
+If your deployment process runs `composer install` on the server, you can deploy `composer.json` and `composer.lock` instead of uploading `vendor/`.
+
+### Not Required in Production
+
+These files and folders are development, debugging, setup, or documentation artifacts and should normally be excluded from production deployments:
+
+- `CHANGES_SUMMARY.md`
+- `README.md`
+- `phpunit.xml`
+- `.phpunit.result.cache`
+- `tests/`
+- `docker-compose.yml`
+- `.vscode/`
+- `.git/`
+- `composer-setup.php`
+- `composer.phar`
+- `vendor.zip`
+- `vendor.tar.gz`
+- `check_columns.php`
+- `check_login_counts.php`
+- `create_admin.php`
+- `create_admin_user.php`
+- `debug_user.php`
+- `fix_user_password.php`
+- `redirect-old-site.htaccess`
+- `public/error_log`
+
+### Database Files
+
+The `sql/` and `migrations/` folders are useful for new environments, upgrades, and recovery, but they are not required for normal runtime once the production database has already been created and migrated.
+
+### GitHub and `.deployignore`
+
+GitHub does not natively use a `.deployignore` file. It only understands `.gitignore`.
+
+If you deploy with GitHub Actions, a `.deployignore` file only has an effect if your workflow explicitly reads it and excludes matching files during packaging or upload. Without that workflow logic, `.deployignore` is just a normal file in the repository.
+
 ## Usage
 
 - Navigate to the application in your web browser.
