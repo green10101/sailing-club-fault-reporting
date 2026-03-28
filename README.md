@@ -63,12 +63,14 @@ sailing-club-fault-reporting
 ## Installation
 
 1. Clone the repository:
+
    ```
    git clone <repository-url>
    cd sailing-club-fault-reporting
    ```
 
 2. Install dependencies using Composer:
+
    ```
    composer install
    ```
