@@ -1,7 +1,0 @@
-# Permanent redirect from bosun.greengiants.org.uk to cyc.uk/bosun/
-# Upload this file to the ROOT of the old site and rename it to .htaccess
-
-RewriteEngine On
-
-# Redirect everything to the new site, preserving no path (new site has different structure)
-RewriteRule ^ https://cyc.uk/bosun/ [R=301,L]
