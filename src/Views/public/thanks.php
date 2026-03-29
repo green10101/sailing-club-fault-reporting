@@ -13,7 +13,7 @@
         <?php if (isset($isBosun) && $isBosun): ?>
             <a href="index.php?route=/bosun/dashboard" class="btn btn-primary">Back to Dashboard</a>
         <?php else: ?>
-            <a href="index.php" class="btn btn-primary">Return to Home</a>
+            <a href="index.php?route=/" class="btn btn-primary">Return to Home</a>
         <?php endif; ?>
     </div>
     <script src="/assets/js/app.js"></script>
