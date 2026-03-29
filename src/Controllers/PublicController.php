@@ -33,8 +33,24 @@ class PublicController
             $reporterName = $_POST['reporter_name'] ?? '';
             $reporterEmail = $_POST['reporter_email'] ?? '';
 
-            if ($this->reportModel->create($boatId, $faultDescription, $reporterName, $reporterEmail)) {
-                // $this->mailService->sendRepairAssignedEmail('admin@example.com', $boatName, $faultDescription); // Uncomment when email is configured
+            $reportId = $this->reportModel->createAndReturnId($boatId, $faultDescription, $reporterName, $reporterEmail);
+            if ($reportId !== false) {
+                $boat = $this->boatModel->getBoatById((int) $boatId);
+                $boatName = $boat['boat_name'] ?? 'Unknown boat';
+
+                // Email should never prevent a valid report from being saved.
+                try {
+                    $this->mailService->sendNewFaultReportEmail([
+                        'report_id' => $reportId,
+                        'boat_name' => $boatName,
+                        'reporter_email' => $reporterEmail,
+                        'reporter_name' => $reporterName,
+                        'fault_description' => $faultDescription,
+                    ]);
+                } catch (\Throwable $e) {
+                    error_log('New fault report email failed for report #' . $reportId . ': ' . $e->getMessage());
+                }
+
                 header('Location: index.php?route=/thanks');
                 exit;
             } else {

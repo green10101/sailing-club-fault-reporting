@@ -23,12 +23,22 @@ class Report
 
     public function create($boatId, $faultDescription, $reporterName = '', $reporterEmail = '')
     {
+        return $this->createAndReturnId($boatId, $faultDescription, $reporterName, $reporterEmail) !== false;
+    }
+
+    public function createAndReturnId($boatId, $faultDescription, $reporterName = '', $reporterEmail = '')
+    {
         $stmt = $this->db->prepare("INSERT INTO " . $this->table . " (boat_id, fault_description, reporter_name, reporter_email, reported_at) VALUES (:boat_id, :fault_description, :reporter_name, :reporter_email, NOW())");
         $stmt->bindValue(':boat_id', $boatId);
         $stmt->bindValue(':fault_description', $faultDescription);
         $stmt->bindValue(':reporter_name', $reporterName);
         $stmt->bindValue(':reporter_email', $reporterEmail);
-        return $stmt->execute();
+
+        if (!$stmt->execute()) {
+            return false;
+        }
+
+        return (int) $this->db->lastInsertId();
     }
 
     public function getAllReports($filter = 'all', $sortBy = 'created_at', $sortOrder = 'DESC', $boatId = null, $status = null, $page = 1, $perPage = 50)
@@ -93,7 +103,7 @@ class Report
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             // Log error and return empty array or default sorting
             error_log("Error in getAllReports: " . $e->getMessage());
             // Fallback to basic query without sorting
@@ -229,7 +239,7 @@ class Report
             $stmt->execute($params);
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             return (int)$result['total'];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error in getReportsCount: " . $e->getMessage());
             return 0;
         }

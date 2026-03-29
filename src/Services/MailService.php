@@ -2,55 +2,64 @@
 
 namespace src\Services;
 
-// use PHPMailer\PHPMailer\PHPMailer;
-// use PHPMailer\PHPMailer\Exception;
-
 class MailService
 {
-    // private $mailer;
-
-    public function __construct()
-    {
-        // $this->mailer = new PHPMailer(true);
-        // $this->configureMailer();
-    }
-
-    // private function configureMailer()
-    // {
-    //     $this->mailer->isSMTP();
-    //     $this->mailer->Host = 'smtp.example.com'; // Set the SMTP server to send through
-    //     $this->mailer->SMTPAuth = true;
-    //     $this->mailer->Username = 'your_email@example.com'; // SMTP username
-    //     $this->mailer->Password = 'your_password'; // SMTP password
-    //     $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    //     $this->mailer->Port = 587; // TCP port to connect to
-    // }
-
     public function sendRepairAssignedEmail($to, $boatName, $faultDescription)
     {
-        // Placeholder for email sending
-        // try {
-        //     $this->mailer->setFrom('from@example.com', 'Sailing Club');
-        //     $this->mailer->addAddress($to);
-        //     $this->mailer->Subject = 'Repair Job Assigned';
-        //     $this->mailer->Body = "A repair job has been assigned for the boat: $boatName.\nFault Description: $faultDescription";
-        //     $this->mailer->send();
-        // } catch (Exception $e) {
-        //     // Handle error
-        // }
+        return true;
     }
 
     public function sendRepairCompletedEmail($to, $boatName)
     {
-        // Placeholder
-        // try {
-        //     $this->mailer->setFrom('from@example.com', 'Sailing Club');
-        //     $this->mailer->addAddress($to);
-        //     $this->mailer->Subject = 'Repair Job Completed';
-        //     $this->mailer->Body = "The repair job for the boat: $boatName has been completed.";
-        //     $this->mailer->send();
-        // } catch (Exception $e) {
-        //     // Handle error
-        // }
+        return true;
+    }
+
+    public function sendNewFaultReportEmail(array $reportData)
+    {
+        $to = $this->getNotificationRecipient();
+        $fromAddress = $this->getFromAddress();
+        $fromName = $this->getFromName();
+
+        $reportId = (int) ($reportData['report_id'] ?? 0);
+        $boatName = trim((string) ($reportData['boat_name'] ?? 'Unknown boat'));
+        $reporterEmail = trim((string) ($reportData['reporter_email'] ?? ''));
+        $reporterName = trim((string) ($reportData['reporter_name'] ?? ''));
+        $faultDescription = trim((string) ($reportData['fault_description'] ?? ''));
+
+        $subject = 'New Fault Report #' . $reportId . ' - ' . $boatName;
+        $body = "A new fault report has been submitted.\n\n"
+            . "Report ID: " . $reportId . "\n"
+            . "Boat Name: " . $boatName . "\n"
+            . "Reporter Email: " . $reporterEmail . "\n"
+            . "Reporter Name: " . $reporterName . "\n"
+            . "Fault Description:\n" . $faultDescription . "\n";
+
+        $safeFromName = str_replace(["\r", "\n"], '', $fromName);
+        $safeFromAddress = str_replace(["\r", "\n"], '', $fromAddress);
+        $headers = [
+            'From: ' . $safeFromName . ' <' . $safeFromAddress . '>',
+            'Reply-To: ' . $safeFromAddress,
+            'Content-Type: text/plain; charset=UTF-8',
+        ];
+
+        return mail($to, $subject, $body, implode("\r\n", $headers));
+    }
+
+    private function getNotificationRecipient()
+    {
+        $configured = $_ENV['MAIL_TO'] ?? getenv('MAIL_TO');
+        return $configured ?: 'cycdinghysection@gmail.com';
+    }
+
+    private function getFromAddress()
+    {
+        $configured = $_ENV['MAIL_FROM_ADDRESS'] ?? getenv('MAIL_FROM_ADDRESS');
+        return $configured ?: 'noreply@sailingclub.com';
+    }
+
+    private function getFromName()
+    {
+        $configured = $_ENV['MAIL_FROM_NAME'] ?? getenv('MAIL_FROM_NAME');
+        return $configured ?: 'Sailing Club Fault Reporting';
     }
 }
