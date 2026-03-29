@@ -34,6 +34,7 @@ $requestUri = preg_replace('#^/public#', '', $requestUri);
 // Normalize the route - treat /index.php and empty as /
 if (
     $requestUri === '/index.php' ||
+    $requestUri === '/bosun/index.php' ||
     $requestUri === '' ||
     $requestUri === '/bosun' ||
     $requestUri === '/bosun/' ||
