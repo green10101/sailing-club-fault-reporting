@@ -40,13 +40,19 @@ class PublicController
 
                 // Email should never prevent a valid report from being saved.
                 try {
-                    $this->mailService->sendNewFaultReportEmail([
+                    $emailSent = $this->mailService->sendNewFaultReportEmail([
                         'report_id' => $reportId,
                         'boat_name' => $boatName,
                         'reporter_email' => $reporterEmail,
                         'reporter_name' => $reporterName,
                         'fault_description' => $faultDescription,
                     ]);
+
+                    if ($emailSent) {
+                        error_log('New fault report email sent for report #' . $reportId);
+                    } else {
+                        error_log('New fault report email could not be sent for report #' . $reportId);
+                    }
                 } catch (\Throwable $e) {
                     error_log('New fault report email failed for report #' . $reportId . ': ' . $e->getMessage());
                 }
