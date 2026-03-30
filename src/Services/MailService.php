@@ -60,7 +60,7 @@ class MailService
 
         $encryption = strtolower($this->env('MAIL_ENCRYPTION', 'tls'));
         if ($encryption === 'ssl') {
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMIME;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         } else {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         }
