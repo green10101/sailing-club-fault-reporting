@@ -2,6 +2,10 @@
 
 namespace src\Services;
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 class MailService
 {
     public function sendRepairAssignedEmail($to, $boatName, $faultDescription)
@@ -16,10 +20,6 @@ class MailService
 
     public function sendNewFaultReportEmail(array $reportData)
     {
-        $to = $this->getNotificationRecipient();
-        $fromAddress = $this->getFromAddress();
-        $fromName = $this->getFromName();
-
         $reportId = (int) ($reportData['report_id'] ?? 0);
         $boatName = trim((string) ($reportData['boat_name'] ?? 'Unknown boat'));
         $reporterEmail = trim((string) ($reportData['reporter_email'] ?? ''));
@@ -34,32 +34,66 @@ class MailService
             . "Reporter Name: " . $reporterName . "\n"
             . "Fault Description:\n" . $faultDescription . "\n";
 
-        $safeFromName = str_replace(["\r", "\n"], '', $fromName);
-        $safeFromAddress = str_replace(["\r", "\n"], '', $fromAddress);
-        $headers = [
-            'From: ' . $safeFromName . ' <' . $safeFromAddress . '>',
-            'Reply-To: ' . $safeFromAddress,
-            'Content-Type: text/plain; charset=UTF-8',
-        ];
-
-        return mail($to, $subject, $body, implode("\r\n", $headers));
+        try {
+            $mail = $this->createMailer();
+            $mail->addAddress($this->getNotificationRecipient());
+            $mail->Subject = $subject;
+            $mail->Body    = $body;
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            error_log('MailService::sendNewFaultReportEmail failed: ' . $e->getMessage());
+            return false;
+        }
     }
 
-    private function getNotificationRecipient()
+    private function createMailer(): PHPMailer
     {
-        $configured = $_ENV['MAIL_TO'] ?? getenv('MAIL_TO');
-        return $configured ?: 'cycdinghysection@gmail.com';
+        $mail = new PHPMailer(true);
+
+        $mail->isSMTP();
+        $mail->Host       = $this->env('MAIL_HOST', 'localhost');
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $this->env('MAIL_USERNAME', '');
+        $mail->Password   = $this->env('MAIL_PASSWORD', '');
+        $mail->Port       = (int) $this->env('MAIL_PORT', '587');
+
+        $encryption = strtolower($this->env('MAIL_ENCRYPTION', 'tls'));
+        if ($encryption === 'ssl') {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMIME;
+        } else {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        }
+
+        $mail->setFrom(
+            $this->getFromAddress(),
+            $this->getFromName()
+        );
+
+        $mail->CharSet = PHPMailer::CHARSET_UTF8;
+
+        return $mail;
     }
 
-    private function getFromAddress()
+    private function getNotificationRecipient(): string
     {
-        $configured = $_ENV['MAIL_FROM_ADDRESS'] ?? getenv('MAIL_FROM_ADDRESS');
-        return $configured ?: 'noreply@sailingclub.com';
+        return $this->env('MAIL_TO', 'cycdinghysection@gmail.com');
     }
 
-    private function getFromName()
+    private function getFromAddress(): string
     {
-        $configured = $_ENV['MAIL_FROM_NAME'] ?? getenv('MAIL_FROM_NAME');
-        return $configured ?: 'Sailing Club Fault Reporting';
+        return $this->env('MAIL_FROM_ADDRESS', 'noreply@sailingclub.com');
+    }
+
+    private function getFromName(): string
+    {
+        return $this->env('MAIL_FROM_NAME', 'Sailing Club Fault Reporting');
+    }
+
+    private function env(string $key, string $default): string
+    {
+        $value = $_ENV[$key] ?? getenv($key);
+        return ($value !== false && $value !== '') ? $value : $default;
     }
 }
+
