@@ -34,7 +34,7 @@ class MailService
             . "Reporter Email: " . $reporterEmail . "\n"
             . "Reporter Name: " . $reporterName . "\n"
             . "Fault Description:\n\n" . $faultDescription . "\n\n"
-            . "https://cyc.uk/bosun/index.php?route=/bosun/dashboard";
+            . "https://cyc.uk/bosun/index.php";
 
         try {
             $mail = $this->createMailer();
