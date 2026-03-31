@@ -18,6 +18,7 @@ class UserProfileController
             header('Location: index.php?route=/bosun/boats');
             exit;
         }
+        $supportsNotifyPreference = User::supportsFaultNotificationPreference();
         include '../src/Views/user/profile.php';
     }
 
@@ -33,6 +34,7 @@ class UserProfileController
             header('Location: index.php?route=/bosun/boats');
             exit;
         }
+        $supportsNotifyPreference = User::supportsFaultNotificationPreference();
         include '../src/Views/user/profile_edit.php';
     }
 
@@ -58,6 +60,8 @@ class UserProfileController
         $userId = $_SESSION['user']['id'];
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
+        $notifyNewReports = isset($_POST['notify_new_reports']) ? 1 : 0;
+        $supportsNotifyPreference = User::supportsFaultNotificationPreference();
 
         // Validate email format
         if (!isValidEmail($email)) {
@@ -69,7 +73,7 @@ class UserProfileController
 
         try {
             // Update the user without changing role
-            User::updateUserProfile($userId, $name, $email);
+            User::updateUserProfile($userId, $name, $email, $notifyNewReports);
             // Update session data
             $_SESSION['user']['name'] = $name;
             $_SESSION['user']['email'] = $email;

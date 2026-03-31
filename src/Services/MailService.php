@@ -2,6 +2,7 @@
 
 namespace src\Services;
 
+use src\Models\User;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -36,7 +37,10 @@ class MailService
 
         try {
             $mail = $this->createMailer();
-            $mail->addAddress($this->getNotificationRecipient());
+            $recipients = $this->getNotificationRecipients();
+            foreach ($recipients as $recipient) {
+                $mail->addAddress($recipient);
+            }
             $mail->Subject = $subject;
             $mail->Body    = $body;
             $mail->send();
@@ -75,9 +79,14 @@ class MailService
         return $mail;
     }
 
-    private function getNotificationRecipient(): string
+    private function getNotificationRecipients(): array
     {
-        return $this->env('MAIL_TO', 'cycdinghysection@gmail.com');
+        $recipients = User::getFaultNotificationEmails();
+        if (!empty($recipients)) {
+            return $recipients;
+        }
+
+        return [$this->env('MAIL_TO', 'cycdinghysection@gmail.com')];
     }
 
     private function getFromAddress(): string

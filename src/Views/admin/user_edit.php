@@ -42,6 +42,20 @@
                         </select>
                     </div>
 
+                    <?php if (isset($supportsNotifyPreference) && $supportsNotifyPreference): ?>
+                        <div class="mb-3 form-check">
+                            <input
+                                type="checkbox"
+                                class="form-check-input"
+                                id="notify_new_reports"
+                                name="notify_new_reports"
+                                value="1"
+                                <?php echo !empty($user['notify_new_reports']) ? 'checked' : ''; ?>
+                            >
+                            <label class="form-check-label" for="notify_new_reports">Email me new faults</label>
+                        </div>
+                    <?php endif; ?>
+
                     <p class="text-muted">To change the password, use the "Reset Password" button from the user list.</p>
 
                     <button type="submit" class="btn btn-primary">Save Changes</button>
