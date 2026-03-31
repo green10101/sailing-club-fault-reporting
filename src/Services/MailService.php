@@ -33,7 +33,8 @@ class MailService
             . "Boat Name: " . $boatName . "\n"
             . "Reporter Email: " . $reporterEmail . "\n"
             . "Reporter Name: " . $reporterName . "\n"
-            . "Fault Description:\n" . $faultDescription . "\n";
+            . "Fault Description:\n\n" . $faultDescription . "\n\n"
+            . "https://cyc.uk/bosun/index.php?route=/bosun/dashboard";
 
         try {
             $mail = $this->createMailer();
