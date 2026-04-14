@@ -43,6 +43,20 @@
                         </select>
                     </div>
 
+                    <?php if (isset($supportsNotifyPreference) && $supportsNotifyPreference): ?>
+                        <div class="mb-3 form-check">
+                            <input
+                                type="checkbox"
+                                class="form-check-input"
+                                id="notify_new_reports"
+                                name="notify_new_reports"
+                                value="1"
+                                <?php echo !empty($prefill['notifyNewReports']) ? 'checked' : ''; ?>
+                            >
+                            <label class="form-check-label" for="notify_new_reports">Email me new faults</label>
+                        </div>
+                    <?php endif; ?>
+
                     <button type="submit" class="btn btn-primary">Create User</button>
                 </form>
             </div>

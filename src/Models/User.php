@@ -59,50 +59,91 @@ class User {
 
     public static function getAllUsers() {
         $db = $GLOBALS['pdo'];
-        $stmt = $db->prepare("SELECT id, password, name, email, role, login_count FROM users ORDER BY email");
+        $select = "id, password, name, email, role, login_count";
+        if (self::supportsFaultNotificationPreference()) {
+            $select .= ", notify_new_reports";
+        }
+
+        $stmt = $db->prepare("SELECT " . $select . " FROM users ORDER BY email");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public static function getUserById($id) {
         $db = $GLOBALS['pdo'];
-        $stmt = $db->prepare("SELECT id, password, name, email, role, login_count FROM users WHERE id = :id");
+        $select = "id, password, name, email, role, login_count";
+        if (self::supportsFaultNotificationPreference()) {
+            $select .= ", notify_new_reports";
+        }
+
+        $stmt = $db->prepare("SELECT " . $select . " FROM users WHERE id = :id");
         $stmt->bindValue(':id', $id);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public static function createUser($password, $name, $email, $role = 'bosun') {
+    public static function createUser($password, $name, $email, $role = 'bosun', $notifyNewReports = 0) {
         $db = $GLOBALS['pdo'];
         try {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $db->prepare("INSERT INTO users (password, name, email, role) VALUES (:password, :name, :email, :role)");
+            $supportsNotifyPreference = self::supportsFaultNotificationPreference();
+
+            $query = "INSERT INTO users (password, name, email, role";
+            $values = " VALUES (:password, :name, :email, :role";
+            if ($supportsNotifyPreference) {
+                $query .= ", notify_new_reports";
+                $values .= ", :notify_new_reports";
+            }
+            $query .= ")" . $values . ")";
+
+            $stmt = $db->prepare($query);
             $stmt->bindValue(':password', $hashedPassword);
             $stmt->bindValue(':name', $name);
             $stmt->bindValue(':email', $email);
             $stmt->bindValue(':role', $role);
+            if ($supportsNotifyPreference) {
+                $stmt->bindValue(':notify_new_reports', $notifyNewReports ? 1 : 0, PDO::PARAM_INT);
+            }
             return $stmt->execute();
         } catch (\PDOException $e) {
             throw $e;
         }
     }
 
-    public static function updateUser($id, $name, $email, $role) {
+    public static function updateUser($id, $name, $email, $role, $notifyNewReports = null) {
         $db = $GLOBALS['pdo'];
-        $stmt = $db->prepare("UPDATE users SET name = :name, email = :email, role = :role WHERE id = :id");
+        $query = "UPDATE users SET name = :name, email = :email, role = :role";
+        if (self::supportsFaultNotificationPreference() && $notifyNewReports !== null) {
+            $query .= ", notify_new_reports = :notify_new_reports";
+        }
+        $query .= " WHERE id = :id";
+
+        $stmt = $db->prepare($query);
         $stmt->bindValue(':id', $id);
         $stmt->bindValue(':name', $name);
         $stmt->bindValue(':email', $email);
         $stmt->bindValue(':role', $role);
+        if (self::supportsFaultNotificationPreference() && $notifyNewReports !== null) {
+            $stmt->bindValue(':notify_new_reports', $notifyNewReports ? 1 : 0, PDO::PARAM_INT);
+        }
         return $stmt->execute();
     }
 
-    public static function updateUserProfile($id, $name, $email) {
+    public static function updateUserProfile($id, $name, $email, $notifyNewReports = null) {
         $db = $GLOBALS['pdo'];
-        $stmt = $db->prepare("UPDATE users SET name = :name, email = :email WHERE id = :id");
+        $query = "UPDATE users SET name = :name, email = :email";
+        if (self::supportsFaultNotificationPreference() && $notifyNewReports !== null) {
+            $query .= ", notify_new_reports = :notify_new_reports";
+        }
+        $query .= " WHERE id = :id";
+
+        $stmt = $db->prepare($query);
         $stmt->bindValue(':id', $id);
         $stmt->bindValue(':name', $name);
         $stmt->bindValue(':email', $email);
+        if (self::supportsFaultNotificationPreference() && $notifyNewReports !== null) {
+            $stmt->bindValue(':notify_new_reports', $notifyNewReports ? 1 : 0, PDO::PARAM_INT);
+        }
         return $stmt->execute();
     }
 
@@ -126,5 +167,42 @@ class User {
         $stmt = $db->prepare("UPDATE users SET login_count = login_count + 1 WHERE id = :id");
         $stmt->bindValue(':id', $id);
         return $stmt->execute();
+    }
+
+    public static function getFaultNotificationEmails() {
+        $db = $GLOBALS['pdo'];
+
+        try {
+            $columns = $db->query("SHOW COLUMNS FROM users")->fetchAll(PDO::FETCH_COLUMN, 0);
+            if (!in_array('notify_new_reports', $columns, true) || !in_array('email', $columns, true)) {
+                return [];
+            }
+
+            $stmt = $db->prepare("SELECT email FROM users WHERE notify_new_reports = 1 AND email IS NOT NULL AND email <> ''");
+            $stmt->execute();
+            $emails = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+            if (!is_array($emails)) {
+                return [];
+            }
+
+            return array_values(array_unique(array_filter($emails, function ($email) {
+                return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+            })));
+        } catch (\Throwable $e) {
+            // Keep compatibility with older schemas and installations.
+            return [];
+        }
+    }
+
+    public static function supportsFaultNotificationPreference() {
+        $db = $GLOBALS['pdo'];
+
+        try {
+            $columns = $db->query("SHOW COLUMNS FROM users")->fetchAll(PDO::FETCH_COLUMN, 0);
+            return in_array('notify_new_reports', $columns, true);
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 }

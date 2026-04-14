@@ -22,6 +22,7 @@ class AdminController
             header('Location: index.php?route=/login');
             exit;
         }
+        $supportsNotifyPreference = User::supportsFaultNotificationPreference();
         include '../src/Views/admin/user_new.php';
     }
 
@@ -47,11 +48,13 @@ class AdminController
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $role = $_POST['role'] ?? 'bosun';
+        $supportsNotifyPreference = User::supportsFaultNotificationPreference();
+        $notifyNewReports = isset($_POST['notify_new_reports']) ? 1 : 0;
 
         // Validate email format
         if (!isValidEmail($email)) {
             $error = 'Invalid email format.';
-            $prefill = compact('name', 'email', 'role');
+            $prefill = compact('name', 'email', 'role', 'notifyNewReports');
             include '../src/Views/admin/user_new.php';
             exit;
         }
@@ -59,17 +62,17 @@ class AdminController
         // Validate password length
         if (strlen($password) < 6) {
             $error = 'Password must be at least 6 characters long.';
-            $prefill = compact('name', 'email', 'role');
+            $prefill = compact('name', 'email', 'role', 'notifyNewReports');
             include '../src/Views/admin/user_new.php';
             exit;
         }
 
         try {
-            User::createUser($password, $name, $email, $role);
+            User::createUser($password, $name, $email, $role, $notifyNewReports);
             header('Location: index.php?route=/admin/users');
         } catch (\PDOException $e) {
             $error = 'Failed to create user: ' . $e->getMessage();
-            $prefill = compact('name', 'email', 'role');
+            $prefill = compact('name', 'email', 'role', 'notifyNewReports');
             include '../src/Views/admin/user_new.php';
         }
     }
@@ -85,6 +88,7 @@ class AdminController
             header('Location: index.php?route=/admin/users');
             exit;
         }
+        $supportsNotifyPreference = User::supportsFaultNotificationPreference();
         include '../src/Views/admin/user_edit.php';
     }
 
@@ -110,6 +114,8 @@ class AdminController
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $role = $_POST['role'] ?? 'bosun';
+        $notifyNewReports = isset($_POST['notify_new_reports']) ? 1 : 0;
+        $supportsNotifyPreference = User::supportsFaultNotificationPreference();
 
         // Validate email format
         if (!isValidEmail($email)) {
@@ -120,7 +126,7 @@ class AdminController
         }
 
         try {
-            User::updateUser($userId, $name, $email, $role);
+            User::updateUser($userId, $name, $email, $role, $notifyNewReports);
             header('Location: index.php?route=/admin/users');
         } catch (\PDOException $e) {
             $error = 'Failed to update user: ' . $e->getMessage();

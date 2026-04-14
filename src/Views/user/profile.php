@@ -25,6 +25,12 @@
                     <label style="font-weight: 600; color: #333;">Role</label>
                     <p style="margin: 0.5rem 0; font-size: 1.1rem;"><?php echo htmlspecialchars($user['role']); ?></p>
                 </div>
+                <?php if (isset($supportsNotifyPreference) && $supportsNotifyPreference): ?>
+                    <div style="margin-bottom: 2rem;">
+                        <label style="font-weight: 600; color: #333;">Email Notifications</label>
+                        <p style="margin: 0.5rem 0; font-size: 1.1rem;"><?php echo !empty($user['notify_new_reports']) ? 'Email me new faults: On' : 'Email me new faults: Off'; ?></p>
+                    </div>
+                <?php endif; ?>
                 <div style="display: flex; gap: 1rem;">
                     <a href="index.php?route=/profile/edit" class="btn btn-primary">Edit Profile</a>
                     <a href="index.php?route=/profile/change-password" class="btn btn-outline-primary">Change Password</a>
