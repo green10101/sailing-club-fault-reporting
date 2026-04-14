@@ -8,6 +8,7 @@ Last updated: 2026-04-14
 Add an asset check-in workflow after each use, while preserving the existing fault reporting workflow.
 
 ### Goals
+
 - Users scan an asset-specific QR code and open an asset-specific check-in URL.
 - User submits:
   - Name
@@ -24,6 +25,7 @@ Add an asset check-in workflow after each use, while preserving the existing fau
 - Deploy to the same cPanel host and same existing database.
 
 ### Non-goals
+
 - Replacing or redesigning the current fault reporting flow.
 - Moving to a new hosting platform.
 - Rebuilding authentication or user roles.
@@ -31,6 +33,7 @@ Add an asset check-in workflow after each use, while preserving the existing fau
 ## 2. Existing System Constraints
 
 The current application already separates public and bosun workflows:
+
 - Public route handling and entry point: [public/index.php](../public/index.php)
 - Public fault controller: [src/Controllers/PublicController.php](../src/Controllers/PublicController.php)
 - Bosun fault/asset controller: [src/Controllers/BosunController.php](../src/Controllers/BosunController.php)
@@ -38,6 +41,7 @@ The current application already separates public and bosun workflows:
 - Fault report model: [src/Models/Report.php](../src/Models/Report.php)
 
 Important note:
+
 - [sql/schema.sql](../sql/schema.sql) is not fully aligned with the live code expectations. Treat production DB as source of truth and use additive migrations only.
 
 ## 3. High-Level Design
@@ -45,6 +49,7 @@ Important note:
 Add a parallel check-in flow, not a modification of the current public fault form.
 
 ### Design principle
+
 - Keep existing fault reporting endpoints and behavior unchanged.
 - Introduce new check-in endpoints, tables, and bosun check-in report view.
 - Reuse existing reports table for faults originating from check-in.
@@ -54,6 +59,7 @@ Add a parallel check-in flow, not a modification of the current public fault for
 ## 4.1 New table: asset_checkins
 
 Suggested columns:
+
 - id (PK)
 - asset_id (FK -> assets.id, or boats.id in current schema)
 - user_name (varchar)
@@ -69,30 +75,36 @@ Suggested columns:
 - updated_at (timestamp)
 
 Indexes:
+
 - idx_asset_checkins_asset_date on (asset_id, checked_in_at)
 - idx_asset_checkins_date on (checked_in_at)
 
 ## 4.2 Existing asset table extension
 
 Add one asset-specific QR identifier:
+
 - checkin_slug (varchar, unique)
 
 Rationale:
+
 - Enables stable QR URL per asset without exposing internal IDs.
 - Current codebase compatibility: if retaining existing naming, add this to the `boats` table first.
 
 ## 4.3 Optional provenance extension: reports
 
 Recommended optional columns:
+
 - source enum('fault_form','asset_checkin') default 'fault_form'
 - asset_checkin_id nullable FK -> asset_checkins.id
 
 Rationale:
+
 - Makes it easy to identify which faults came from check-in.
 
 ## 5. URL and Route Plan
 
 Public routes (no login required):
+
 - GET /checkin/{slug}
   - Show check-in form for one asset.
 - POST /checkin/{slug}
@@ -102,27 +114,34 @@ Public routes (no login required):
   - Redirect to thank-you confirmation.
 
 Bosun routes (authenticated):
+
 - GET /bosun/checkins
   - Check-in history newest to oldest.
   - Filter by asset.
 
 Route integration location:
+
 - [public/index.php](../public/index.php)
 
 ## 6. UX Flow (Mobile First)
 
 Single-page check-in flow is recommended:
+
 1. QR opens asset-specific URL.
 2. Form displays asset name and system date/time.
 3. User enters name.
 4. User enters contact email address.
 5. User answers checklist:
-  - Is the asset put away as it was found?
-  - Is the asset in a safe condition for the next user?
-  - Does the asset have faults that should be rectified?
+
+- Is the asset put away as it was found?
+- Is the asset in a safe condition for the next user?
+- Does the asset have faults that should be rectified?
+
 6. If Question 2 or Question 3 is Yes, reveal:
-  - Did the damage happen during this checkout?
-  - Fault description field
+
+- Did the damage happen during this checkout?
+- Fault description field
+
 7. Submit.
 8. Show thank-you message.
 
@@ -131,6 +150,7 @@ Alternative two-step flow can be done later, but single-page is lower risk and r
 ## 7. Fault Creation Rules from Check-In
 
 When Safe Condition = Yes OR Has Faults to Rectify = Yes:
+
 - Create a normal fault report in existing reports table.
 - Populate asset identifier and fault_description.
 - Current schema compatibility: map asset identifier to `reports.boat_id` until table renaming is performed.
@@ -140,18 +160,21 @@ When Safe Condition = Yes OR Has Faults to Rectify = Yes:
 - If captured, record whether damage happened during this checkout.
 
 When Safe Condition = No AND Has Faults to Rectify = No:
+
 - No fault report is created.
 - Only asset_checkins row is stored.
 
 ## 8. Bosun Reporting Requirements
 
 New page: check-in history report
+
 - Sort order: newest to oldest by checked_in_at.
 - Filters:
   - Asset filter (specific asset)
   - Optional: has fault/no fault
 
 Suggested columns:
+
 - Date/time
 - Asset name
 - User name
@@ -165,11 +188,13 @@ Suggested columns:
 ## 9. Asset View Enhancement
 
 Add Number of Uses to Asset Status view:
+
 - Existing target page: [src/Views/bosun/boats.php](../src/Views/bosun/boats.php)
 - Use count source: asset_checkins grouped by asset_id
 - Current schema compatibility: if using `boat_id`, aggregate by `boat_id` until renamed.
 
 Performance requirement:
+
 - Avoid one query per asset for use count.
 - Prefer a single aggregate query or join.
 
@@ -189,6 +214,7 @@ Performance requirement:
 ## 11. Deployment Plan (cPanel + Existing DB)
 
 Deployment approach:
+
 1. Upload PHP/view/model changes to existing app on cPanel.
 2. Apply additive SQL migration to existing DB (do not drop/replace existing tables).
 3. Generate asset QR codes from checkin_slug URLs.
@@ -196,17 +222,20 @@ Deployment approach:
 5. Roll out to all assets.
 
 Rollback:
+
 - Disable /checkin routes in router.
 - Keep schema (non-destructive rollback) unless cleanup is explicitly approved.
 
 ## 12. Migration Strategy
 
 Create new migration files in repo for repeatability (examples):
+
 - migrations/2026_04_14_001_add_asset_checkins.sql
 - migrations/2026_04_14_002_add_asset_checkin_slug.sql
 - migrations/2026_04_14_003_add_report_source_columns.sql (optional)
 
 Guidelines:
+
 - Only additive changes.
 - Keep foreign keys nullable where linking can happen after insert sequence.
 - Backfill checkin_slug for existing assets before printing QR labels.
@@ -220,30 +249,36 @@ Guidelines:
 ## 14. Implementation Checklist (Future)
 
 Phase 1: Database
+
 - [ ] Add asset_checkins table.
 - [ ] Add asset catalogue checkin_slug unique column (or boats.checkin_slug in current schema).
 - [ ] (Optional) Add reports.source and reports.asset_checkin_id.
 
 Phase 2: Public check-in app
+
 - [ ] Add check-in GET/POST routes.
 - [ ] Add controller methods for display + submit.
 - [ ] Add check-in view and confirmation view.
 - [ ] Add validation and error handling.
 
 Phase 3: Fault integration
+
 - [ ] On failed condition check, create standard report row.
 - [ ] Link report to check-in (if optional columns used).
 
 Phase 4: Bosun reporting
+
 - [ ] Add /bosun/checkins route + page.
 - [ ] Implement newest-first list with asset filter.
 - [ ] Add links to related fault reports.
 
 Phase 5: Asset list enhancement
+
 - [ ] Add Number of Uses on asset status page.
 - [ ] Ensure aggregate query strategy (no N+1 counts).
 
 Phase 6: Deployment
+
 - [ ] Apply SQL migrations on production DB.
 - [ ] Deploy code to cPanel host.
 - [ ] Generate and print QR labels.
