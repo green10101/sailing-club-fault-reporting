@@ -228,6 +228,12 @@ Deployment approach:
 3. Pilot on a subset of boats.
 4. Roll out to all boats.
 
+Branch compatibility requirement:
+
+- While development happens on a feature branch, the production database changes must remain backward-compatible with the current `main` branch.
+- Reverting the deployed code from the feature branch back to `main` must leave the existing fault reporting and bosun workflows working against the updated database.
+- New database objects for check-in must be safe for `main` to ignore.
+
 Rollback:
 
 - Disable /checkin routes in router.
@@ -245,6 +251,10 @@ Guidelines:
 - Only additive changes.
 - Keep foreign keys nullable where linking can happen after insert sequence.
 - Reuse existing boats table for asset selection; no slug backfill or label generation needed.
+- Do not rename, drop, or repurpose existing tables or columns used by `main`.
+- Any new columns added to existing tables must be nullable or have safe defaults so old code continues to run.
+- Do not make existing reads or writes in `main` depend on check-in data being present.
+- Treat `main` compatibility as a hard requirement until the feature branch is merged and deployed.
 
 ## 13. Confirmed Decisions
 
@@ -298,4 +308,5 @@ Phase 6: Deployment
 - Bosun can view check-ins newest-first and filter by boat.
 - Boat status screen shows Number of Uses.
 - Existing fault reporting route and bosun fault dashboard continue to work unchanged.
+- Reverting deployed code from the feature branch back to `main` still works with the migrated database.
 - Deployment works on current cPanel host and existing database.
