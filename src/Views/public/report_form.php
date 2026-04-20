@@ -15,7 +15,11 @@
                 <a href="index.php?route=/login" class="btn btn-secondary">Bosun Login</a>
             <?php endif; ?>
         </div>
+        <?php if (isset($error)): ?>
+            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
         <form action="index.php?route=/report" method="POST" data-single-submit="true">
+            <input type="hidden" name="report_submission_token" value="<?php echo htmlspecialchars($reportSubmissionToken ?? ''); ?>">
             <div class="form-group">
                 <label for="boat_id">Boat Name</label>
                 <select id="boat_id" name="boat_id" class="form-control" required>
@@ -46,6 +50,6 @@
             <p data-submit-status style="margin-top: 0.75rem; color: #666; min-height: 1.5rem;"></p>
         </form>
     </div>
-    <script src="/assets/js/app.js"></script>
+    <script src="assets/js/app.js"></script>
 </body>
 </html>
