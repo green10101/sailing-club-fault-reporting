@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 
 // Load security configuration
 require_once '../src/config/security.php';
+require_once '../src/config/app_version.php';
 
 // Configure secure session settings before starting session
 configureSecureSession();
@@ -13,6 +14,7 @@ session_start();
 
 // Add security headers
 addSecurityHeaders();
+header('X-App-Version: ' . getAppVersionLabel());
 
 // Initialize CSRF token
 initializeCsrfToken();

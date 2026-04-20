@@ -15,6 +15,7 @@
         <?php else: ?>
             <a href="index.php?route=/" class="btn btn-primary">Return to Home</a>
         <?php endif; ?>
+        <p style="margin-top: 1.5rem; font-size: 0.875rem; color: #666;">App version: <?php echo htmlspecialchars(getAppVersionLabel()); ?></p>
     </div>
     <script src="/assets/js/app.js"></script>
 </body>

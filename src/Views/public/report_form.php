@@ -49,6 +49,7 @@
             </div>
             <p data-submit-status style="margin-top: 0.75rem; color: #666; min-height: 1.5rem;"></p>
         </form>
+        <p style="margin-top: 1.5rem; font-size: 0.875rem; color: #666;">App version: <?php echo htmlspecialchars(getAppVersionLabel()); ?></p>
     </div>
     <script src="assets/js/app.js"></script>
 </body>
