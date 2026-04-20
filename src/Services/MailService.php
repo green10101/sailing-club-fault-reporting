@@ -92,7 +92,7 @@ class MailService
 
     private function getFromAddress(): string
     {
-        return $this->env('MAIL_FROM_ADDRESS', 'noreply@sailingclub.com');
+        return $this->env('MAIL_FROM_ADDRESS', 'no-reply@cyc.uk');
     }
 
     private function getFromName(): string
