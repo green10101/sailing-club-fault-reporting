@@ -56,7 +56,7 @@ class BosunController
                 $filteredBoat = $this->boatModel->getBoatById($boatId);
             }
             include '../src/Views/bosun/dashboard.php';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Log error and show basic dashboard
             error_log("Error in dashboard: " . $e->getMessage());
             $reports = $this->reportModel->getAllReports();

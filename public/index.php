@@ -221,18 +221,6 @@ switch ($requestUri) {
             $bosunController->updateReportStatus($reportId, $status);
         }
         break;
-    case '/bosun/update-notes':
-        if (!isset($_SESSION['user'])) {
-            header('Location: /bosun/login');
-            exit;
-        }
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $reportId = $_POST['report_id'];
-            $notes = $_POST['notes'];
-            $bosunController = new \src\Controllers\BosunController();
-            $bosunController->updateReportNotes($reportId, $notes);
-        }
-        break;
     case (preg_match('/^\/bosun\/edit\/(\d+)$/', $requestUri, $matches) ? $requestUri : null):
         if (!isset($_SESSION['user'])) {
             header('Location: /bosun/login');
