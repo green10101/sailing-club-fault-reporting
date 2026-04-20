@@ -1,6 +1,6 @@
 <?php
 
-const APP_RELEASE_MARKER = '2026-04-20 v3.0';
+const APP_RELEASE_MARKER = '2026-04-20 Draft v4.0';
 
 function getAppVersionLabel()
 {

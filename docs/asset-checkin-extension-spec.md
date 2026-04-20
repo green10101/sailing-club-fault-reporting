@@ -1,7 +1,7 @@
 # Boat Check-In Extension Specification
 
 Status: Draft (Planning only, no implementation)
-Last updated: 2026-04-14
+Last updated: 2026-04-20
 
 ## 1. Purpose
 
@@ -9,18 +9,19 @@ Add a boat check-in workflow after each use, while preserving the existing fault
 
 ### Goals
 
-- Users scan a boat-specific QR code and open a boat-specific check-in URL.
+- Users open a single shared check-in page.
+- The check-in form should follow the same visual presentation style as the existing fault reporting flow, with a common look and feel.
 - User submits:
   - Name
   - Contact email address
-  - Boat name (preselected from QR URL context)
+  - Asset name (selected from list)
   - Date (auto-populated by system)
   - Checklist answers:
-    - Has the boat been put away properly and any radios, safety box, sails and foils back in the correct place
+    - Has the boat been put away properly and any radios, safety box, sails and foils back in the correct place?
     - Is the boat in a safe / working condition for the next user?
     - Does the boat have faults that should be rectified?
 - If Question 2 or Question 3 is Yes, ask if the damage happened during this checkout and capture fault description for the existing fault reports table.
-- Add a bosun report view for check-in history (newest first, filter by boat).
+- Add a bosun report view for check-in history (newest first, optionally filter by boat).
 - Add Number of Uses to the boat status view.
 - Deploy to the same cPanel host and same existing database.
 
@@ -53,6 +54,7 @@ Add a parallel check-in flow, not a modification of the current public fault for
 - Keep existing fault reporting endpoints and behavior unchanged.
 - Introduce new check-in endpoints, tables, and bosun check-in report view.
 - Reuse existing reports table for faults originating from check-in.
+- Reuse the existing public form styling patterns, layout structure, and overall visual language so the check-in flow feels like part of the same application.
 
 ## 4. Proposed Data Model
 
@@ -81,14 +83,13 @@ Indexes:
 
 ## 4.2 Existing boat table extension
 
-Add one boat-specific QR identifier:
-
-- checkin_slug (varchar, unique)
+No new boat identifier is required.
 
 Rationale:
 
-- Enables stable QR URL per boat without exposing internal IDs.
-- Add this to the `boats` table.
+- The agreed workflow uses one shared check-in entry point.
+- User selects the asset from the existing boat list instead of arriving with boat context from a QR code or slug.
+- Avoids creating, printing, replacing, and tracking one label per boat.
 
 ## 4.3 Optional provenance extension: reports
 
@@ -105,9 +106,9 @@ Rationale:
 
 Public routes (no login required):
 
-- GET /checkin/{slug}
-  - Show check-in form for one boat.
-- POST /checkin/{slug}
+- GET /checkin
+  - Show check-in form with asset selector.
+- POST /checkin
   - Save check-in.
   - If safe_for_next_user = yes OR has_faults_to_rectify = yes, ask if damage happened during this checkout and collect fault description.
   - If fault description is provided under that condition, create row in reports.
@@ -127,23 +128,30 @@ Route integration location:
 
 Single-page check-in flow is recommended:
 
-1. QR opens boat-specific URL.
-2. Form displays boat name and system date/time.
-3. User enters name.
-4. User enters contact email address.
-5. User answers checklist:
+Presentation requirements:
+
+- Match the current public fault reporting page layout, spacing, typography, button treatment, and general form structure.
+- Reuse existing CSS and shared UI patterns where practical rather than creating a visually separate workflow.
+- Keep the mobile-first behavior and interaction style consistent with the fault reporting form.
+
+1. User opens the shared check-in page.
+2. User selects the asset from the list.
+3. Form displays system date/time.
+4. User enters name.
+5. User enters contact email address.
+6. User answers checklist:
 
 - Has the boat been put away properly and any radios, safety box, sails and foils back in the correct place
 - Is the boat in a safe condition for the next user?
 - Does the boat have faults that should be rectified?
 
-6. If Question 2 or Question 3 is Yes, reveal:
+7. If Question 2 or Question 3 is Yes, reveal:
 
 - Did the damage happen during this checkout?
 - Fault description field
 
-7. Submit.
-8. Show thank-you message.
+8. Submit.
+9. Show thank-you message.
 
 Alternative two-step flow can be done later, but single-page is lower risk and reduces drop-off.
 
@@ -200,8 +208,9 @@ Performance requirement:
 ## 10. Security and Data Validation
 
 - Server sets checked_in_at; do not trust client date.
-- Validate slug to existing active boat.
+- Validate submitted boat_id to an existing active boat.
 - Validate required fields:
+  - boat_id
   - user_name
   - user_email (valid email format)
   - checklist booleans
@@ -216,9 +225,8 @@ Deployment approach:
 
 1. Upload PHP/view/model changes to existing app on cPanel.
 2. Apply additive SQL migration to existing DB (do not drop/replace existing tables).
-3. Generate boat QR codes from checkin_slug URLs.
-4. Pilot on a subset of boats.
-5. Roll out to all boats.
+3. Pilot on a subset of boats.
+4. Roll out to all boats.
 
 Rollback:
 
@@ -230,34 +238,32 @@ Rollback:
 Create new migration files in repo for repeatability (examples):
 
 - migrations/2026_04_14_001_add_boat_checkins.sql
-- migrations/2026_04_14_002_add_boat_checkin_slug.sql
-- migrations/2026_04_14_003_add_report_source_columns.sql (optional)
+- migrations/2026_04_14_002_add_report_source_columns.sql (optional)
 
 Guidelines:
 
 - Only additive changes.
 - Keep foreign keys nullable where linking can happen after insert sequence.
-- Backfill checkin_slug for existing boats before printing QR labels.
+- Reuse existing boats table for asset selection; no slug backfill or label generation needed.
 
-## 13. Open Decisions
+## 13. Confirmed Decisions
 
-- Should retired boats still allow check-ins (normally no)?
-- Should check-in faults trigger same email notification path as existing public fault form?
-- Should check-in form include optional notes even when no fault?
+- Retired boats should not be offered in the public check-in asset selector.
+- Faults created from check-in should trigger the same email notification path as the existing public fault form.
+- Check-in submissions with no faults do not require optional notes at this time.
 
 ## 14. Implementation Checklist (Future)
 
 Phase 1: Database
 
 - [ ] Add boat_checkins table.
-- [ ] Add boats.checkin_slug unique column.
 - [ ] (Optional) Add reports.source and reports.boat_checkin_id.
 
 Phase 2: Public check-in app
 
 - [ ] Add check-in GET/POST routes.
 - [ ] Add controller methods for display + submit.
-- [ ] Add check-in view and confirmation view.
+- [ ] Add check-in view and confirmation view with asset selector.
 - [ ] Add validation and error handling.
 
 Phase 3: Fault integration
@@ -280,12 +286,11 @@ Phase 6: Deployment
 
 - [ ] Apply SQL migrations on production DB.
 - [ ] Deploy code to cPanel host.
-- [ ] Generate and print QR labels.
 - [ ] Run pilot and collect feedback.
 
 ## 15. Acceptance Criteria
 
-- Scanning a boat QR opens that boat's check-in page.
+- User can open one shared check-in page and choose the asset from the list.
 - User can submit Name + checklist in under 30 seconds.
 - Contact email address is captured and validated on check-in.
 - Date is recorded automatically by server.
