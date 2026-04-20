@@ -9,6 +9,12 @@ use PHPMailer\PHPMailer\Exception;
 
 class MailService
 {
+    public function notificationsAreSuppressed()
+    {
+        return $this->envFlag('MAIL_TEST_MODE', false)
+            || $this->envFlag('DISABLE_NOTIFICATIONS', false);
+    }
+
     public function sendRepairAssignedEmail($to, $boatName, $faultDescription)
     {
         return true;
@@ -37,8 +43,17 @@ class MailService
             . "https://cyc.uk/bosun/index.php";
 
         try {
-            $mail = $this->createMailer();
             $recipients = $this->getNotificationRecipients();
+
+            if ($this->notificationsAreSuppressed()) {
+                error_log(
+                    'MailService::sendNewFaultReportEmail suppressed by test mode for report #' . $reportId
+                    . '; recipients=' . implode(',', $recipients)
+                );
+                return true;
+            }
+
+            $mail = $this->createMailer();
             foreach ($recipients as $recipient) {
                 $mail->addAddress($recipient);
             }
@@ -104,6 +119,13 @@ class MailService
     {
         $value = $_ENV[$key] ?? getenv($key);
         return ($value !== false && $value !== '') ? $value : $default;
+    }
+
+    private function envFlag(string $key, bool $default): bool
+    {
+        $defaultValue = $default ? '1' : '0';
+        $value = strtolower(trim($this->env($key, $defaultValue)));
+        return in_array($value, ['1', 'true', 'yes', 'on'], true);
     }
 }
 

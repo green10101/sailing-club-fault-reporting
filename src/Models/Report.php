@@ -21,12 +21,12 @@ class Report
         return $stmt->execute();
     }
 
-    public function create($boatId, $faultDescription, $reporterName = '', $reporterEmail = '')
+    public function create($boatId, $faultDescription, $reporterName = '', $reporterEmail = ''): bool
     {
         return $this->createAndReturnId($boatId, $faultDescription, $reporterName, $reporterEmail) !== false;
     }
 
-    public function createAndReturnId($boatId, $faultDescription, $reporterName = '', $reporterEmail = '')
+    public function createAndReturnId($boatId, $faultDescription, $reporterName = '', $reporterEmail = ''): int|false
     {
         $stmt = $this->db->prepare("INSERT INTO " . $this->table . " (boat_id, fault_description, reporter_name, reporter_email, reported_at) VALUES (:boat_id, :fault_description, :reporter_name, :reporter_email, NOW())");
         $stmt->bindValue(':boat_id', $boatId);
@@ -41,7 +41,7 @@ class Report
         return (int) $this->db->lastInsertId();
     }
 
-    public function findRecentDuplicateReportId($boatId, $faultDescription, $reporterName = '', $reporterEmail = '', $windowSeconds = 120)
+    public function findRecentDuplicateReportId($boatId, $faultDescription, $reporterName = '', $reporterEmail = '', $windowSeconds = 120): ?int
     {
         $reportedAfter = date('Y-m-d H:i:s', time() - max(1, (int) $windowSeconds));
 

@@ -76,6 +76,7 @@ class PublicController
 
                 // Email should never prevent a valid report from being saved.
                 try {
+                    $notificationsSuppressed = $this->mailService->notificationsAreSuppressed();
                     $emailSent = $this->mailService->sendNewFaultReportEmail([
                         'report_id' => $reportId,
                         'boat_name' => $boatName,
@@ -85,7 +86,11 @@ class PublicController
                     ]);
 
                     if ($emailSent) {
-                        error_log('New fault report email sent for report #' . $reportId);
+                        if ($notificationsSuppressed) {
+                            error_log('New fault report email suppressed by test mode for report #' . $reportId);
+                        } else {
+                            error_log('New fault report email sent for report #' . $reportId);
+                        }
                     } else {
                         error_log('New fault report email could not be sent for report #' . $reportId);
                     }
