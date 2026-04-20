@@ -41,6 +41,31 @@ class Report
         return (int) $this->db->lastInsertId();
     }
 
+    public function findRecentDuplicateReportId($boatId, $faultDescription, $reporterName = '', $reporterEmail = '', $windowSeconds = 120)
+    {
+        $reportedAfter = date('Y-m-d H:i:s', time() - max(1, (int) $windowSeconds));
+
+        $stmt = $this->db->prepare(
+            "SELECT id FROM " . $this->table . "
+            WHERE boat_id = :boat_id
+              AND fault_description = :fault_description
+              AND reporter_name = :reporter_name
+              AND reporter_email = :reporter_email
+              AND reported_at >= :reported_after
+            ORDER BY id DESC
+            LIMIT 1"
+        );
+        $stmt->bindValue(':boat_id', $boatId, PDO::PARAM_INT);
+        $stmt->bindValue(':fault_description', $faultDescription);
+        $stmt->bindValue(':reporter_name', $reporterName);
+        $stmt->bindValue(':reporter_email', $reporterEmail);
+        $stmt->bindValue(':reported_after', $reportedAfter);
+        $stmt->execute();
+
+        $duplicateId = $stmt->fetchColumn();
+        return ($duplicateId !== false) ? (int) $duplicateId : null;
+    }
+
     public function getAllReports($filter = 'all', $sortBy = 'created_at', $sortOrder = 'DESC', $boatId = null, $status = null, $page = 1, $perPage = 50)
     {
         try {

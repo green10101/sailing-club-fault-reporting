@@ -15,7 +15,7 @@
                 <a href="index.php?route=/login" class="btn btn-secondary">Bosun Login</a>
             <?php endif; ?>
         </div>
-        <form action="index.php?route=/report" method="POST">
+        <form action="index.php?route=/report" method="POST" data-single-submit="true">
             <div class="form-group">
                 <label for="boat_id">Boat Name</label>
                 <select id="boat_id" name="boat_id" class="form-control" required>
@@ -38,11 +38,12 @@
                 <textarea id="fault_description" name="fault_description" class="form-control" rows="4" required></textarea>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Submit Report</button>
+                <button type="submit" class="btn btn-primary" data-submitting-text="Submitting...">Submit Report</button>
                 <?php if (isset($_SESSION['user'])): ?>
                     <a href="index.php?route=/bosun/boats" class="btn btn-secondary">Cancel</a>
                 <?php endif; ?>
             </div>
+            <p data-submit-status style="margin-top: 0.75rem; color: #666; min-height: 1.5rem;"></p>
         </form>
     </div>
     <script src="/assets/js/app.js"></script>

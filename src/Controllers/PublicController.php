@@ -28,14 +28,27 @@ class PublicController
     public function submitReport()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $boatId = $_POST['boat_id'] ?? '';
-            $faultDescription = $_POST['fault_description'] ?? '';
-            $reporterName = $_POST['reporter_name'] ?? '';
-            $reporterEmail = $_POST['reporter_email'] ?? '';
+            $boatId = (int) ($_POST['boat_id'] ?? 0);
+            $faultDescription = trim((string) ($_POST['fault_description'] ?? ''));
+            $reporterName = trim((string) ($_POST['reporter_name'] ?? ''));
+            $reporterEmail = strtolower(trim((string) ($_POST['reporter_email'] ?? '')));
+
+            $existingReportId = $this->reportModel->findRecentDuplicateReportId(
+                $boatId,
+                $faultDescription,
+                $reporterName,
+                $reporterEmail
+            );
+
+            if ($existingReportId !== null) {
+                error_log('Duplicate fault report suppressed; using existing report #' . $existingReportId);
+                header('Location: index.php?route=/thanks');
+                exit;
+            }
 
             $reportId = $this->reportModel->createAndReturnId($boatId, $faultDescription, $reporterName, $reporterEmail);
             if ($reportId !== false) {
-                $boat = $this->boatModel->getBoatById((int) $boatId);
+                $boat = $this->boatModel->getBoatById($boatId);
                 $boatName = $boat['boat_name'] ?? 'Unknown boat';
 
                 // Email should never prevent a valid report from being saved.
@@ -60,7 +73,7 @@ class PublicController
                 header('Location: index.php?route=/thanks');
                 exit;
             } else {
-                // Handle error (e.g., show an error message)
+                error_log('Fault report could not be created for boat #' . $boatId);
             }
         }
     }
