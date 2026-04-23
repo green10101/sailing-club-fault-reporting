@@ -62,13 +62,14 @@ function buildCheckinFilterUrl($boatId, $faultFilter, $page = 1)
                     <th>Safe for Next</th>
                     <th>Faults to Rectify</th>
                     <th>Damage During Checkout</th>
+                    <th>Additional Notes</th>
                     <th>Fault Report</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($checkins)): ?>
                     <tr>
-                        <td colspan="9">No check-ins found for the selected filters.</td>
+                        <td colspan="10">No check-ins found for the selected filters.</td>
                     </tr>
                 <?php endif; ?>
                 <?php foreach ($checkins as $checkin): ?>
@@ -87,6 +88,7 @@ function buildCheckinFilterUrl($boatId, $faultFilter, $page = 1)
                                 <?php echo ((int) $checkin['damage_during_checkout'] === 1) ? 'Yes' : 'No'; ?>
                             <?php endif; ?>
                         </td>
+                        <td><?php echo !empty($checkin['checkin_notes']) ? nl2br(htmlspecialchars($checkin['checkin_notes'])) : '-'; ?></td>
                         <td>
                             <?php if (!empty($checkin['fault_report_id'])): ?>
                                 <a href="index.php?route=/bosun/edit/<?php echo (int) $checkin['fault_report_id']; ?>">
