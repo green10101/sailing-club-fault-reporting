@@ -26,9 +26,9 @@
             <input type="hidden" name="checkin_submission_token" value="<?php echo htmlspecialchars($checkinSubmissionToken ?? ''); ?>">
 
             <div class="form-group">
-                <label for="boat_id">Asset Name</label>
+                <label for="boat_id">Boat Name</label>
                 <select id="boat_id" name="boat_id" class="form-control" required>
-                    <option value="">Select an asset</option>
+                    <option value="">Select a boat</option>
                     <?php foreach ($boats as $boat): ?>
                         <option value="<?php echo $boat['id']; ?>" <?php echo ((string)($old['boat_id'] ?? '') === (string)$boat['id']) ? 'selected' : ''; ?>>
                             <?php echo htmlspecialchars($boat['boat_name']); ?>
