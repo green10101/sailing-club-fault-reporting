@@ -69,7 +69,7 @@
             </div>
 
             <div class="form-group">
-                <label>Is the boat free of faults that need rectification?</label>
+                <label>Is the boat free of faults that should be fixed?</label>
                 <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
                     <label style="font-weight: 500;"><input type="radio" name="has_faults_to_rectify" value="yes" <?php echo (($old['has_faults_to_rectify'] ?? '') === 'yes') ? 'checked' : ''; ?> required> Yes</label>
                     <label style="font-weight: 500;"><input type="radio" name="has_faults_to_rectify" value="no" <?php echo (($old['has_faults_to_rectify'] ?? '') === 'no') ? 'checked' : ''; ?> required> No</label>
