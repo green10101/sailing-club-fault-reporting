@@ -52,6 +52,8 @@ if ($requestUri === '/boats') {
     $requestUri = '/bosun/dashboard';
 } elseif ($requestUri === '/bosun/login') {
     $requestUri = '/login';
+} elseif ($requestUri === '/bosun/checkin') {
+    $requestUri = '/checkin';
 }
 
 switch ($requestUri) {

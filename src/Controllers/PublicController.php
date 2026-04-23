@@ -175,7 +175,9 @@ class PublicController
         }
 
         $safeForNextUser = ($safeForNextUserRaw === 'yes');
-        $hasFaultsToRectify = ($hasFaultsToRectifyRaw === 'yes');
+        // Q3 is phrased as "fault-free". "No" means faults exist and should be rectified.
+        $isFaultFree = ($hasFaultsToRectifyRaw === 'yes');
+        $hasFaultsToRectify = !$isFaultFree;
         $requiresFaultDetails = (!$safeForNextUser) || $hasFaultsToRectify;
 
         $damageDuringCheckout = null;
