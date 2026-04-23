@@ -2,7 +2,6 @@
 $currentBoatId = $_GET['boat_id'] ?? null;
 $currentFaultFilter = $_GET['fault_filter'] ?? 'all';
 $currentPage = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-$isAdmin = function_exists('userHasAdminRole') && userHasAdminRole();
 
 function buildCheckinFilterUrl($boatId, $faultFilter, $page = 1)
 {
@@ -65,13 +64,12 @@ function buildCheckinFilterUrl($boatId, $faultFilter, $page = 1)
                     <th>Damage During Checkout</th>
                     <th>Additional Notes</th>
                     <th>Fault Report</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($checkins)): ?>
                     <tr>
-                        <td colspan="11">No check-ins found for the selected filters.</td>
+                        <td colspan="10">No check-ins found for the selected filters.</td>
                     </tr>
                 <?php endif; ?>
                 <?php foreach ($checkins as $checkin): ?>
@@ -96,16 +94,6 @@ function buildCheckinFilterUrl($boatId, $faultFilter, $page = 1)
                                 <a href="index.php?route=/bosun/edit/<?php echo (int) $checkin['fault_report_id']; ?>">
                                     #<?php echo (int) $checkin['fault_report_id']; ?>
                                 </a>
-                            <?php else: ?>
-                                -
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <?php if ($isAdmin): ?>
-                                <form method="POST" action="index.php?route=/admin/delete-checkin/<?php echo (int) $checkin['id']; ?>" onsubmit="return confirm('Delete this check-in record? This cannot be undone.');" style="margin: 0; padding: 0; background: transparent; border: none; box-shadow: none; border-top: none; display: inline;">
-                                    <?php echo csrfField(); ?>
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" style="margin: 0;">Delete</button>
-                                </form>
                             <?php else: ?>
                                 -
                             <?php endif; ?>
