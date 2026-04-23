@@ -78,7 +78,7 @@
 
             <div id="faultDetailsPanel" style="display: none; border: 1px solid #dee2e6; border-radius: 8px; padding: 1rem; background: #f8f9fa; margin-bottom: 1rem;">
                 <div class="form-group">
-                    <label>Did the damage happen during this checkout?</label>
+                    <label>Did this fault occur during your checkout?</label>
                     <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
                         <label style="font-weight: 500;"><input type="radio" name="damage_during_checkout" value="yes" <?php echo (($old['damage_during_checkout'] ?? '') === 'yes') ? 'checked' : ''; ?>> Yes</label>
                         <label style="font-weight: 500;"><input type="radio" name="damage_during_checkout" value="no" <?php echo (($old['damage_during_checkout'] ?? '') === 'no') ? 'checked' : ''; ?>> No</label>
@@ -86,8 +86,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="fault_description">Fault Description</label>
-                    <textarea id="fault_description" name="fault_description" class="form-control" rows="4" placeholder="Describe any faults or safety concerns for the next user..."><?php echo htmlspecialchars($old['fault_description'] ?? ''); ?></textarea>
+                    <label for="fault_description">Please describe the fault(s) that need rectification.</label>
+                    <textarea id="fault_description" name="fault_description" class="form-control" rows="4" placeholder="Describe the fault(s) that need rectification..."><?php echo htmlspecialchars($old['fault_description'] ?? ''); ?></textarea>
                 </div>
             </div>
 
