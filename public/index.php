@@ -68,6 +68,13 @@ switch ($requestUri) {
         // Show report form for both logged-in staff and public users
         $controller->showReportForm();
         break;
+    case '/checkin':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->submitCheckin();
+        } else {
+            $controller->showCheckinForm();
+        }
+        break;
     case '/report':
         $controller->submitReport();
         break;
@@ -157,6 +164,14 @@ switch ($requestUri) {
         }
         $bosunController = new \src\Controllers\BosunController();
         $bosunController->dashboard();
+        break;
+    case '/bosun/checkins':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /bosun/login');
+            exit;
+        }
+        $bosunController = new \src\Controllers\BosunController();
+        $bosunController->checkins();
         break;
     case '/bosun/boats':
         if (!isset($_SESSION['user'])) {

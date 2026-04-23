@@ -66,6 +66,7 @@
                     <th><a href="<?php echo getSortUrl('boat_type', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Asset Type <?php echo getSortIcon('boat_type', $currentSort, $currentOrder); ?></a></th>
                     <th><a href="<?php echo getSortUrl('status', $currentFilter, $currentSort, $currentOrder); ?>" class="text-decoration-none">Status <?php echo getSortIcon('status', $currentSort, $currentOrder); ?></a></th>
                     <th>Active Faults</th>
+                    <th>Number of Uses</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -80,6 +81,7 @@
                                 <?php echo $boat['active_faults']; ?> active
                             </a>
                         </td>
+                        <td><?php echo (int) ($boat['number_of_uses'] ?? 0); ?></td>
                         <td>
                             <a href="index.php?route=/bosun/boat/edit/<?php echo $boat['id']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
                         </td>

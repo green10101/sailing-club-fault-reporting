@@ -4,18 +4,21 @@ namespace src\Controllers;
 
 use src\Models\Report;
 use src\Models\Boat;
+use src\Models\BoatCheckin;
 use src\Services\MailService;
 
 class BosunController
 {
     protected $reportModel;
     protected $boatModel;
+    protected $boatCheckinModel;
     protected $mailService;
 
     public function __construct()
     {
         $this->reportModel = new Report();
         $this->boatModel = new Boat();
+        $this->boatCheckinModel = new BoatCheckin();
         $this->mailService = new MailService();
     }
 
@@ -82,11 +85,34 @@ class BosunController
         $sortBy = $_GET['sort'] ?? 'boat_name';
         $sortOrder = $_GET['order'] ?? 'ASC';
         $boats = $this->boatModel->getBoatsFilteredSorted($filter, $sortBy, $sortOrder);
+        $activeFaultCounts = $this->boatModel->getActiveFaultCountsByBoatId();
+        $useCounts = $this->boatModel->getUseCountsByBoatId();
         foreach ($boats as &$boat) {
-            $boat['active_faults'] = $this->boatModel->getActiveFaultCount($boat['id']);
+            $boatId = (int) $boat['id'];
+            $boat['active_faults'] = $activeFaultCounts[$boatId] ?? 0;
+            $boat['number_of_uses'] = $useCounts[$boatId] ?? 0;
         }
         unset($boat); // break reference to avoid unexpected foreach behavior
         include '../src/Views/bosun/boats.php';
+    }
+
+    public function checkins()
+    {
+        $boatId = isset($_GET['boat_id']) && $_GET['boat_id'] !== '' ? (int) $_GET['boat_id'] : null;
+        $faultFilter = $_GET['fault_filter'] ?? 'all';
+        if (!in_array($faultFilter, ['all', 'with_fault', 'without_fault'], true)) {
+            $faultFilter = 'all';
+        }
+
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+        $perPage = 50;
+
+        $checkins = $this->boatCheckinModel->getCheckins($boatId, $faultFilter, $page, $perPage);
+        $totalCheckins = $this->boatCheckinModel->getCheckinsCount($boatId, $faultFilter);
+        $totalPages = max(1, (int) ceil($totalCheckins / $perPage));
+        $boats = $this->boatModel->getAllBoats();
+
+        include '../src/Views/bosun/checkins.php';
     }
 
     public function updateBoatStatus($boatId, $status)

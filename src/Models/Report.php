@@ -41,6 +41,55 @@ class Report
         return (int) $this->db->lastInsertId();
     }
 
+    public function createFromCheckin($boatId, $faultDescription, $reporterName = '', $reporterEmail = '', $boatCheckinId = null): int|false
+    {
+        $columns = ['boat_id', 'fault_description', 'reporter_name', 'reporter_email', 'reported_at'];
+        $placeholders = [':boat_id', ':fault_description', ':reporter_name', ':reporter_email', 'NOW()'];
+        $params = [
+            ':boat_id' => (int) $boatId,
+            ':fault_description' => $faultDescription,
+            ':reporter_name' => $reporterName,
+            ':reporter_email' => $reporterEmail,
+        ];
+
+        try {
+            $sourceColumn = $this->db->query("SHOW COLUMNS FROM " . $this->table . " LIKE 'source'");
+            if ($sourceColumn && $sourceColumn->rowCount() > 0) {
+                $columns[] = 'source';
+                $placeholders[] = ':source';
+                $params[':source'] = 'boat_checkin';
+            }
+
+            if ($boatCheckinId !== null) {
+                $checkinColumn = $this->db->query("SHOW COLUMNS FROM " . $this->table . " LIKE 'boat_checkin_id'");
+                if ($checkinColumn && $checkinColumn->rowCount() > 0) {
+                    $columns[] = 'boat_checkin_id';
+                    $placeholders[] = ':boat_checkin_id';
+                    $params[':boat_checkin_id'] = (int) $boatCheckinId;
+                }
+            }
+        } catch (\Throwable $e) {
+            // Keep backward compatibility with schemas that don't yet have provenance columns.
+        }
+
+        $query = "INSERT INTO " . $this->table . " (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
+        $stmt = $this->db->prepare($query);
+
+        foreach ($params as $key => $value) {
+            if ($key === ':boat_id' || $key === ':boat_checkin_id') {
+                $stmt->bindValue($key, $value, PDO::PARAM_INT);
+            } else {
+                $stmt->bindValue($key, $value);
+            }
+        }
+
+        if (!$stmt->execute()) {
+            return false;
+        }
+
+        return (int) $this->db->lastInsertId();
+    }
+
     public function findRecentDuplicateReportId($boatId, $faultDescription, $reporterName = '', $reporterEmail = '', $windowSeconds = 120): ?int
     {
         $reportedAfter = date('Y-m-d H:i:s', time() - max(1, (int) $windowSeconds));
