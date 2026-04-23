@@ -204,9 +204,14 @@ class AdminController
         }
 
         $reportModel = new \src\Models\Report();
-        $reportModel->deleteReport($id);
-        
-        $_SESSION['flash_message'] = 'Fault report deleted successfully.';
+        $deleted = $reportModel->deleteReport($id);
+
+        if ($deleted) {
+            $_SESSION['flash_message'] = 'Fault report deleted successfully.';
+        } else {
+            $_SESSION['flash_message'] = 'Could not delete the fault report. Please try again.';
+        }
+
         header('Location: index.php?route=/bosun/dashboard');
         exit;
     }

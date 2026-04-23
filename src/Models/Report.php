@@ -8,6 +8,7 @@ class Report
 {
     private $db;
     private $table = 'reports';
+    private $hasBoatCheckinsTable = null;
 
     public function __construct()
     {
@@ -16,9 +17,44 @@ class Report
 
     public function deleteReport($id)
     {
-        $stmt = $this->db->prepare("DELETE FROM " . $this->table . " WHERE id = :id");
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-        return $stmt->execute();
+        try {
+            $this->db->beginTransaction();
+
+            if ($this->hasBoatCheckinsTable()) {
+                $unlinkStmt = $this->db->prepare("UPDATE boat_checkins SET fault_report_id = NULL WHERE fault_report_id = :id");
+                $unlinkStmt->bindValue(':id', $id, PDO::PARAM_INT);
+                $unlinkStmt->execute();
+            }
+
+            $stmt = $this->db->prepare("DELETE FROM " . $this->table . " WHERE id = :id");
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $deleted = $stmt->execute();
+
+            $this->db->commit();
+            return $deleted;
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            error_log('Report delete failed for report #' . (int) $id . ': ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function hasBoatCheckinsTable(): bool
+    {
+        if ($this->hasBoatCheckinsTable !== null) {
+            return $this->hasBoatCheckinsTable;
+        }
+
+        try {
+            $stmt = $this->db->query("SHOW TABLES LIKE 'boat_checkins'");
+            $this->hasBoatCheckinsTable = (bool) ($stmt && $stmt->fetch());
+        } catch (\Throwable $e) {
+            $this->hasBoatCheckinsTable = false;
+        }
+
+        return $this->hasBoatCheckinsTable;
     }
 
     public function create($boatId, $faultDescription, $reporterName = '', $reporterEmail = ''): bool
