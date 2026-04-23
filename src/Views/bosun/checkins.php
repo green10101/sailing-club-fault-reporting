@@ -2,8 +2,7 @@
 $currentBoatId = $_GET['boat_id'] ?? null;
 $currentFaultFilter = $_GET['fault_filter'] ?? 'all';
 $currentPage = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-$sessionRole = isset($_SESSION['user']['role']) ? strtolower(trim((string) $_SESSION['user']['role'])) : '';
-$isAdmin = $sessionRole === 'admin';
+$isAdmin = function_exists('userHasAdminRole') && userHasAdminRole();
 
 function buildCheckinFilterUrl($boatId, $faultFilter, $page = 1)
 {
