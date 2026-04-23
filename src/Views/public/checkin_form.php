@@ -14,6 +14,8 @@
                 <a href="index.php?route=/" class="btn btn-secondary">Report a Fault</a>
                 <?php if (!isset($_SESSION['user'])): ?>
                     <a href="index.php?route=/login" class="btn btn-secondary">Bosun Login</a>
+                <?php else: ?>
+                    <a href="index.php?route=/bosun/boats" class="btn btn-secondary">Bosun Dashboard</a>
                 <?php endif; ?>
             </div>
         </div>
