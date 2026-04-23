@@ -5,6 +5,7 @@ $currentBoatId = $_GET['boat_id'] ?? null;
 $currentSort = $_GET['sort'] ?? 'r.reported_at';
 $currentOrder = $_GET['order'] ?? 'DESC';
 $currentPage = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$sessionRole = isset($_SESSION['user']['role']) ? strtolower(trim((string) $_SESSION['user']['role'])) : '';
 
 // Determine if we're showing only active faults
 $showActiveOnly = ($currentStatus !== 'Complete' && $currentStatus !== 'All');
@@ -171,7 +172,7 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
                                     <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
                                 </svg>
                             </a>
-                            <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
+                            <?php if ($sessionRole === 'admin'): ?>
                                 <button onclick="if(confirm('Are you sure you want to delete this fault report? This action cannot be undone.')) { window.location.href='index.php?route=/admin/delete-report/<?php echo $report['id']; ?>'; }" class="btn btn-sm btn-outline-danger" title="Delete Report" style="padding: 0.25rem 0.5rem; line-height: 1; margin-left: 0.25rem;">
                                     <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: middle;">
                                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>

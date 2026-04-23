@@ -2,7 +2,8 @@
 $currentBoatId = $_GET['boat_id'] ?? null;
 $currentFaultFilter = $_GET['fault_filter'] ?? 'all';
 $currentPage = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-$isAdmin = isset($_SESSION['user']) && isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin';
+$sessionRole = isset($_SESSION['user']['role']) ? strtolower(trim((string) $_SESSION['user']['role'])) : '';
+$isAdmin = $sessionRole === 'admin';
 
 function buildCheckinFilterUrl($boatId, $faultFilter, $page = 1)
 {
@@ -65,15 +66,12 @@ function buildCheckinFilterUrl($boatId, $faultFilter, $page = 1)
                     <th>Damage During Checkout</th>
                     <th>Additional Notes</th>
                     <th>Fault Report</th>
-                    <?php if ($isAdmin): ?>
-                        <th>Actions</th>
-                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($checkins)): ?>
                     <tr>
-                        <td colspan="<?php echo $isAdmin ? '11' : '10'; ?>">No check-ins found for the selected filters.</td>
+                        <td colspan="10">No check-ins found for the selected filters.</td>
                     </tr>
                 <?php endif; ?>
                 <?php foreach ($checkins as $checkin): ?>
@@ -101,15 +99,13 @@ function buildCheckinFilterUrl($boatId, $faultFilter, $page = 1)
                             <?php else: ?>
                                 -
                             <?php endif; ?>
-                        </td>
-                        <?php if ($isAdmin): ?>
-                            <td>
+                            <?php if ($isAdmin): ?>
                                 <form method="POST" action="index.php?route=/admin/delete-checkin/<?php echo (int) $checkin['id']; ?>" onsubmit="return confirm('Delete this check-in record? This cannot be undone.');" style="margin: 0;">
                                     <?php echo csrfField(); ?>
-                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-danger" style="margin-top: 0.4rem;">Delete Check-In</button>
                                 </form>
-                            </td>
-                        <?php endif; ?>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

@@ -194,7 +194,8 @@ class AdminController
 
     private function isAdmin()
     {
-        return isset($_SESSION['user']) && isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin';
+        $role = isset($_SESSION['user']['role']) ? strtolower(trim((string) $_SESSION['user']['role'])) : '';
+        return $role === 'admin';
     }
 
     public function deleteReport($id)

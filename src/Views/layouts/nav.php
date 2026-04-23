@@ -10,6 +10,7 @@ $isCheckinForm = strpos($currentPath, '/checkin') !== false;
 $isCheckins = strpos($currentPath, '/bosun/checkins') === 0;
 $isAdmin = strpos($currentPath, '/admin/') === 0;
 $isProfile = strpos($currentPath, '/profile') === 0;
+$sessionRole = isset($_SESSION['user']['role']) ? strtolower(trim((string) $_SESSION['user']['role'])) : '';
 ?>
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4" style="background-color: #f8f9fa; padding: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid #dee2e6;">
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
@@ -18,7 +19,7 @@ $isProfile = strpos($currentPath, '/profile') === 0;
         <a href="index.php?route=/bosun/checkins" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isCheckins ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">Check-In History</a>
         <a href="index.php?route=/checkin" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isCheckinForm ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">Boat Check-In</a>
         <a href="index.php?route=/report-form" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isReportForm ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">Report a Fault</a>
-        <?php if (isset($_SESSION['user']) && isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
+        <?php if ($sessionRole === 'admin'): ?>
             <a href="index.php?route=/admin/users" class="btn" style="background-color: #004d99; color: white; border: none; <?php echo !$isAdmin ? 'opacity: 0.7;' : ''; ?>padding: 8px 12px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem;">User Management</a>
         <?php endif; ?>
         <?php if (isset($_SESSION['user'])): ?>
