@@ -8,6 +8,7 @@ class BoatCheckin
 {
     private $db;
     private $table = 'boat_checkins';
+    private $hasReportsBoatCheckinColumn = null;
 
     public function __construct()
     {
@@ -148,5 +149,47 @@ class BoatCheckin
             error_log('Boat check-in count failed: ' . $e->getMessage());
             return 0;
         }
+    }
+
+    public function deleteCheckin(int $checkinId): bool
+    {
+        try {
+            $this->db->beginTransaction();
+
+            if ($this->hasReportsBoatCheckinColumn()) {
+                $unlinkReportsStmt = $this->db->prepare('UPDATE reports SET boat_checkin_id = NULL WHERE boat_checkin_id = :checkin_id');
+                $unlinkReportsStmt->bindValue(':checkin_id', $checkinId, PDO::PARAM_INT);
+                $unlinkReportsStmt->execute();
+            }
+
+            $deleteStmt = $this->db->prepare("DELETE FROM {$this->table} WHERE id = :id");
+            $deleteStmt->bindValue(':id', $checkinId, PDO::PARAM_INT);
+            $deleted = $deleteStmt->execute();
+
+            $this->db->commit();
+            return $deleted;
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            error_log('Boat check-in delete failed for #' . $checkinId . ': ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function hasReportsBoatCheckinColumn(): bool
+    {
+        if ($this->hasReportsBoatCheckinColumn !== null) {
+            return $this->hasReportsBoatCheckinColumn;
+        }
+
+        try {
+            $stmt = $this->db->query("SHOW COLUMNS FROM reports LIKE 'boat_checkin_id'");
+            $this->hasReportsBoatCheckinColumn = (bool) ($stmt && $stmt->fetch());
+        } catch (\Throwable $e) {
+            $this->hasReportsBoatCheckinColumn = false;
+        }
+
+        return $this->hasReportsBoatCheckinColumn;
     }
 }

@@ -3,6 +3,7 @@
 namespace src\Controllers;
 
 use src\Models\User;
+use src\Models\BoatCheckin;
 
 class AdminController
 {
@@ -213,6 +214,32 @@ class AdminController
         }
 
         header('Location: index.php?route=/bosun/dashboard');
+        exit;
+    }
+
+    public function deleteCheckin($id)
+    {
+        if (!$this->isAdmin()) {
+            header('Location: index.php?route=/login');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verifyCsrfToken()) {
+            $_SESSION['flash_message'] = 'Security token validation failed. Please try again.';
+            header('Location: index.php?route=/bosun/checkins');
+            exit;
+        }
+
+        $boatCheckinModel = new BoatCheckin();
+        $deleted = $boatCheckinModel->deleteCheckin((int) $id);
+
+        if ($deleted) {
+            $_SESSION['flash_message'] = 'Boat check-in deleted successfully.';
+        } else {
+            $_SESSION['flash_message'] = 'Could not delete the boat check-in. Please try again.';
+        }
+
+        header('Location: index.php?route=/bosun/checkins');
         exit;
     }
 }

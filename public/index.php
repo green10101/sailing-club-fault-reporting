@@ -172,6 +172,15 @@ switch ($requestUri) {
         $adminController = new \src\Controllers\AdminController();
         $adminController->deleteReport($reportId);
         break;
+    case (preg_match('/^\/admin\/delete-checkin\/(\d+)$/', $requestUri, $matches) ? $requestUri : null):
+        if (!isset($_SESSION['user'])) {
+            header('Location: /bosun/login');
+            exit;
+        }
+        $checkinId = $matches[1];
+        $adminController = new \src\Controllers\AdminController();
+        $adminController->deleteCheckin($checkinId);
+        break;
     case (preg_match('/^\/admin\/user\/reset-password\/(\d+)$/', $requestUri, $matches) ? $requestUri : null):
         if (!isset($_SESSION['user'])) {
             header('Location: /bosun/login');
