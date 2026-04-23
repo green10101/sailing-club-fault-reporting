@@ -94,6 +94,9 @@
             <div class="form-group">
                 <label for="checkin_notes">Additional Notes (Optional)</label>
                 <textarea id="checkin_notes" name="checkin_notes" class="form-control" rows="3"><?php echo htmlspecialchars($old['checkin_notes'] ?? ''); ?></textarea>
+                <small id="checkinNotesPrompt" style="display: none; color: #8a6d3b; margin-top: 0.5rem;">
+                    Please add details here about what was not put away properly.
+                </small>
             </div>
 
             <div class="form-group">
@@ -107,10 +110,13 @@
     <script src="assets/js/app.js"></script>
     <script>
         (function () {
+            const putAwayInputs = document.querySelectorAll('input[name="put_away_ok"]');
             const safeInputs = document.querySelectorAll('input[name="safe_for_next_user"]');
             const faultInputs = document.querySelectorAll('input[name="has_faults_to_rectify"]');
             const damageInputs = document.querySelectorAll('input[name="damage_during_checkout"]');
             const faultDescription = document.getElementById('fault_description');
+            const checkinNotes = document.getElementById('checkin_notes');
+            const checkinNotesPrompt = document.getElementById('checkinNotesPrompt');
             const panel = document.getElementById('faultDetailsPanel');
 
             function selectedValue(inputs) {
@@ -132,6 +138,23 @@
                 faultDescription.required = requiresFaultDetails;
             }
 
+            function updateNotesPrompt() {
+                const putAwayValue = selectedValue(putAwayInputs);
+                const shouldPromptForNotes = putAwayValue === 'no';
+
+                checkinNotesPrompt.style.display = shouldPromptForNotes ? 'block' : 'none';
+
+                if (shouldPromptForNotes) {
+                    checkinNotes.setAttribute('aria-describedby', 'checkinNotesPrompt');
+                } else {
+                    checkinNotes.removeAttribute('aria-describedby');
+                }
+            }
+
+            putAwayInputs.forEach(function (input) {
+                input.addEventListener('change', updateNotesPrompt);
+            });
+
             safeInputs.forEach(function (input) {
                 input.addEventListener('change', updateFaultPanel);
             });
@@ -140,6 +163,7 @@
             });
 
             updateFaultPanel();
+            updateNotesPrompt();
         })();
     </script>
 </body>
