@@ -11,7 +11,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; gap: 0.5rem; flex-wrap: wrap;">
             <h1>Boat Check-In</h1>
             <div>
-                <a href="index.php?route=/" class="btn btn-secondary">Report a Fault</a>
+                <a href="index.php?route=/report-form" class="btn btn-secondary">Report a Fault</a>
                 <?php if (!isset($_SESSION['user'])): ?>
                     <a href="index.php?route=/login" class="btn btn-secondary">Bosun Login</a>
                 <?php else: ?>
