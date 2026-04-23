@@ -58,6 +58,9 @@
                     <label style="font-weight: 500;"><input type="radio" name="put_away_ok" value="yes" <?php echo (($old['put_away_ok'] ?? '') === 'yes') ? 'checked' : ''; ?> required> Yes</label>
                     <label style="font-weight: 500;"><input type="radio" name="put_away_ok" value="no" <?php echo (($old['put_away_ok'] ?? '') === 'no') ? 'checked' : ''; ?> required> No</label>
                 </div>
+                <small id="putAwayNoPrompt" style="display: none; color: #8a6d3b; margin-top: 0.5rem;">
+                    You selected "No". Please add the reason in the Additional Notes section below.
+                </small>
             </div>
 
             <div class="form-group">
@@ -94,9 +97,6 @@
             <div class="form-group">
                 <label for="checkin_notes">Additional Notes (Optional)</label>
                 <textarea id="checkin_notes" name="checkin_notes" class="form-control" rows="3"><?php echo htmlspecialchars($old['checkin_notes'] ?? ''); ?></textarea>
-                <small id="checkinNotesPrompt" style="display: none; color: #8a6d3b; margin-top: 0.5rem;">
-                    Please add details here about what was not put away properly.
-                </small>
             </div>
 
             <div class="form-group">
@@ -116,7 +116,7 @@
             const damageInputs = document.querySelectorAll('input[name="damage_during_checkout"]');
             const faultDescription = document.getElementById('fault_description');
             const checkinNotes = document.getElementById('checkin_notes');
-            const checkinNotesPrompt = document.getElementById('checkinNotesPrompt');
+            const putAwayNoPrompt = document.getElementById('putAwayNoPrompt');
             const panel = document.getElementById('faultDetailsPanel');
 
             function selectedValue(inputs) {
@@ -142,10 +142,10 @@
                 const putAwayValue = selectedValue(putAwayInputs);
                 const shouldPromptForNotes = putAwayValue === 'no';
 
-                checkinNotesPrompt.style.display = shouldPromptForNotes ? 'block' : 'none';
+                putAwayNoPrompt.style.display = shouldPromptForNotes ? 'block' : 'none';
 
                 if (shouldPromptForNotes) {
-                    checkinNotes.setAttribute('aria-describedby', 'checkinNotesPrompt');
+                    checkinNotes.setAttribute('aria-describedby', 'putAwayNoPrompt');
                 } else {
                     checkinNotes.removeAttribute('aria-describedby');
                 }
