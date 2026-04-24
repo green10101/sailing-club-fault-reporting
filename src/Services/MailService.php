@@ -33,16 +33,33 @@ class MailService
         $reporterName = trim((string) ($reportData['reporter_name'] ?? ''));
         $faultDescription = trim((string) ($reportData['fault_description'] ?? ''));
         $fromCheckin = (($reportData['source'] ?? '') === 'boat_checkin');
+        $isSevere = (bool) ($reportData['is_severe'] ?? false);
+        $reportedAt = trim((string) ($reportData['reported_at'] ?? date('Y-m-d H:i:s')));
 
-        $subject = 'New Fault Report #' . $reportId . ' - ' . $boatName;
-        $body = ($fromCheckin ? "*** This fault was reported during a boat check-in. ***\n\n" : '')
-            . "A new fault report has been submitted.\n\n"
+        $sourceLabel = $fromCheckin ? 'Boat Check-In' : 'Fault Form';
+        $severityHeading = $isSevere
+            ? "SEVERE ISSUE: Safety / Not Operational"
+            : "Standard Fault Report";
+
+        $faultSection = ($faultDescription !== '') ? $faultDescription : '(No description provided)';
+
+        $subjectPrefix = $isSevere ? '[SEVERE] ' : '';
+        $subject = $subjectPrefix . 'Fault Report #' . $reportId . ' - ' . $boatName;
+        $body = "FAULT ALERT\n"
+            . "===========\n"
+            . $severityHeading . "\n\n"
+            . "Boat: " . $boatName . "\n\n"
+            . "Fault Description:\n"
+            . "------------------\n"
+            . $faultSection . "\n\n"
+            . "Additional Details\n"
+            . "------------------\n"
             . "Report ID: " . $reportId . "\n"
-            . "Boat Name: " . $boatName . "\n"
-            . ($fromCheckin ? "Source: Boat Check-In\n" : '')
+            . "Source: " . $sourceLabel . "\n"
+            . "Reported By: " . $reporterName . "\n"
             . "Reporter Email: " . $reporterEmail . "\n"
-            . "Reporter Name: " . $reporterName . "\n"
-            . "Fault Description:\n\n" . $faultDescription . "\n\n"
+            . "Reported At: " . $reportedAt . "\n\n"
+            . "Open in bosun dashboard:\n"
             . "https://cyc.uk/bosun/index.php";
 
         try {
