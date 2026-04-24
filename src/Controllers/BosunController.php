@@ -370,4 +370,75 @@ class BosunController
         
         include '../src/Views/bosun/print_report.php';
     }
+
+    public function exportReportsCsv()
+    {
+        $status = $_GET['status'] ?? null;
+        $filter = 'all';
+        if ($status === null) {
+            $filter = 'active';
+        }
+
+        $sortBy = $_GET['sort'] ?? 'r.reported_at';
+        $sortOrder = $_GET['order'] ?? 'DESC';
+        $boatId = $_GET['boat_id'] ?? null;
+        if ($boatId === '') {
+            $boatId = null;
+        }
+
+        $reports = $this->reportModel->getReportsForExport($filter, $sortBy, $sortOrder, $boatId, $status);
+
+        $timestamp = date('Ymd_His');
+        $filename = 'fault_reports_' . $timestamp . '.csv';
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=' . $filename);
+
+        $output = fopen('php://output', 'w');
+        if ($output === false) {
+            http_response_code(500);
+            exit;
+        }
+
+        fputcsv($output, [
+            'Report ID',
+            'Reported At',
+            'Boat ID',
+            'Boat Name',
+            'Boat Type',
+            'Fault Description',
+            'Reporter Name',
+            'Reporter Email',
+            'Status',
+            'Source',
+            'Bosun Notes',
+            'Bosun Assessment',
+            'Part Required',
+            'Part Status',
+            'Completion Date',
+        ]);
+
+        foreach ($reports as $report) {
+            fputcsv($output, [
+                (int) ($report['id'] ?? 0),
+                (string) ($report['reported_at'] ?? ''),
+                !empty($report['boat_id']) ? (int) $report['boat_id'] : '',
+                (string) ($report['boat_name'] ?? ''),
+                (string) ($report['boat_type'] ?? ''),
+                (string) ($report['fault_description'] ?? ''),
+                (string) ($report['reporter_name'] ?? ''),
+                (string) ($report['reporter_email'] ?? ''),
+                (string) ($report['status'] ?? ''),
+                (string) ($report['source'] ?? ''),
+                (string) ($report['bosun_notes'] ?? ''),
+                (string) ($report['bosun_assessment'] ?? ''),
+                (string) ($report['part_required'] ?? ''),
+                (string) ($report['part_status'] ?? ''),
+                (string) ($report['completion_date'] ?? ''),
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
 }

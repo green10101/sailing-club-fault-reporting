@@ -230,6 +230,14 @@ switch ($requestUri) {
         $bosunController = new \src\Controllers\BosunController();
         $bosunController->printReport();
         break;
+    case '/bosun/export-reports-csv':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /bosun/login');
+            exit;
+        }
+        $bosunController = new \src\Controllers\BosunController();
+        $bosunController->exportReportsCsv();
+        break;
     case '/bosun/boat/new':
         if (!isset($_SESSION['user'])) {
             header('Location: /bosun/login');

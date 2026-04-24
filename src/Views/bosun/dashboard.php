@@ -58,6 +58,17 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
     }
     return $url;
 }
+
+function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, $currentOrder) {
+    $url = "index.php?route=/bosun/export-reports-csv&sort={$currentSort}&order={$currentOrder}";
+    if ($currentStatus) {
+        $url .= "&status=" . urlencode($currentStatus);
+    }
+    if ($currentBoatId) {
+        $url .= "&boat_id=" . urlencode($currentBoatId);
+    }
+    return $url;
+}
 ?>
 
 <!DOCTYPE html>
@@ -120,6 +131,7 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
                 🖨️ Print Selected
             </button>
             <a href="index.php?route=/bosun/print-report" class="btn btn-success" target="_blank">🖨️ Print All Reports</a>
+            <a href="<?php echo buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, $currentOrder); ?>" class="btn btn-success">⬇️ Export CSV</a>
         </div>
         <table class="table table-responsive">
             <thead>

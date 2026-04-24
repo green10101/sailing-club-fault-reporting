@@ -229,6 +229,60 @@ class Report
         }
     }
 
+    public function getReportsForExport($filter = 'all', $sortBy = 'r.reported_at', $sortOrder = 'DESC', $boatId = null, $status = null): array
+    {
+        try {
+            $query = "SELECT r.*, b.boat_name, b.boat_type FROM " . $this->table . " r LEFT JOIN boats b ON r.boat_id = b.id";
+            $params = [];
+            $whereConditions = [];
+
+            if ($filter === 'active' && $status === null) {
+                $whereConditions[] = "r.status IN ('New', 'In progress', 'Waiting parts')";
+            }
+
+            if ($status !== null && $status !== 'All') {
+                $whereConditions[] = "r.status = :status";
+                $params[':status'] = $status;
+            }
+
+            if ($boatId !== null) {
+                $whereConditions[] = "r.boat_id = :boat_id";
+                $params[':boat_id'] = (int) $boatId;
+            }
+
+            if (!empty($whereConditions)) {
+                $query .= " WHERE " . implode(" AND ", $whereConditions);
+            }
+
+            $allowedSortColumns = ['r.id', 'b.boat_name', 'r.status', 'r.reported_at'];
+            if (!in_array($sortBy, $allowedSortColumns, true)) {
+                $sortBy = 'r.reported_at';
+            }
+
+            $sortOrder = strtoupper($sortOrder);
+            if ($sortOrder !== 'ASC' && $sortOrder !== 'DESC') {
+                $sortOrder = 'DESC';
+            }
+
+            $query .= " ORDER BY {$sortBy} {$sortOrder}";
+
+            $stmt = $this->db->prepare($query);
+            foreach ($params as $key => $value) {
+                if ($key === ':boat_id') {
+                    $stmt->bindValue($key, $value, PDO::PARAM_INT);
+                } else {
+                    $stmt->bindValue($key, $value);
+                }
+            }
+
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('Error in getReportsForExport: ' . $e->getMessage());
+            return [];
+        }
+    }
+
     public function getReportById($id)
     {
         $stmt = $this->db->prepare("SELECT r.*, b.boat_name FROM " . $this->table . " r LEFT JOIN boats b ON r.boat_id = b.id WHERE r.id = :id");
