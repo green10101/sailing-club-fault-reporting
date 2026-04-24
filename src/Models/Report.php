@@ -8,6 +8,7 @@ class Report
 {
     private $db;
     private $table = 'reports';
+    private $hasBoatCheckinsTable = null;
 
     public function __construct()
     {
@@ -16,17 +17,52 @@ class Report
 
     public function deleteReport($id)
     {
-        $stmt = $this->db->prepare("DELETE FROM " . $this->table . " WHERE id = :id");
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-        return $stmt->execute();
+        try {
+            $this->db->beginTransaction();
+
+            if ($this->hasBoatCheckinsTable()) {
+                $unlinkStmt = $this->db->prepare("UPDATE boat_checkins SET fault_report_id = NULL WHERE fault_report_id = :id");
+                $unlinkStmt->bindValue(':id', $id, PDO::PARAM_INT);
+                $unlinkStmt->execute();
+            }
+
+            $stmt = $this->db->prepare("DELETE FROM " . $this->table . " WHERE id = :id");
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $deleted = $stmt->execute();
+
+            $this->db->commit();
+            return $deleted;
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            error_log('Report delete failed for report #' . (int) $id . ': ' . $e->getMessage());
+            return false;
+        }
     }
 
-    public function create($boatId, $faultDescription, $reporterName = '', $reporterEmail = '')
+    private function hasBoatCheckinsTable(): bool
+    {
+        if ($this->hasBoatCheckinsTable !== null) {
+            return $this->hasBoatCheckinsTable;
+        }
+
+        try {
+            $stmt = $this->db->query("SHOW TABLES LIKE 'boat_checkins'");
+            $this->hasBoatCheckinsTable = (bool) ($stmt && $stmt->fetch());
+        } catch (\Throwable $e) {
+            $this->hasBoatCheckinsTable = false;
+        }
+
+        return $this->hasBoatCheckinsTable;
+    }
+
+    public function create($boatId, $faultDescription, $reporterName = '', $reporterEmail = ''): bool
     {
         return $this->createAndReturnId($boatId, $faultDescription, $reporterName, $reporterEmail) !== false;
     }
 
-    public function createAndReturnId($boatId, $faultDescription, $reporterName = '', $reporterEmail = '')
+    public function createAndReturnId($boatId, $faultDescription, $reporterName = '', $reporterEmail = ''): int|false
     {
         $stmt = $this->db->prepare("INSERT INTO " . $this->table . " (boat_id, fault_description, reporter_name, reporter_email, reported_at) VALUES (:boat_id, :fault_description, :reporter_name, :reporter_email, NOW())");
         $stmt->bindValue(':boat_id', $boatId);
@@ -41,7 +77,56 @@ class Report
         return (int) $this->db->lastInsertId();
     }
 
-    public function findRecentDuplicateReportId($boatId, $faultDescription, $reporterName = '', $reporterEmail = '', $windowSeconds = 120)
+    public function createFromCheckin($boatId, $faultDescription, $reporterName = '', $reporterEmail = '', $boatCheckinId = null): int|false
+    {
+        $columns = ['boat_id', 'fault_description', 'reporter_name', 'reporter_email', 'reported_at'];
+        $placeholders = [':boat_id', ':fault_description', ':reporter_name', ':reporter_email', 'NOW()'];
+        $params = [
+            ':boat_id' => (int) $boatId,
+            ':fault_description' => $faultDescription,
+            ':reporter_name' => $reporterName,
+            ':reporter_email' => $reporterEmail,
+        ];
+
+        try {
+            $sourceColumn = $this->db->query("SHOW COLUMNS FROM " . $this->table . " LIKE 'source'");
+            if ($sourceColumn && $sourceColumn->rowCount() > 0) {
+                $columns[] = 'source';
+                $placeholders[] = ':source';
+                $params[':source'] = 'boat_checkin';
+            }
+
+            if ($boatCheckinId !== null) {
+                $checkinColumn = $this->db->query("SHOW COLUMNS FROM " . $this->table . " LIKE 'boat_checkin_id'");
+                if ($checkinColumn && $checkinColumn->rowCount() > 0) {
+                    $columns[] = 'boat_checkin_id';
+                    $placeholders[] = ':boat_checkin_id';
+                    $params[':boat_checkin_id'] = (int) $boatCheckinId;
+                }
+            }
+        } catch (\Throwable $e) {
+            // Keep backward compatibility with schemas that don't yet have provenance columns.
+        }
+
+        $query = "INSERT INTO " . $this->table . " (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
+        $stmt = $this->db->prepare($query);
+
+        foreach ($params as $key => $value) {
+            if ($key === ':boat_id' || $key === ':boat_checkin_id') {
+                $stmt->bindValue($key, $value, PDO::PARAM_INT);
+            } else {
+                $stmt->bindValue($key, $value);
+            }
+        }
+
+        if (!$stmt->execute()) {
+            return false;
+        }
+
+        return (int) $this->db->lastInsertId();
+    }
+
+    public function findRecentDuplicateReportId($boatId, $faultDescription, $reporterName = '', $reporterEmail = '', $windowSeconds = 120): ?int
     {
         $reportedAfter = date('Y-m-d H:i:s', time() - max(1, (int) $windowSeconds));
 
@@ -141,6 +226,60 @@ class Report
             $stmt = $this->db->prepare($fallbackQuery);
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        }
+    }
+
+    public function getReportsForExport($filter = 'all', $sortBy = 'r.reported_at', $sortOrder = 'DESC', $boatId = null, $status = null): array
+    {
+        try {
+            $query = "SELECT r.*, b.boat_name, b.boat_type FROM " . $this->table . " r LEFT JOIN boats b ON r.boat_id = b.id";
+            $params = [];
+            $whereConditions = [];
+
+            if ($filter === 'active' && $status === null) {
+                $whereConditions[] = "r.status IN ('New', 'In progress', 'Waiting parts')";
+            }
+
+            if ($status !== null && $status !== 'All') {
+                $whereConditions[] = "r.status = :status";
+                $params[':status'] = $status;
+            }
+
+            if ($boatId !== null) {
+                $whereConditions[] = "r.boat_id = :boat_id";
+                $params[':boat_id'] = (int) $boatId;
+            }
+
+            if (!empty($whereConditions)) {
+                $query .= " WHERE " . implode(" AND ", $whereConditions);
+            }
+
+            $allowedSortColumns = ['r.id', 'b.boat_name', 'r.status', 'r.reported_at'];
+            if (!in_array($sortBy, $allowedSortColumns, true)) {
+                $sortBy = 'r.reported_at';
+            }
+
+            $sortOrder = strtoupper($sortOrder);
+            if ($sortOrder !== 'ASC' && $sortOrder !== 'DESC') {
+                $sortOrder = 'DESC';
+            }
+
+            $query .= " ORDER BY {$sortBy} {$sortOrder}";
+
+            $stmt = $this->db->prepare($query);
+            foreach ($params as $key => $value) {
+                if ($key === ':boat_id') {
+                    $stmt->bindValue($key, $value, PDO::PARAM_INT);
+                } else {
+                    $stmt->bindValue($key, $value);
+                }
+            }
+
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('Error in getReportsForExport: ' . $e->getMessage());
+            return [];
         }
     }
 

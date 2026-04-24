@@ -11,9 +11,14 @@
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <h1>Report a Fault</h1>
-            <?php if (!isset($_SESSION['user'])): ?>
-                <a href="index.php?route=/login" class="btn btn-secondary">Bosun Login</a>
-            <?php endif; ?>
+            <div>
+                <a href="index.php?route=/checkin" class="btn btn-secondary">Boat Check-In</a>
+                <?php if (!isset($_SESSION['user'])): ?>
+                    <a href="index.php?route=/login" class="btn btn-secondary">Bosun Login</a>
+                <?php else: ?>
+                    <a href="index.php?route=/bosun/boats" class="btn btn-secondary">Bosun Dashboard</a>
+                <?php endif; ?>
+            </div>
         </div>
         <?php if (isset($error)): ?>
             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>

@@ -105,4 +105,44 @@ class Boat
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['count'];
     }
+
+    public function getActiveFaultCountsByBoatId(): array
+    {
+        $stmt = $this->db->prepare("SELECT boat_id, COUNT(*) AS count FROM reports WHERE status != 'Complete' GROUP BY boat_id");
+        $stmt->execute();
+
+        $counts = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $counts[(int) $row['boat_id']] = (int) $row['count'];
+        }
+
+        return $counts;
+    }
+
+    public function getUseCountsByBoatId(): array
+    {
+        if (!$this->hasBoatCheckinsTable()) {
+            return [];
+        }
+
+        $stmt = $this->db->prepare("SELECT boat_id, COUNT(*) AS count FROM boat_checkins GROUP BY boat_id");
+        $stmt->execute();
+
+        $counts = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $counts[(int) $row['boat_id']] = (int) $row['count'];
+        }
+
+        return $counts;
+    }
+
+    private function hasBoatCheckinsTable(): bool
+    {
+        try {
+            $stmt = $this->db->query("SHOW TABLES LIKE 'boat_checkins'");
+            return (bool) $stmt && $stmt->rowCount() > 0;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
 }

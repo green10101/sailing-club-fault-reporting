@@ -4,18 +4,21 @@ namespace src\Controllers;
 
 use src\Models\Report;
 use src\Models\Boat;
+use src\Models\BoatCheckin;
 use src\Services\MailService;
 
 class BosunController
 {
     protected $reportModel;
     protected $boatModel;
+    protected $boatCheckinModel;
     protected $mailService;
 
     public function __construct()
     {
         $this->reportModel = new Report();
         $this->boatModel = new Boat();
+        $this->boatCheckinModel = new BoatCheckin();
         $this->mailService = new MailService();
     }
 
@@ -82,11 +85,100 @@ class BosunController
         $sortBy = $_GET['sort'] ?? 'boat_name';
         $sortOrder = $_GET['order'] ?? 'ASC';
         $boats = $this->boatModel->getBoatsFilteredSorted($filter, $sortBy, $sortOrder);
+        $activeFaultCounts = $this->boatModel->getActiveFaultCountsByBoatId();
+        $useCounts = $this->boatModel->getUseCountsByBoatId();
         foreach ($boats as &$boat) {
-            $boat['active_faults'] = $this->boatModel->getActiveFaultCount($boat['id']);
+            $boatId = (int) $boat['id'];
+            $boat['active_faults'] = $activeFaultCounts[$boatId] ?? 0;
+            $boat['number_of_uses'] = $useCounts[$boatId] ?? 0;
         }
         unset($boat); // break reference to avoid unexpected foreach behavior
         include '../src/Views/bosun/boats.php';
+    }
+
+    public function checkins()
+    {
+        $boatId = isset($_GET['boat_id']) && $_GET['boat_id'] !== '' ? (int) $_GET['boat_id'] : null;
+        $faultFilter = $_GET['fault_filter'] ?? 'all';
+        if (!in_array($faultFilter, ['all', 'with_fault', 'without_fault'], true)) {
+            $faultFilter = 'all';
+        }
+
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+        $perPage = 50;
+
+        $checkins = $this->boatCheckinModel->getCheckins($boatId, $faultFilter, $page, $perPage);
+        $totalCheckins = $this->boatCheckinModel->getCheckinsCount($boatId, $faultFilter);
+        $totalPages = max(1, (int) ceil($totalCheckins / $perPage));
+        $boats = $this->boatModel->getAllBoats();
+
+        include '../src/Views/bosun/checkins.php';
+    }
+
+    public function exportCheckinsCsv()
+    {
+        $boatId = isset($_GET['boat_id']) && $_GET['boat_id'] !== '' ? (int) $_GET['boat_id'] : null;
+        $faultFilter = $_GET['fault_filter'] ?? 'all';
+        if (!in_array($faultFilter, ['all', 'with_fault', 'without_fault'], true)) {
+            $faultFilter = 'all';
+        }
+
+        $checkins = $this->boatCheckinModel->getCheckinsForExport($boatId, $faultFilter);
+        $timestamp = date('Ymd_His');
+        $filename = 'boat_checkins_' . $timestamp . '.csv';
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=' . $filename);
+
+        $output = fopen('php://output', 'w');
+        if ($output === false) {
+            http_response_code(500);
+            exit;
+        }
+
+        fputcsv($output, [
+            'Check-In ID',
+            'Checked In At',
+            'Boat ID',
+            'Boat Name',
+            'User Name',
+            'User Email',
+            'Put Away OK',
+            'Safe For Next User',
+            'Has Faults To Rectify',
+            'Damage During Checkout',
+            'Check-In Notes',
+            'Fault Report ID',
+            'Fault Report Status',
+            'Fault Description',
+        ]);
+
+        foreach ($checkins as $checkin) {
+            $damageDuringCheckout = '';
+            if ($checkin['damage_during_checkout'] !== null) {
+                $damageDuringCheckout = ((int) $checkin['damage_during_checkout'] === 1) ? 'Yes' : 'No';
+            }
+
+            fputcsv($output, [
+                (int) $checkin['id'],
+                (string) ($checkin['checked_in_at'] ?? ''),
+                (int) ($checkin['boat_id'] ?? 0),
+                (string) ($checkin['boat_name'] ?? ''),
+                (string) ($checkin['user_name'] ?? ''),
+                (string) ($checkin['user_email'] ?? ''),
+                ((int) ($checkin['put_away_ok'] ?? 0) === 1) ? 'Yes' : 'No',
+                ((int) ($checkin['safe_for_next_user'] ?? 0) === 1) ? 'Yes' : 'No',
+                ((int) ($checkin['has_faults_to_rectify'] ?? 0) === 1) ? 'Yes' : 'No',
+                $damageDuringCheckout,
+                (string) ($checkin['checkin_notes'] ?? ''),
+                !empty($checkin['fault_report_id']) ? (int) $checkin['fault_report_id'] : '',
+                (string) ($checkin['fault_report_status'] ?? ''),
+                (string) ($checkin['fault_description'] ?? ''),
+            ]);
+        }
+
+        fclose($output);
+        exit;
     }
 
     public function updateBoatStatus($boatId, $status)
@@ -277,5 +369,76 @@ class BosunController
         ksort($boatGroups);
         
         include '../src/Views/bosun/print_report.php';
+    }
+
+    public function exportReportsCsv()
+    {
+        $status = $_GET['status'] ?? null;
+        $filter = 'all';
+        if ($status === null) {
+            $filter = 'active';
+        }
+
+        $sortBy = $_GET['sort'] ?? 'r.reported_at';
+        $sortOrder = $_GET['order'] ?? 'DESC';
+        $boatId = $_GET['boat_id'] ?? null;
+        if ($boatId === '') {
+            $boatId = null;
+        }
+
+        $reports = $this->reportModel->getReportsForExport($filter, $sortBy, $sortOrder, $boatId, $status);
+
+        $timestamp = date('Ymd_His');
+        $filename = 'fault_reports_' . $timestamp . '.csv';
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=' . $filename);
+
+        $output = fopen('php://output', 'w');
+        if ($output === false) {
+            http_response_code(500);
+            exit;
+        }
+
+        fputcsv($output, [
+            'Report ID',
+            'Reported At',
+            'Boat ID',
+            'Boat Name',
+            'Boat Type',
+            'Fault Description',
+            'Reporter Name',
+            'Reporter Email',
+            'Status',
+            'Source',
+            'Bosun Notes',
+            'Bosun Assessment',
+            'Part Required',
+            'Part Status',
+            'Completion Date',
+        ]);
+
+        foreach ($reports as $report) {
+            fputcsv($output, [
+                (int) ($report['id'] ?? 0),
+                (string) ($report['reported_at'] ?? ''),
+                !empty($report['boat_id']) ? (int) $report['boat_id'] : '',
+                (string) ($report['boat_name'] ?? ''),
+                (string) ($report['boat_type'] ?? ''),
+                (string) ($report['fault_description'] ?? ''),
+                (string) ($report['reporter_name'] ?? ''),
+                (string) ($report['reporter_email'] ?? ''),
+                (string) ($report['status'] ?? ''),
+                (string) ($report['source'] ?? ''),
+                (string) ($report['bosun_notes'] ?? ''),
+                (string) ($report['bosun_assessment'] ?? ''),
+                (string) ($report['part_required'] ?? ''),
+                (string) ($report['part_status'] ?? ''),
+                (string) ($report['completion_date'] ?? ''),
+            ]);
+        }
+
+        fclose($output);
+        exit;
     }
 }

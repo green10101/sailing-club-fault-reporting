@@ -148,4 +148,14 @@ function clearLoginAttempts($email) {
         unlink($attemptsFile);
     }
 }
+
+// Determine whether the current session user should be treated as an admin.
+function userHasAdminRole(): bool {
+    $role = isset($_SESSION['user']['role']) ? trim((string) $_SESSION['user']['role']) : '';
+    if ($role === '') {
+        return false;
+    }
+
+    return preg_match('/\badmin(istrator)?\b/i', $role) === 1;
+}
 ?>

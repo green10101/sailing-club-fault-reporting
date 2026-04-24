@@ -9,6 +9,12 @@ use PHPMailer\PHPMailer\Exception;
 
 class MailService
 {
+    public function notificationsAreSuppressed()
+    {
+        return $this->envFlag('MAIL_TEST_MODE', false)
+            || $this->envFlag('DISABLE_NOTIFICATIONS', false);
+    }
+
     public function sendRepairAssignedEmail($to, $boatName, $faultDescription)
     {
         return true;
@@ -26,19 +32,48 @@ class MailService
         $reporterEmail = trim((string) ($reportData['reporter_email'] ?? ''));
         $reporterName = trim((string) ($reportData['reporter_name'] ?? ''));
         $faultDescription = trim((string) ($reportData['fault_description'] ?? ''));
+        $fromCheckin = (($reportData['source'] ?? '') === 'boat_checkin');
+        $isSevere = (bool) ($reportData['is_severe'] ?? false);
+        $reportedAt = trim((string) ($reportData['reported_at'] ?? date('Y-m-d H:i:s')));
 
-        $subject = 'New Fault Report #' . $reportId . ' - ' . $boatName;
-        $body = "A new fault report has been submitted.\n\n"
+        $sourceLabel = $fromCheckin ? 'Boat Check-In' : 'Fault Form';
+        $severityHeading = $isSevere
+            ? "SEVERE ISSUE: Safety / Not Operational"
+            : "Standard Fault Report";
+
+        $faultSection = ($faultDescription !== '') ? $faultDescription : '(No description provided)';
+
+        $subjectPrefix = $isSevere ? '[SEVERE] ' : '';
+        $subject = $subjectPrefix . 'Fault Report #' . $reportId . ' - ' . $boatName;
+        $body = "FAULT ALERT\n"
+            . "===========\n"
+            . $severityHeading . "\n\n"
+            . "Boat: " . $boatName . "\n\n"
+            . "Fault Description:\n"
+            . "------------------\n"
+            . $faultSection . "\n\n"
+            . "Additional Details\n"
+            . "------------------\n"
             . "Report ID: " . $reportId . "\n"
-            . "Boat Name: " . $boatName . "\n"
+            . "Source: " . $sourceLabel . "\n"
+            . "Reported By: " . $reporterName . "\n"
             . "Reporter Email: " . $reporterEmail . "\n"
-            . "Reporter Name: " . $reporterName . "\n"
-            . "Fault Description:\n\n" . $faultDescription . "\n\n"
+            . "Reported At: " . $reportedAt . "\n\n"
+            . "Open in bosun dashboard:\n"
             . "https://cyc.uk/bosun/index.php";
 
         try {
-            $mail = $this->createMailer();
             $recipients = $this->getNotificationRecipients();
+
+            if ($this->notificationsAreSuppressed()) {
+                error_log(
+                    'MailService::sendNewFaultReportEmail suppressed by test mode for report #' . $reportId
+                    . '; recipients=' . implode(',', $recipients)
+                );
+                return true;
+            }
+
+            $mail = $this->createMailer();
             foreach ($recipients as $recipient) {
                 $mail->addAddress($recipient);
             }
@@ -104,6 +139,13 @@ class MailService
     {
         $value = $_ENV[$key] ?? getenv($key);
         return ($value !== false && $value !== '') ? $value : $default;
+    }
+
+    private function envFlag(string $key, bool $default): bool
+    {
+        $defaultValue = $default ? '1' : '0';
+        $value = strtolower(trim($this->env($key, $defaultValue)));
+        return in_array($value, ['1', 'true', 'yes', 'on'], true);
     }
 }
 

@@ -25,9 +25,31 @@ require_once '../src/config/database.php';
 
 $controller = new \src\Controllers\PublicController();
 
-// Parse the request URI to remove query string for routing
-// Support both URL path and ?route= query parameter
-$requestUri = $_GET['route'] ?? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+// Parse the request URI to remove query string for routing.
+// Support both URL path and ?route= query parameter, including hosts that
+// accidentally pass nested values like "index.php?route=/checkin" as route.
+$routeParam = $_GET['route'] ?? null;
+if (is_string($routeParam) && $routeParam !== '') {
+    $requestUri = $routeParam;
+
+    if (strpos($requestUri, 'index.php?route=') !== false) {
+        $nestedParts = parse_url($requestUri);
+        $nestedQuery = [];
+        parse_str($nestedParts['query'] ?? '', $nestedQuery);
+
+        if (isset($nestedQuery['route']) && is_string($nestedQuery['route']) && $nestedQuery['route'] !== '') {
+            $requestUri = $nestedQuery['route'];
+        } elseif (isset($nestedParts['path']) && is_string($nestedParts['path']) && $nestedParts['path'] !== '') {
+            $requestUri = $nestedParts['path'];
+        }
+    }
+} else {
+    $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+}
+
+if (is_string($requestUri) && $requestUri !== '' && $requestUri !== '/') {
+    $requestUri = '/' . ltrim($requestUri, '/');
+}
 
 // Remove /public prefix if present (some hosts expose paths as /public/*)
 $requestUri = preg_replace('#^/public#', '', $requestUri);
@@ -52,6 +74,8 @@ if ($requestUri === '/boats') {
     $requestUri = '/bosun/dashboard';
 } elseif ($requestUri === '/bosun/login') {
     $requestUri = '/login';
+} elseif ($requestUri === '/bosun/checkin') {
+    $requestUri = '/checkin';
 }
 
 switch ($requestUri) {
@@ -67,6 +91,13 @@ switch ($requestUri) {
     case '/report-form':
         // Show report form for both logged-in staff and public users
         $controller->showReportForm();
+        break;
+    case '/checkin':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->submitCheckin();
+        } else {
+            $controller->showCheckinForm();
+        }
         break;
     case '/report':
         $controller->submitReport();
@@ -141,6 +172,15 @@ switch ($requestUri) {
         $adminController = new \src\Controllers\AdminController();
         $adminController->deleteReport($reportId);
         break;
+    case (preg_match('/^\/admin\/delete-checkin\/(\d+)$/', $requestUri, $matches) ? $requestUri : null):
+        if (!isset($_SESSION['user'])) {
+            header('Location: /bosun/login');
+            exit;
+        }
+        $checkinId = $matches[1];
+        $adminController = new \src\Controllers\AdminController();
+        $adminController->deleteCheckin($checkinId);
+        break;
     case (preg_match('/^\/admin\/user\/reset-password\/(\d+)$/', $requestUri, $matches) ? $requestUri : null):
         if (!isset($_SESSION['user'])) {
             header('Location: /bosun/login');
@@ -158,6 +198,22 @@ switch ($requestUri) {
         $bosunController = new \src\Controllers\BosunController();
         $bosunController->dashboard();
         break;
+    case '/bosun/checkins':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /bosun/login');
+            exit;
+        }
+        $bosunController = new \src\Controllers\BosunController();
+        $bosunController->checkins();
+        break;
+    case '/bosun/checkins/export':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /bosun/login');
+            exit;
+        }
+        $bosunController = new \src\Controllers\BosunController();
+        $bosunController->exportCheckinsCsv();
+        break;
     case '/bosun/boats':
         if (!isset($_SESSION['user'])) {
             header('Location: /bosun/login');
@@ -173,6 +229,14 @@ switch ($requestUri) {
         }
         $bosunController = new \src\Controllers\BosunController();
         $bosunController->printReport();
+        break;
+    case '/bosun/export-reports-csv':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /bosun/login');
+            exit;
+        }
+        $bosunController = new \src\Controllers\BosunController();
+        $bosunController->exportReportsCsv();
         break;
     case '/bosun/boat/new':
         if (!isset($_SESSION['user'])) {
