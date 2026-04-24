@@ -32,11 +32,14 @@ class MailService
         $reporterEmail = trim((string) ($reportData['reporter_email'] ?? ''));
         $reporterName = trim((string) ($reportData['reporter_name'] ?? ''));
         $faultDescription = trim((string) ($reportData['fault_description'] ?? ''));
+        $fromCheckin = (($reportData['source'] ?? '') === 'boat_checkin');
 
         $subject = 'New Fault Report #' . $reportId . ' - ' . $boatName;
-        $body = "A new fault report has been submitted.\n\n"
+        $body = ($fromCheckin ? "*** This fault was reported during a boat check-in. ***\n\n" : '')
+            . "A new fault report has been submitted.\n\n"
             . "Report ID: " . $reportId . "\n"
             . "Boat Name: " . $boatName . "\n"
+            . ($fromCheckin ? "Source: Boat Check-In\n" : '')
             . "Reporter Email: " . $reporterEmail . "\n"
             . "Reporter Name: " . $reporterName . "\n"
             . "Fault Description:\n\n" . $faultDescription . "\n\n"

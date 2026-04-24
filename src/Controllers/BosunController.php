@@ -115,6 +115,72 @@ class BosunController
         include '../src/Views/bosun/checkins.php';
     }
 
+    public function exportCheckinsCsv()
+    {
+        $boatId = isset($_GET['boat_id']) && $_GET['boat_id'] !== '' ? (int) $_GET['boat_id'] : null;
+        $faultFilter = $_GET['fault_filter'] ?? 'all';
+        if (!in_array($faultFilter, ['all', 'with_fault', 'without_fault'], true)) {
+            $faultFilter = 'all';
+        }
+
+        $checkins = $this->boatCheckinModel->getCheckinsForExport($boatId, $faultFilter);
+        $timestamp = date('Ymd_His');
+        $filename = 'boat_checkins_' . $timestamp . '.csv';
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=' . $filename);
+
+        $output = fopen('php://output', 'w');
+        if ($output === false) {
+            http_response_code(500);
+            exit;
+        }
+
+        fputcsv($output, [
+            'Check-In ID',
+            'Checked In At',
+            'Boat ID',
+            'Boat Name',
+            'User Name',
+            'User Email',
+            'Put Away OK',
+            'Safe For Next User',
+            'Has Faults To Rectify',
+            'Damage During Checkout',
+            'Check-In Notes',
+            'Fault Report ID',
+            'Fault Report Status',
+            'Fault Description',
+        ]);
+
+        foreach ($checkins as $checkin) {
+            $damageDuringCheckout = '';
+            if ($checkin['damage_during_checkout'] !== null) {
+                $damageDuringCheckout = ((int) $checkin['damage_during_checkout'] === 1) ? 'Yes' : 'No';
+            }
+
+            fputcsv($output, [
+                (int) $checkin['id'],
+                (string) ($checkin['checked_in_at'] ?? ''),
+                (int) ($checkin['boat_id'] ?? 0),
+                (string) ($checkin['boat_name'] ?? ''),
+                (string) ($checkin['user_name'] ?? ''),
+                (string) ($checkin['user_email'] ?? ''),
+                ((int) ($checkin['put_away_ok'] ?? 0) === 1) ? 'Yes' : 'No',
+                ((int) ($checkin['safe_for_next_user'] ?? 0) === 1) ? 'Yes' : 'No',
+                ((int) ($checkin['has_faults_to_rectify'] ?? 0) === 1) ? 'Yes' : 'No',
+                $damageDuringCheckout,
+                (string) ($checkin['checkin_notes'] ?? ''),
+                !empty($checkin['fault_report_id']) ? (int) $checkin['fault_report_id'] : '',
+                (string) ($checkin['fault_report_status'] ?? ''),
+                (string) ($checkin['fault_description'] ?? ''),
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
+
     public function updateBoatStatus($boatId, $status)
     {
         if ($this->boatModel->updateStatus($boatId, $status)) {

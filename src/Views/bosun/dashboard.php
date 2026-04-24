@@ -144,7 +144,12 @@ function buildPageUrl($page, $currentStatus, $currentBoatId, $currentSort, $curr
                         </td>
                         <td><?php echo htmlspecialchars($report['id']); ?></td>
                         <td><?php echo htmlspecialchars($report['boat_name']); ?></td>
-                        <td><?php echo htmlspecialchars($report['fault_description']); ?></td>
+                        <td>
+                            <?php if (($report['source'] ?? '') === 'boat_checkin'): ?>
+                                <span class="badge bg-info text-dark me-1" title="Reported during boat check-in">Check-In</span>
+                            <?php endif; ?>
+                            <?php echo htmlspecialchars($report['fault_description']); ?>
+                        </td>
                         <td><?php echo htmlspecialchars($report['reporter_name'] ?? ''); ?></td>
                         <td style="text-align: center;">
                             <?php 

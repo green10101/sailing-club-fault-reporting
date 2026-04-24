@@ -206,6 +206,14 @@ switch ($requestUri) {
         $bosunController = new \src\Controllers\BosunController();
         $bosunController->checkins();
         break;
+    case '/bosun/checkins/export':
+        if (!isset($_SESSION['user'])) {
+            header('Location: /bosun/login');
+            exit;
+        }
+        $bosunController = new \src\Controllers\BosunController();
+        $bosunController->exportCheckinsCsv();
+        break;
     case '/bosun/boats':
         if (!isset($_SESSION['user'])) {
             header('Location: /bosun/login');

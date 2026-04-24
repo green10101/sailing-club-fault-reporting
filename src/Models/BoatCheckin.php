@@ -151,6 +151,47 @@ class BoatCheckin
         }
     }
 
+    public function getCheckinsForExport($boatId = null, $faultFilter = 'all'): array
+    {
+        try {
+            $query = "SELECT c.*, b.boat_name, r.status AS fault_report_status, r.fault_description
+                      FROM {$this->table} c
+                      INNER JOIN boats b ON b.id = c.boat_id
+                      LEFT JOIN reports r ON r.id = c.fault_report_id";
+
+            $where = [];
+            $params = [];
+
+            if ($boatId !== null) {
+                $where[] = 'c.boat_id = :boat_id';
+                $params[':boat_id'] = (int) $boatId;
+            }
+
+            if ($faultFilter === 'with_fault') {
+                $where[] = 'c.fault_report_id IS NOT NULL';
+            } elseif ($faultFilter === 'without_fault') {
+                $where[] = 'c.fault_report_id IS NULL';
+            }
+
+            if (!empty($where)) {
+                $query .= ' WHERE ' . implode(' AND ', $where);
+            }
+
+            $query .= ' ORDER BY c.checked_in_at DESC, c.id DESC';
+
+            $stmt = $this->db->prepare($query);
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value, PDO::PARAM_INT);
+            }
+
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('Boat check-in export failed: ' . $e->getMessage());
+            return [];
+        }
+    }
+
     public function deleteCheckin(int $checkinId): bool
     {
         try {

@@ -11,6 +11,15 @@ function buildCheckinFilterUrl($boatId, $faultFilter, $page = 1)
     }
     return $url;
 }
+
+function buildCheckinExportUrl($boatId, $faultFilter)
+{
+    $url = "index.php?route=/bosun/checkins/export&fault_filter=" . urlencode($faultFilter);
+    if (!empty($boatId)) {
+        $url .= '&boat_id=' . urlencode($boatId);
+    }
+    return $url;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,6 +59,10 @@ function buildCheckinFilterUrl($boatId, $faultFilter, $page = 1)
                 <button type="submit" class="btn btn-primary">Apply Filters</button>
             </div>
         </form>
+
+        <div class="mb-3">
+            <a class="btn btn-outline-secondary" href="<?php echo buildCheckinExportUrl($currentBoatId, $currentFaultFilter); ?>">Export CSV</a>
+        </div>
 
         <table class="table table-responsive">
             <thead>

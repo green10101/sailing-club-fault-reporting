@@ -232,6 +232,7 @@ class PublicController
                         'reporter_email' => $userEmail,
                         'reporter_name' => $userName,
                         'fault_description' => $faultDescription,
+                        'source' => 'boat_checkin',
                     ]);
                 } catch (\Throwable $e) {
                     error_log('Checkin fault report email failed for report #' . $reportId . ': ' . $e->getMessage());

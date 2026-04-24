@@ -24,6 +24,12 @@
                         <p class="form-control-plaintext"><?php echo htmlspecialchars($report['id']); ?></p>
                     </div>
 
+                    <?php if (($report['source'] ?? '') === 'boat_checkin'): ?>
+                    <div class="alert alert-info" role="alert">
+                        This fault was reported during a boat check-in.
+                    </div>
+                    <?php endif; ?>
+
                     <div class="mb-3">
                         <label for="boat_id" class="form-label">Boat Name</label>
                         <select class="form-select" id="boat_id" name="boat_id" required>
