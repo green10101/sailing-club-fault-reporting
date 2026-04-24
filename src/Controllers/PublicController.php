@@ -221,6 +221,21 @@ class PublicController
 
             if ($reportId !== false) {
                 $this->boatCheckinModel->updateFaultReportId($checkinId, (int) $reportId);
+
+                $boat = $this->boatModel->getBoatById($boatId);
+                $boatName = $boat['boat_name'] ?? 'Unknown boat';
+
+                try {
+                    $this->mailService->sendNewFaultReportEmail([
+                        'report_id' => $reportId,
+                        'boat_name' => $boatName,
+                        'reporter_email' => $userEmail,
+                        'reporter_name' => $userName,
+                        'fault_description' => $faultDescription,
+                    ]);
+                } catch (\Throwable $e) {
+                    error_log('Checkin fault report email failed for report #' . $reportId . ': ' . $e->getMessage());
+                }
             } else {
                 error_log('Fault report creation from check-in failed for checkin #' . $checkinId);
             }
