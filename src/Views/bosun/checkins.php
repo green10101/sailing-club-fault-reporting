@@ -56,9 +56,9 @@ function buildCheckinExportUrl($boatId, $faultFilter)
                 </select>
             </div>
             <div style="align-self: end;">
-                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <div style="display: flex; gap: 0.5rem; flex-wrap: nowrap; align-items: center;">
                     <button type="submit" class="btn btn-primary">Apply Filters</button>
-                    <a class="btn btn-outline-secondary" href="<?php echo buildCheckinExportUrl($currentBoatId, $currentFaultFilter); ?>">Export CSV</a>
+                    <a class="btn btn-outline-secondary" href="<?php echo buildCheckinExportUrl($currentBoatId, $currentFaultFilter); ?>" style="white-space: nowrap;">Export CSV</a>
                 </div>
             </div>
         </form>
