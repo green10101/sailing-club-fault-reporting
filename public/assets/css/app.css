@@ -452,6 +452,14 @@ code {
     min-width: 80px;
   }
 
+  .table .fault-description-header,
+  .table .fault-description-cell {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    min-width: 180px;
+  }
+
   .table th:first-child,
   .table td:first-child {
     position: sticky;
@@ -502,6 +510,11 @@ code {
     padding: 6px 4px;
     min-width: 70px;
   }
+  
+  .table .fault-description-header,
+  .table .fault-description-cell {
+    min-width: 150px;
+  }
 
   .btn-sm {
     padding: 6px 10px;
@@ -551,6 +564,38 @@ code {
   color: inherit !important;
   border-left: none !important;
   border: none !important;
+}
+
+/* Fault report list typography normalization */
+.fault-description-cell,
+.fault-status-cell {
+  line-height: 1.3;
+}
+
+.fault-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .fault-status-badge {
+    line-height: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .fault-description-cell,
+  .fault-status-cell {
+    line-height: 1.25;
+  }
+
+  .fault-status-badge {
+    font-size: 1rem;
+  }
 }
 
 /* Status select styling with background colors */

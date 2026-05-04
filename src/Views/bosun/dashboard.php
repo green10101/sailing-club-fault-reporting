@@ -141,7 +141,7 @@ function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, 
                     </th>
                     <th><a href="<?php echo getSortUrl('r.id', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">ID <?php echo getSortIcon('r.id', $currentSort, $currentOrder); ?></a></th>
                     <th><a href="<?php echo getSortUrl('b.boat_name', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">Asset Name <?php echo getSortIcon('b.boat_name', $currentSort, $currentOrder); ?></a></th>
-                    <th>Fault Description</th>
+                    <th class="fault-description-header">Fault Description</th>
                     <th>Reported By</th>
                     <th><a href="<?php echo getSortUrl('r.status', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">Status <?php echo getSortIcon('r.status', $currentSort, $currentOrder); ?></a></th>
                     <th>Bosun Notes</th>
@@ -156,14 +156,14 @@ function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, 
                         </td>
                         <td><?php echo htmlspecialchars($report['id']); ?></td>
                         <td><?php echo htmlspecialchars($report['boat_name']); ?></td>
-                        <td>
+                        <td class="fault-description-cell">
                             <?php if (($report['source'] ?? '') === 'boat_checkin'): ?>
                                 <span class="badge bg-info text-dark me-1" title="Reported during boat check-in">Check-In</span>
                             <?php endif; ?>
                             <?php echo htmlspecialchars($report['fault_description']); ?>
                         </td>
                         <td><?php echo htmlspecialchars($report['reporter_name'] ?? ''); ?></td>
-                        <td style="text-align: center;">
+                        <td class="fault-status-cell" style="text-align: center;">
                             <?php 
                                 $statusClass = 'status-new';
                                 $statusIcon = '🆕';
@@ -178,7 +178,7 @@ function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, 
                                     $statusIcon = '✅';
                                 }
                             ?>
-                            <span class="status-badge <?php echo $statusClass; ?>" style="font-size: 1.5rem;">
+                            <span class="status-badge fault-status-badge <?php echo $statusClass; ?>" aria-label="<?php echo htmlspecialchars($report['status']); ?>" title="<?php echo htmlspecialchars($report['status']); ?>">
                                 <?php echo $statusIcon; ?>
                             </span>
                         </td>
