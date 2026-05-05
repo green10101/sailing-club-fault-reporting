@@ -133,7 +133,8 @@ function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, 
             <a href="index.php?route=/bosun/print-report" class="btn btn-success" target="_blank">🖨️ Print All Reports</a>
             <a href="<?php echo buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, $currentOrder); ?>" class="btn btn-success">⬇️ Export CSV</a>
         </div>
-        <table class="table table-responsive">
+        <div class="table-responsive">
+        <table class="table fault-reports-table">
             <thead>
                 <tr>
                     <th style="width: 40px;">
@@ -144,7 +145,7 @@ function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, 
                     <th class="fault-description-header">Fault Description</th>
                     <th>Reported By</th>
                     <th><a href="<?php echo getSortUrl('r.status', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">Status <?php echo getSortIcon('r.status', $currentSort, $currentOrder); ?></a></th>
-                    <th>Bosun Notes</th>
+                    <th class="bosun-notes-header">Bosun Notes</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -182,7 +183,7 @@ function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, 
                                 <?php echo $statusIcon; ?>
                             </span>
                         </td>
-                        <td><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></td>
+                        <td class="bosun-notes-cell"><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></td>
                         <td style="white-space: nowrap;">
                             <a href="index.php?route=/bosun/edit/<?php echo $report['id']; ?>" class="btn btn-sm btn-outline-primary" title="Edit Report" style="padding: 0.25rem 0.5rem; line-height: 1;">
                                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: middle;">
@@ -202,6 +203,7 @@ function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, 
                 <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
 
         <?php if (isset($totalPages) && $totalPages > 1): ?>
             <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 2rem; flex-wrap: wrap;">

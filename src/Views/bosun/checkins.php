@@ -63,7 +63,8 @@ function buildCheckinExportUrl($boatId, $faultFilter)
             </div>
         </form>
 
-        <table class="table table-responsive">
+        <div class="table-responsive">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Date/Time</th>
@@ -114,6 +115,7 @@ function buildCheckinExportUrl($boatId, $faultFilter)
                 <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
 
         <?php if (($totalPages ?? 1) > 1): ?>
             <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap;">
