@@ -25,6 +25,11 @@ body {
   min-height: 100vh;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 .container {
   max-width: 1000px;
   margin: 0 auto;
@@ -454,10 +459,11 @@ code {
 
   .table .fault-description-header,
   .table .fault-description-cell {
-    white-space: normal;
+    white-space: normal !important;
     overflow-wrap: anywhere;
     word-break: break-word;
     min-width: 180px;
+    font: inherit;
   }
 
   .table th:first-child,
@@ -514,6 +520,12 @@ code {
   .table .fault-description-header,
   .table .fault-description-cell {
     min-width: 150px;
+  }
+
+  .table .fault-description-cell {
+    white-space: normal !important;
+    font-size: inherit;
+    line-height: inherit;
   }
 
   .btn-sm {
