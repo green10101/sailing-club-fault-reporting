@@ -455,21 +455,6 @@ code {
     min-width: 80px;
   }
 
-  .fault-reports-table .fault-description-header,
-  .fault-reports-table .fault-description-cell,
-  .fault-reports-table .bosun-notes-header,
-  .fault-reports-table .bosun-notes-cell {
-    white-space: normal !important;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    width: 14rem;
-    min-width: 14rem;
-    max-width: 14rem;
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
-  }
-
   .table th:first-child,
   .table td:first-child {
     position: sticky;
@@ -519,22 +504,6 @@ code {
   .table td {
     padding: 6px 4px;
     min-width: 70px;
-  }
-
-  .fault-reports-table .fault-description-header,
-  .fault-reports-table .fault-description-cell,
-  .fault-reports-table .bosun-notes-header,
-  .fault-reports-table .bosun-notes-cell {
-    width: 11rem;
-    min-width: 11rem;
-    max-width: 11rem;
-  }
-
-  .fault-reports-table .fault-description-cell,
-  .fault-reports-table .bosun-notes-cell {
-    white-space: normal !important;
-    font-size: inherit;
-    line-height: inherit;
   }
 
   .btn-sm {
@@ -588,6 +557,20 @@ code {
 }
 
 /* Fault report list typography normalization */
+.fault-reports-table .fault-description-header,
+.fault-reports-table .fault-description-cell,
+.fault-reports-table .bosun-notes-header,
+.fault-reports-table .bosun-notes-cell,
+.fault-reports-table .fault-description-cell .fault-description-text,
+.fault-reports-table .bosun-notes-cell .bosun-notes-text {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
 .fault-description-cell,
 .bosun-notes-cell,
 .fault-status-cell {
@@ -610,6 +593,15 @@ code {
 }
 
 @media (max-width: 768px) {
+  .fault-reports-table .fault-description-header,
+  .fault-reports-table .fault-description-cell,
+  .fault-reports-table .bosun-notes-header,
+  .fault-reports-table .bosun-notes-cell {
+    width: 14rem !important;
+    min-width: 14rem !important;
+    max-width: 14rem !important;
+  }
+
   .fault-description-cell,
   .bosun-notes-cell,
   .fault-status-cell {
@@ -618,6 +610,17 @@ code {
 
   .fault-status-badge {
     font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .fault-reports-table .fault-description-header,
+  .fault-reports-table .fault-description-cell,
+  .fault-reports-table .bosun-notes-header,
+  .fault-reports-table .bosun-notes-cell {
+    width: 11rem !important;
+    min-width: 11rem !important;
+    max-width: 11rem !important;
   }
 }
 
