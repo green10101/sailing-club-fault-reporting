@@ -77,6 +77,43 @@ function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/bosun/assets/css/app.css">
+    <style>
+        .fault-reports-table .fault-description-header,
+        .fault-reports-table .fault-description-cell,
+        .fault-reports-table .bosun-notes-header,
+        .fault-reports-table .bosun-notes-cell,
+        .fault-reports-table .fault-description-cell .fault-description-text,
+        .fault-reports-table .bosun-notes-cell .bosun-notes-text {
+            white-space: normal !important;
+            overflow-wrap: anywhere !important;
+            word-break: break-word !important;
+            font-family: inherit !important;
+            font-size: inherit !important;
+            line-height: inherit !important;
+        }
+
+        @media (max-width: 768px) {
+            .fault-reports-table .fault-description-header,
+            .fault-reports-table .fault-description-cell,
+            .fault-reports-table .bosun-notes-header,
+            .fault-reports-table .bosun-notes-cell {
+                width: 14rem !important;
+                min-width: 14rem !important;
+                max-width: 14rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fault-reports-table .fault-description-header,
+            .fault-reports-table .fault-description-cell,
+            .fault-reports-table .bosun-notes-header,
+            .fault-reports-table .bosun-notes-cell {
+                width: 11rem !important;
+                min-width: 11rem !important;
+                max-width: 11rem !important;
+            }
+        }
+    </style>
     <title>Bosun Dashboard</title>
 </head>
 <body>
