@@ -142,10 +142,10 @@ function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, 
                     </th>
                     <th><a href="<?php echo getSortUrl('r.id', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">ID <?php echo getSortIcon('r.id', $currentSort, $currentOrder); ?></a></th>
                     <th><a href="<?php echo getSortUrl('b.boat_name', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">Asset Name <?php echo getSortIcon('b.boat_name', $currentSort, $currentOrder); ?></a></th>
-                    <th class="fault-description-header">Fault Description</th>
+                    <th class="fault-description-header" style="white-space: normal; word-break: break-word; overflow-wrap: anywhere; font-family: inherit; font-size: inherit; line-height: inherit;">Fault Description</th>
                     <th>Reported By</th>
                     <th><a href="<?php echo getSortUrl('r.status', $currentStatus, $currentBoatId, $currentSort, $currentOrder, $currentPage); ?>" class="text-decoration-none">Status <?php echo getSortIcon('r.status', $currentSort, $currentOrder); ?></a></th>
-                    <th class="bosun-notes-header">Bosun Notes</th>
+                    <th class="bosun-notes-header" style="white-space: normal; word-break: break-word; overflow-wrap: anywhere; font-family: inherit; font-size: inherit; line-height: inherit;">Bosun Notes</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -157,11 +157,11 @@ function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, 
                         </td>
                         <td><?php echo htmlspecialchars($report['id']); ?></td>
                         <td><?php echo htmlspecialchars($report['boat_name']); ?></td>
-                        <td class="fault-description-cell">
+                        <td class="fault-description-cell" style="white-space: normal; word-break: break-word; overflow-wrap: anywhere; font-family: inherit; font-size: inherit; line-height: inherit; min-width: 11rem; max-width: 14rem;">
                             <?php if (($report['source'] ?? '') === 'boat_checkin'): ?>
                                 <span class="badge bg-info text-dark me-1" title="Reported during boat check-in">Check-In</span>
                             <?php endif; ?>
-                            <?php echo htmlspecialchars($report['fault_description']); ?>
+                            <span style="white-space: normal; word-break: break-word; overflow-wrap: anywhere; font-family: inherit; font-size: inherit; line-height: inherit;"><?php echo htmlspecialchars($report['fault_description']); ?></span>
                         </td>
                         <td><?php echo htmlspecialchars($report['reporter_name'] ?? ''); ?></td>
                         <td class="fault-status-cell" style="text-align: center;">
@@ -183,7 +183,7 @@ function buildExportReportsCsvUrl($currentStatus, $currentBoatId, $currentSort, 
                                 <?php echo $statusIcon; ?>
                             </span>
                         </td>
-                        <td class="bosun-notes-cell"><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></td>
+                        <td class="bosun-notes-cell" style="white-space: normal; word-break: break-word; overflow-wrap: anywhere; font-family: inherit; font-size: inherit; line-height: inherit; min-width: 11rem; max-width: 14rem;"><span style="white-space: normal; word-break: break-word; overflow-wrap: anywhere; font-family: inherit; font-size: inherit; line-height: inherit;"><?php echo htmlspecialchars($report['bosun_notes'] ?? ''); ?></span></td>
                         <td style="white-space: nowrap;">
                             <a href="index.php?route=/bosun/edit/<?php echo $report['id']; ?>" class="btn btn-sm btn-outline-primary" title="Edit Report" style="padding: 0.25rem 0.5rem; line-height: 1;">
                                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: middle;">
